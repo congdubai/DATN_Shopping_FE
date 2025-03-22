@@ -1,12 +1,13 @@
 import ModalRole from "@/components/admin/role/modal.role";
 import ViewDetailRole from "@/components/admin/role/view.role";
 import DataTable from "@/components/client/data-table";
+import { callDeleteRole } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchRole } from "@/redux/slice/roleSlide";
 import { IRole } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from "@ant-design/pro-components";
-import { Button, Popconfirm, Space, Tag } from "antd";
+import { Button, message, notification, Popconfirm, Space, Tag } from "antd";
 import dayjs from "dayjs";
 import queryString from "query-string";
 import { useRef, useState } from "react";
@@ -27,7 +28,20 @@ const RolePage = () => {
     const reloadTable = () => {
         tableRef?.current?.reload();
     }
-
+    const handleDeleteUser = async (id: string | undefined) => {
+        if (id) {
+            const res = await callDeleteRole(id);
+            if (+res.statusCode === 200) {
+                message.success('Xóa vai trò thành công');
+                reloadTable();
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
+        }
+    }
     const columns: ProColumns<IRole>[] = [
         {
             title: 'Id',
@@ -95,12 +109,14 @@ const RolePage = () => {
                         type=""
                         onClick={() => {
                             setOpenModal(true);
+                            setDataInit(entity);
                         }}
                     />
                     <Popconfirm
                         placement="leftTop"
                         title={"Xác nhận xóa role"}
                         description={"Bạn có chắc chắn muốn xóa role này ?"}
+                        onConfirm={() => handleDeleteUser(entity.id)}
                         okText="Xác nhận"
                         cancelText="Hủy"
                     >

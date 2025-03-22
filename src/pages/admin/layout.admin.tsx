@@ -38,7 +38,7 @@ const LayoutAdmin = () => {
             { label: <Link to='/admin/user'>User</Link>, key: '/admin/user', icon: <UserOutlined /> },
             { label: <Link to='/admin/product'>Product</Link>, key: '/admin/product', icon: <BankOutlined /> },
             { label: <Link to='/admin/job'>Job</Link>, key: '/admin/job', icon: <ScheduleOutlined /> },
-            { label: <Link to='/admin/resume'>Resume</Link>, key: '/admin/resume', icon: <AliwangwangOutlined /> },
+            { label: <Link to='/admin/category'>Category</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
             { label: <Link to='/admin/permission'>Permission</Link>, key: '/admin/permission', icon: <ApiOutlined /> },
             { label: <Link to='/admin/role'>Role</Link>, key: '/admin/role', icon: <ExceptionOutlined /> },
         ];

@@ -44,7 +44,6 @@ export interface IUser {
         name: string;
     }
     createdBy?: string;
-    isDeleted?: boolean;
     deletedAt?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
@@ -55,7 +54,6 @@ export interface IRole {
     name: string;
     description: string;
     createdBy?: string;
-    isDeleted?: boolean;
     deletedAt?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
@@ -78,5 +76,10 @@ export interface IProduct {
 export interface ICategory {
     id?: string;
     name: string;
+    image: string;
     description: string;
+    createdBy?: string;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
 }

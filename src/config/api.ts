@@ -93,3 +93,12 @@ export const callDeleteProduct = (id: string) => {
 export const callFetchCategory = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<ICategory>>>(`/api/v1/categories?${query}`);
 }
+export const callCreateCategory = (name: string, image: string, description: string) => {
+    return axios.post<IBackendRes<ICategory>>('/api/v1/categories', { name, image, description });
+}
+export const callUpdateCategory = (id: string, name: string, image: string, description: string) => {
+    return axios.put<IBackendRes<ICategory>>(`/api/v1/categories`, { id, name, image, description });
+}
+export const callDeleteCategory = (id: string) => {
+    return axios.delete<IBackendRes<ICategory>>(`/api/v1/categories/${id}`);
+}

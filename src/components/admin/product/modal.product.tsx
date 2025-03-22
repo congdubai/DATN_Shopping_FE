@@ -162,7 +162,7 @@ const ModalProduct = (props: IProps) => {
                 image,
                 price,
                 shortDesc,
-                category: { id: category.value, name: "", description: "" }
+                category: { id: category.value, name: "", description: "", image: "" }
             }
             const res = await callUpdateProduct(product.id, product.name, product.price, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {
@@ -182,7 +182,7 @@ const ModalProduct = (props: IProps) => {
                 image,
                 price,
                 shortDesc,
-                category: { id: category.value, name: "", description: "" }
+                category: { id: category.value, name: "", description: "", image: "" }
             }
             const res = await callCreateProduct(product.name, product.price, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {

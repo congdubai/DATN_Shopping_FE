@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { fetchAccount } from "./redux/slice/accountSlide";
 import RolePage from "./pages/admin/role";
 import ProductPage from "./pages/admin/product";
+import CategoryPage from "./pages/admin/category";
 const LayoutClient = () => {
   return (
     <div className='layout-app'>
@@ -62,6 +63,13 @@ export default function App() {
           element:
             <ProtectedRoute>
               <ProductPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "category",
+          element:
+            <ProtectedRoute>
+              <CategoryPage />
             </ProtectedRoute>
         }
       ],

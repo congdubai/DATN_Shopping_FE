@@ -1,37 +1,38 @@
-import ModalProduct from "@/components/admin/product/modal.product";
-import ViewDetailProduct from "@/components/admin/product/view.product";
+
+import ModalCategory from "@/components/admin/category/modal.category";
+import ViewDetailCategory from "@/components/admin/category/view.category";
 import DataTable from "@/components/client/data-table";
-import { callDeleteProduct } from "@/config/api";
+import { callDeleteCategory, callDeleteRole } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchProduct } from "@/redux/slice/productSlide";
-import { IProduct } from "@/types/backend";
+import { fetchCategory } from "@/redux/slice/categorySlide";
+import { ICategory, IRole } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from "@ant-design/pro-components";
-import { Button, message, notification, Popconfirm, Space } from "antd";
+import { Button, message, notification, Popconfirm, Space, Tag } from "antd";
 import dayjs from "dayjs";
 import queryString from "query-string";
 import { useRef, useState } from "react";
 import { sfLike } from "spring-filter-query-builder";
 
-const ProductPage = () => {
-    const products = useAppSelector(state => state.product.result);
-    const meta = useAppSelector(state => state.product.meta);
-    const isFetching = useAppSelector(state => state.product.isFetching);
-    const dispatch = useAppDispatch();
-    const tableRef = useRef<ActionType>();
-    const [dataInit, setDataInit] = useState<IProduct | null>(null);
+const CategoryPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
+    const [dataInit, setDataInit] = useState<ICategory | null>(null);
+    const tableRef = useRef<ActionType>();
+    const isFetching = useAppSelector(state => state.category.isFetching);
+    const meta = useAppSelector(state => state.category.meta);
+    const categories = useAppSelector(state => state.category.result);
+
+    const dispatch = useAppDispatch();
 
     const reloadTable = () => {
         tableRef?.current?.reload();
     }
-
-    const handleDeleteProduct = async (id: string | undefined) => {
+    const handleDeleteCategory = async (id: string | undefined) => {
         if (id) {
-            const res = await callDeleteProduct(id);
+            const res = await callDeleteCategory(id);
             if (+res.statusCode === 200) {
-                message.success('Xóa User thành công');
+                message.success('Xóa danh mục thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -41,12 +42,11 @@ const ProductPage = () => {
             }
         }
     }
-
-    const columns: ProColumns<IProduct>[] = [
+    const columns: ProColumns<ICategory>[] = [
         {
             title: 'Id',
             dataIndex: 'id',
-            width: 50,
+            width: 90,
             render: (text, record, index, action) => {
                 return (
                     <a href="#" onClick={() => {
@@ -64,12 +64,12 @@ const ProductPage = () => {
             dataIndex: 'image',
             align: 'center',
             width: 150,
-            render: (_, entity: IProduct) => {
+            render: (_, entity: ICategory) => {
                 console.log("Original Image Name:", entity.image);
                 console.log("Decoded Image Name:", decodeURIComponent(entity.image));
                 return entity.image ? (
                     <img
-                        alt="Product Image"
+                        alt="Product Category"
                         src={`${import.meta.env.VITE_BACKEND_URL}/storage/product/${entity.image}`}
                         style={{ width: 50, height: 50, objectFit: 'cover' }}
 
@@ -81,25 +81,18 @@ const ProductPage = () => {
             }
         },
         {
-
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
+            width: 300,
             sorter: true,
         },
         {
-            title: 'Price',
-            dataIndex: 'price',
+            title: 'Mô tả',
+            dataIndex: 'description',
             sorter: true,
         },
         {
-            title: 'Category',
-            dataIndex: ["category", "name"],
-            width: 200,
-            sorter: true,
-            hideInSearch: true
-        },
-        {
-            title: 'CreatedAt',
+            title: 'Ngày tạo',
             dataIndex: 'createdAt',
             width: 200,
             sorter: true,
@@ -124,7 +117,7 @@ const ProductPage = () => {
         },
         {
 
-            title: 'Actions',
+            title: 'Chức năng',
             hideInSearch: true,
             width: 50,
             render: (_value, entity, _index, _action) => (
@@ -142,9 +135,9 @@ const ProductPage = () => {
                     />
                     <Popconfirm
                         placement="leftTop"
-                        title={"Xác nhận xóa Sản phẩm"}
-                        onConfirm={() => handleDeleteProduct(entity.id)}
-                        description={"Bạn có chắc chắn muốn xóa Sản phẩm này ?"}
+                        title={"Xác nhận xóa role"}
+                        description={"Bạn có chắc chắn muốn xóa role này ?"}
+                        onConfirm={() => handleDeleteCategory(entity.id)}
                         okText="Xác nhận"
                         cancelText="Hủy"
                     >
@@ -157,35 +150,28 @@ const ProductPage = () => {
                             />
                         </span>
                     </Popconfirm>
-                </Space >
+                </Space>
             ),
 
         },
     ];
     const buildQuery = (params: any, sort: any, filter: any) => {
+        const clone = { ...params };
         const q: any = {
             page: params.current,
             size: params.pageSize,
             filter: ""
         }
 
-        const clone = { ...params };
         if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
-        if (clone.email) {
-            q.filter = clone.name ?
-                q.filter + " and " + `${sfLike("email", clone.email)}`
-                : `${sfLike("email", clone.email)}`;
-        }
 
         if (!q.filter) delete q.filter;
+
         let temp = queryString.stringify(q);
 
         let sortBy = "";
         if (sort && sort.name) {
             sortBy = sort.name === 'ascend' ? "sort=name,asc" : "sort=name,desc";
-        }
-        if (sort && sort.email) {
-            sortBy = sort.email === 'ascend' ? "sort=email,asc" : "sort=email,desc";
         }
         if (sort && sort.createdAt) {
             sortBy = sort.createdAt === 'ascend' ? "sort=createdAt,asc" : "sort=createdAt,desc";
@@ -196,7 +182,7 @@ const ProductPage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}`;
+            temp = `${temp}&sort=updatedAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }
@@ -206,16 +192,16 @@ const ProductPage = () => {
     return (
         <div>
 
-            <DataTable<IProduct>
+            <DataTable<ICategory>
                 actionRef={tableRef}
-                headerTitle="Danh sách Users"
+                headerTitle="Danh sách Danh mục"
                 rowKey="id"
-                columns={columns}
-                dataSource={products}
                 loading={isFetching}
+                columns={columns}
+                dataSource={categories}
                 request={async (params, sort, filter): Promise<any> => {
                     const query = buildQuery(params, sort, filter);
-                    dispatch(fetchProduct({ query }))
+                    dispatch(fetchCategory({ query }))
                 }}
                 scroll={{ x: true }}
                 pagination={
@@ -240,19 +226,19 @@ const ProductPage = () => {
                     );
                 }}
             />
-            <ModalProduct
+            <ModalCategory
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
-            <ViewDetailProduct
+            <ViewDetailCategory
                 onClose={setOpenViewDetail}
                 open={openViewDetail}
                 dataInit={dataInit}
                 setDataInit={setDataInit} />
-        </div >
+        </div>
     )
 }
-export default ProductPage;
+export default CategoryPage;

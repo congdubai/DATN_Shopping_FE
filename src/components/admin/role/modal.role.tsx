@@ -1,11 +1,9 @@
-import { FooterToolbar, ModalForm, ProCard, ProFormSwitch, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
+import { ModalForm, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
 import { Col, Form, Row, message, notification } from "antd";
 import { isMobile } from 'react-device-detect';
 import { callCreateRole, callUpdateRole } from "@/config/api";
-import { CheckSquareOutlined } from "@ant-design/icons";
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { resetSingleRole } from "@/redux/slice/roleSlide";
+import { useAppDispatch } from "@/redux/hooks";
 import { IRole } from "@/types/backend";
 
 interface IProps {
@@ -21,22 +19,21 @@ const ModalRole = (props: IProps) => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
-    const submitRole = async (valuesForm: any) => {
-        const { description, active, name, permissions } = valuesForm;
-        const checkedPermissions = [];
-
-        if (permissions) {
-            for (const key in permissions) {
-                if (key.match(/^[1-9][0-9]*$/) && permissions[key] === true) {
-                    checkedPermissions.push({ id: key });
-                }
-            }
+    useEffect(() => {
+        if (dataInit?.id) {
+            form.setFieldsValue({
+                ...dataInit,
+            })
         }
+    }, [dataInit]);
+
+    const submitRole = async (valuesForm: any) => {
+        const { description, name } = valuesForm;
 
         if (dataInit?.id) {
             //update
             const role = {
-                name, description, active, permissions: checkedPermissions
+                name, description
             }
             const res = await callUpdateRole(role, dataInit.id);
             if (res.data) {
@@ -52,7 +49,7 @@ const ModalRole = (props: IProps) => {
         } else {
             //create
             const role = {
-                name, description, active, permissions: checkedPermissions
+                name, description
             }
             const res = await callCreateRole(role);
             if (res.data) {
@@ -83,25 +80,19 @@ const ModalRole = (props: IProps) => {
                     onCancel: () => { handleReset() },
                     afterClose: () => handleReset(),
                     destroyOnClose: true,
-                    width: isMobile ? "100%" : 900,
+                    width: isMobile ? "100%" : 800,
                     keyboard: false,
                     maskClosable: false,
-
+                    okText: <>{dataInit?.id ? "Cập nhật" : "Tạo mới"}</>,
+                    cancelText: "Hủy"
                 }}
                 scrollToFirstError={true}
                 preserve={false}
                 form={form}
                 onFinish={submitRole}
-                submitter={{
-                    render: (_: any, dom: any) => <FooterToolbar>{dom}</FooterToolbar>,
-                    submitButtonProps: {
-                        icon: <CheckSquareOutlined />
-                    },
-                    searchConfig: {
-                        resetText: "Hủy",
-                        submitText: <>{dataInit?.id ? "Cập nhật" : "Tạo mới"}</>,
-                    }
-                }}
+                initialValues={dataInit?.id ? {
+                    ...dataInit,
+                } : {}}
             >
                 <Row gutter={16}>
                     <Col lg={12} md={12} sm={24} xs={24}>
