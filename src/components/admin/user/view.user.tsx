@@ -20,7 +20,14 @@ const ViewDetailUser = (props: IProps) => {
                 width={"40vw"}
                 maskClosable={false}
             >
-                <Descriptions title="" bordered column={2} layout="vertical">
+                <Descriptions title="" bordered column={1} layout="horizontal">
+                    <Descriptions.Item label="Avatar">
+                        <img
+                            alt="Avatar"
+                            src={`${import.meta.env.VITE_BACKEND_URL}/storage/avatar/${dataInit?.avatar}`}
+                            style={{ width: 50, height: 50, objectFit: 'cover' }}
+                        />
+                    </Descriptions.Item>
                     <Descriptions.Item label="Tên hiển thị">{dataInit?.name}</Descriptions.Item>
                     <Descriptions.Item label="Email">{dataInit?.email}</Descriptions.Item>
 

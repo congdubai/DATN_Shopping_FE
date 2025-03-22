@@ -1,32 +1,35 @@
-import ModalUser from "@/components/admin/user/modal.user";
-import ViewDetailUser from "@/components/admin/user/view.user";
+import ModalProduct from "@/components/admin/product/modal.product";
+import ViewDetailProduct from "@/components/admin/product/view.product";
 import DataTable from "@/components/client/data-table";
-import { callDeleteUser } from "@/config/api";
+import { callDeleteProduct } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchUser } from "@/redux/slice/userSlide";
-import { IUser } from "@/types/backend";
-import { DeleteOutlined, EditOutlined, PlusOutlined, EyeOutlined } from "@ant-design/icons";
-import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Popconfirm, Space, message, notification } from "antd";
+import { fetchProduct } from "@/redux/slice/productSlide";
+import { IProduct } from "@/types/backend";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { ActionType, ProColumns } from "@ant-design/pro-components";
+import { Button, message, notification, Popconfirm, Space } from "antd";
 import dayjs from "dayjs";
 import queryString from "query-string";
 import { useRef, useState } from "react";
 import { sfLike } from "spring-filter-query-builder";
 
-const UserPage = () => {
-    const users = useAppSelector(state => state.user.result);
-    const meta = useAppSelector(state => state.user.meta);
-    const isFetching = useAppSelector(state => state.user.isFetching);
+const ProductPage = () => {
+    const products = useAppSelector(state => state.product.result);
+    const meta = useAppSelector(state => state.product.meta);
+    const isFetching = useAppSelector(state => state.product.isFetching);
     const dispatch = useAppDispatch();
-    const [openModal, setOpenModal] = useState<boolean>(false);
-    const [dataInit, setDataInit] = useState<IUser | null>(null);
     const tableRef = useRef<ActionType>();
+    const [dataInit, setDataInit] = useState<IProduct | null>(null);
+    const [openModal, setOpenModal] = useState<boolean>(false);
     const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
+    const reloadTable = () => {
+        tableRef?.current?.reload();
+    }
 
-    const handleDeleteUser = async (id: string | undefined) => {
+    const handleDeleteProduct = async (id: string | undefined) => {
         if (id) {
-            const res = await callDeleteUser(id);
+            const res = await callDeleteProduct(id);
             if (+res.statusCode === 200) {
                 message.success('Xóa User thành công');
                 reloadTable();
@@ -38,10 +41,8 @@ const UserPage = () => {
             }
         }
     }
-    const reloadTable = () => {
-        tableRef?.current?.reload();
-    }
-    const columns: ProColumns<IUser>[] = [
+
+    const columns: ProColumns<IProduct>[] = [
         {
             title: 'Id',
             dataIndex: 'id',
@@ -59,28 +60,17 @@ const UserPage = () => {
             hideInSearch: true,
         },
         {
-
-            title: 'Email',
-            dataIndex: 'email',
-            sorter: true,
-        },
-        {
-            title: 'Name',
-            dataIndex: 'name',
-            sorter: true,
-        },
-        {
-            title: 'Avatar',
+            title: 'Image',
             dataIndex: 'image',
             align: 'center',
             width: 150,
-            render: (_, entity: IUser) => {
-                console.log("Original Image Name:", entity.avatar);
-                console.log("Decoded Image Name:", decodeURIComponent(entity.avatar));
-                return entity.avatar ? (
+            render: (_, entity: IProduct) => {
+                console.log("Original Image Name:", entity.image);
+                console.log("Decoded Image Name:", decodeURIComponent(entity.image));
+                return entity.image ? (
                     <img
                         alt="Product Image"
-                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/avatar/${entity.avatar}`}
+                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/product/${entity.image}`}
                         style={{ width: 50, height: 50, objectFit: 'cover' }}
 
                     />
@@ -91,8 +81,19 @@ const UserPage = () => {
             }
         },
         {
-            title: 'Role',
-            dataIndex: ["role", "name"],
+
+            title: 'Name',
+            dataIndex: 'name',
+            sorter: true,
+        },
+        {
+            title: 'Price',
+            dataIndex: 'price',
+            sorter: true,
+        },
+        {
+            title: 'Category',
+            dataIndex: ["category", "name"],
             sorter: true,
             hideInSearch: true
         },
@@ -128,9 +129,9 @@ const UserPage = () => {
                     />
                     <Popconfirm
                         placement="leftTop"
-                        title={"Xác nhận xóa user"}
-                        description={"Bạn có chắc chắn muốn xóa user này ?"}
-                        onConfirm={() => handleDeleteUser(entity.id)}
+                        title={"Xác nhận xóa Sản phẩm"}
+                        onConfirm={() => handleDeleteProduct(entity.id)}
+                        description={"Bạn có chắc chắn muốn xóa Sản phẩm này ?"}
                         okText="Xác nhận"
                         cancelText="Hủy"
                     >
@@ -148,7 +149,6 @@ const UserPage = () => {
 
         },
     ];
-
     const buildQuery = (params: any, sort: any, filter: any) => {
         const q: any = {
             page: params.current,
@@ -183,7 +183,7 @@ const UserPage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}&sort=updatedAt,desc`;
+            temp = `${temp}`;
         } else {
             temp = `${temp}&${sortBy}`;
         }
@@ -193,16 +193,16 @@ const UserPage = () => {
     return (
         <div>
 
-            <DataTable<IUser>
+            <DataTable<IProduct>
                 actionRef={tableRef}
                 headerTitle="Danh sách Users"
                 rowKey="id"
                 columns={columns}
-                dataSource={users}
+                dataSource={products}
                 loading={isFetching}
                 request={async (params, sort, filter): Promise<any> => {
                     const query = buildQuery(params, sort, filter);
-                    dispatch(fetchUser({ query }))
+                    dispatch(fetchProduct({ query }))
                 }}
                 scroll={{ x: true }}
                 pagination={
@@ -220,27 +220,26 @@ const UserPage = () => {
                         <Button
                             icon={<PlusOutlined />}
                             type="primary"
-                            onClick={() => setOpenModal(true)}>
+                            onClick={() => setOpenModal(true)}
+                        >
                             Thêm mới
                         </Button>
                     );
                 }}
             />
-            <ModalUser
+            <ModalProduct
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
-            <ViewDetailUser
+            <ViewDetailProduct
                 onClose={setOpenViewDetail}
                 open={openViewDetail}
                 dataInit={dataInit}
-                setDataInit={setDataInit}
-            />
+                setDataInit={setDataInit} />
         </div >
     )
 }
-
-export default UserPage;
+export default ProductPage;

@@ -6,12 +6,14 @@ import {
 import userReducer from './slice/userSlide';
 import accountReducer from './slice/accountSlide';
 import roleReducer from './slice/roleSlide';
+import productReducer from './slice/productSlide'
 
 export const store = configureStore({
     reducer: {
         user: userReducer,
         account: accountReducer,
         role: roleReducer,
+        product: productReducer
     }
 });
 

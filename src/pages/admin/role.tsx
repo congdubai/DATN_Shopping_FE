@@ -46,24 +46,18 @@ const RolePage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
+            width: 300,
             sorter: true,
         },
         {
-            title: 'Trạng thái',
-            dataIndex: 'active',
-            render(dom, entity, index, action, schema) {
-                return <>
-                    <Tag color={entity.active ? "lime" : "red"} >
-                        {entity.active ? "ACTIVE" : "INACTIVE"}
-                    </Tag>
-                </>
-            },
-            hideInSearch: true,
+            title: 'Mô tả',
+            dataIndex: 'description',
+            sorter: true,
         },
         {
-            title: 'CreatedAt',
+            title: 'Ngày tạo',
             dataIndex: 'createdAt',
             width: 200,
             sorter: true,
@@ -75,7 +69,7 @@ const RolePage = () => {
             hideInSearch: true,
         },
         {
-            title: 'UpdatedAt',
+            title: 'Ngày cập nhật',
             dataIndex: 'updatedAt',
             width: 200,
             sorter: true,
@@ -88,7 +82,7 @@ const RolePage = () => {
         },
         {
 
-            title: 'Actions',
+            title: 'Chức năng',
             hideInSearch: true,
             width: 50,
             render: (_value, entity, _index, _action) => (
@@ -201,6 +195,12 @@ const RolePage = () => {
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
+            <ModalRole
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                reloadTable={reloadTable}
+                dataInit={dataInit}
+                setDataInit={setDataInit} />
         </div>
     )
 }

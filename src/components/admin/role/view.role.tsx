@@ -22,7 +22,6 @@ const ViewDetailRole = (props: IProps) => {
             >
                 <Descriptions title="" bordered column={1} layout="vertical">
                     <Descriptions.Item label="Vai trò:">{dataInit?.name}</Descriptions.Item>
-                    <Descriptions.Item label="Trạng thái:">{dataInit?.active === true ? "ACTIVE" : "INACTIVE"}</Descriptions.Item>
                     <Descriptions.Item label="Ngày tạo:">{dataInit && dataInit.createdAt ? dayjs(dataInit.createdAt).format('DD-MM-YYYY HH:mm:ss') : "Chưa có thông tin"}</Descriptions.Item>
                     <Descriptions.Item label="Ngày sửa:">{dataInit && dataInit.updatedAt ? dayjs(dataInit.updatedAt).format('DD-MM-YYYY HH:mm:ss') : "Chưa có thông tin"}</Descriptions.Item>
                     <Descriptions.Item label="Mô tả:">{dataInit?.description}</Descriptions.Item>

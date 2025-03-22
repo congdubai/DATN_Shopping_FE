@@ -44,7 +44,6 @@ const initialState: IState = {
         id: "",
         name: "",
         description: "",
-        active: false,
     }
 };
 export const roleSlide = createSlice({
@@ -56,7 +55,6 @@ export const roleSlide = createSlice({
                 id: "",
                 name: "",
                 description: "",
-                active: false,
             }
         },
     },
@@ -91,7 +89,6 @@ export const roleSlide = createSlice({
                 id: "",
                 name: "",
                 description: "",
-                active: false,
             }
             // Add user to the state array
             // state.courseOrder = action.payload;
@@ -103,7 +100,6 @@ export const roleSlide = createSlice({
                 id: "",
                 name: "",
                 description: "",
-                active: false,
             }
             // Add user to the state array
             // state.courseOrder = action.payload;

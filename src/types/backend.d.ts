@@ -24,13 +24,6 @@ export interface IAccount {
         role: {
             id: string;
             name: string;
-            permissions: {
-                id: string;
-                name: string;
-                apiPath: string;
-                method: string;
-                module: string;
-            }[]
         }
     }
 }
@@ -42,15 +35,11 @@ export interface IUser {
     name: string;
     email: string;
     password?: string;
+    avatar: string;
     age: number;
     gender: string;
     address: string;
     role?: {
-        id: string;
-        name: string;
-    }
-
-    company?: {
         id: string;
         name: string;
     }
@@ -65,10 +54,29 @@ export interface IRole {
     id?: string;
     name: string;
     description: string;
-    active: boolean;
     createdBy?: string;
     isDeleted?: boolean;
     deletedAt?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
+}
+
+export interface IProduct {
+    id?: string;
+    name: string;
+    price: number;
+    image: string;
+    detailDesc: string;
+    shortDesc: string;
+    createdAt?: string;
+    updatedAt?: string;
+    category?: {
+        id: string;
+        name: string;
+    }
+}
+export interface ICategory {
+    id?: string;
+    name: string;
+    description: string;
 }

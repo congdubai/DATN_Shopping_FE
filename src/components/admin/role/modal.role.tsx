@@ -12,15 +12,12 @@ interface IProps {
     openModal: boolean;
     setOpenModal: (v: boolean) => void;
     reloadTable: () => void;
-    listPermissions: {
-        module: string;
-    }[];
-    singleRole: IRole | null;
-    setSingleRole: (v: any) => void;
+    dataInit?: IRole | null;
+    setDataInit: (v: any) => void;
 }
 
 const ModalRole = (props: IProps) => {
-    const { openModal, setOpenModal, reloadTable, listPermissions, singleRole, setSingleRole } = props;
+    const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
@@ -36,12 +33,12 @@ const ModalRole = (props: IProps) => {
             }
         }
 
-        if (singleRole?.id) {
+        if (dataInit?.id) {
             //update
             const role = {
                 name, description, active, permissions: checkedPermissions
             }
-            const res = await callUpdateRole(role, singleRole.id);
+            const res = await callUpdateRole(role, dataInit.id);
             if (res.data) {
                 message.success("Cập nhật role thành công");
                 handleReset();
@@ -74,13 +71,13 @@ const ModalRole = (props: IProps) => {
     const handleReset = async () => {
         form.resetFields();
         setOpenModal(false);
-        setSingleRole(null);
+        setDataInit(null);
     }
 
     return (
         <>
             <ModalForm
-                title={<>{singleRole?.id ? "Cập nhật Role" : "Tạo mới Role"}</>}
+                title={<>{dataInit?.id ? "Cập nhật Role" : "Tạo mới Role"}</>}
                 open={openModal}
                 modalProps={{
                     onCancel: () => { handleReset() },
@@ -102,7 +99,7 @@ const ModalRole = (props: IProps) => {
                     },
                     searchConfig: {
                         resetText: "Hủy",
-                        submitText: <>{singleRole?.id ? "Cập nhật" : "Tạo mới"}</>,
+                        submitText: <>{dataInit?.id ? "Cập nhật" : "Tạo mới"}</>,
                     }
                 }}
             >
@@ -117,43 +114,12 @@ const ModalRole = (props: IProps) => {
                             placeholder="Nhập name"
                         />
                     </Col>
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormSwitch
-                            label="Trạng thái"
-                            name="active"
-                            checkedChildren="ACTIVE"
-                            unCheckedChildren="INACTIVE"
-                            initialValue={true}
-                            fieldProps={{
-                                defaultChecked: true,
-                            }}
-                        />
-                    </Col>
-
                     <Col span={24}>
                         <ProFormTextArea
                             label="Miêu tả"
                             name="description"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
                             placeholder="Nhập miêu tả role"
-                            fieldProps={{
-                                autoSize: { minRows: 2 }
-                            }}
                         />
-                    </Col>
-                    <Col span={24}>
-                        <ProCard
-                            title="Quyền hạn"
-                            subTitle="Các quyền hạn được phép cho vai trò này"
-                            headStyle={{ color: '#d81921' }}
-                            style={{ marginBottom: 20 }}
-                            headerBordered
-                            size="small"
-                            bordered
-                        >
-
-                        </ProCard>
-
                     </Col>
                 </Row>
             </ModalForm>

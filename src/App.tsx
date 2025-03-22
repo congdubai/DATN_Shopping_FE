@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/share/protected-route.ts";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { fetchAccount } from "./redux/slice/accountSlide";
 import RolePage from "./pages/admin/role";
+import ProductPage from "./pages/admin/product";
 const LayoutClient = () => {
   return (
     <div className='layout-app'>
@@ -54,6 +55,13 @@ export default function App() {
           element:
             <ProtectedRoute>
               <RolePage />
+            </ProtectedRoute>
+        },
+        {
+          path: "product",
+          element:
+            <ProtectedRoute>
+              <ProductPage />
             </ProtectedRoute>
         }
       ],

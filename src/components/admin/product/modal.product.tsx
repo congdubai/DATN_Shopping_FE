@@ -1,62 +1,67 @@
-import { callCreateUser, callFetchRole, callUpdateUser, callUploadSingleFile } from "@/config/api";
-import { IUser } from "@/types/backend";
-import { ModalForm, ProForm, ProFormDigit, ProFormSelect, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
+import { callCreateProduct, callFetchCategory, callUpdateProduct, callUploadSingleFile } from "@/config/api";
+import { useAppDispatch } from "@/redux/hooks";
+import { IProduct } from "@/types/backend";
+import { ModalForm, ProCard, ProForm, ProFormDigit, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
 import { Col, ConfigProvider, Form, message, Modal, notification, Row, Upload } from "antd";
-import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
-import { DebounceSelect } from "./debouce.select";
+import { DebounceSelect } from "../user/debouce.select";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 interface IProps {
     openModal: boolean;
     setOpenModal: (v: boolean) => void;
-    dataInit?: IUser | null;
-    setDataInit: (v: any) => void;
     reloadTable: () => void;
+    dataInit?: IProduct | null;
+    setDataInit: (v: any) => void;
 }
-
-export interface ICompanySelect {
+export interface IProductSelect {
     label: string;
     value: string;
     key?: string;
 }
-
 interface IProductImage {
     name: string;
     uid: string;
 }
 
-const ModalUser = (props: IProps) => {
-    const { openModal, setOpenModal, dataInit, setDataInit, reloadTable } = props;
-    const [roles, setRoles] = useState<ICompanySelect[]>([]);
+const ModalProduct = (props: IProps) => {
+    const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
+    const dispatch = useAppDispatch();
     const [form] = Form.useForm();
     const [dataImage, setDataImage] = useState<IProductImage[]>([]);
+    const [categories, setCategories] = useState<IProductSelect[]>([]);
     const [loadingUpload, setLoadingUpload] = useState<boolean>(false);
     const [previewOpen, setPreviewOpen] = useState(false);
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
+    const [value, setValue] = useState<string>("");
+
+
 
     useEffect(() => {
         if (dataInit?.id) {
-            if (dataInit.role) {
-                setRoles([
+            if (dataInit.category) {
+                setCategories([
                     {
-                        label: dataInit.role?.name,
-                        value: dataInit.role?.id,
-                        key: dataInit.role?.id,
+                        label: dataInit.category?.name,
+                        value: dataInit.category?.id,
+                        key: dataInit.category?.id,
                     }
                 ])
             }
             form.setFieldsValue({
                 ...dataInit,
-                role: { label: dataInit.role?.name, value: dataInit.role?.id },
+                category: { label: dataInit.category?.name, value: dataInit.category?.id },
             })
             setDataImage([{
-                name: dataInit.avatar,
+                name: dataInit.image,
                 uid: uuidv4(),
             }])
+            setValue(dataInit.detailDesc || "");
         }
     }, [dataInit]);
 
@@ -83,6 +88,29 @@ const ModalUser = (props: IProps) => {
     const handleRemoveFile = (file: any) => {
         setDataImage([])
     }
+
+    async function fetchCategoryList(name: string): Promise<IProductSelect[]> {
+        const res = await callFetchCategory(`page=1&size=100&name=/${name}`);
+        if (res && res.data) {
+            const list = res.data.result;
+            const temp = list.map(item => {
+                return {
+                    label: item.name as string,
+                    value: item.id as string
+                }
+            })
+            return temp;
+        } else return [];
+    }
+
+    const handleReset = async () => {
+        form.resetFields();
+        setDataInit(null);
+        setOpenModal(false);
+        setCategories([]);
+        setValue("");
+    }
+
     const beforeUpload = (file: any) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
@@ -108,7 +136,7 @@ const ModalUser = (props: IProps) => {
         }
     };
     const handleUploadFileImage = async ({ file, onSuccess, onError }: any) => {
-        const res = await callUploadSingleFile(file, "avatar");
+        const res = await callUploadSingleFile(file, "product");
         if (res && res.data) {
             setDataImage([{
                 name: res.data.fileName,
@@ -124,24 +152,21 @@ const ModalUser = (props: IProps) => {
         }
     };
 
-
-    const submitUser = async (valuesForm: any) => {
-        const { name, email, password, address, age, gender, role } = valuesForm;
+    const submitProduct = async (valuesForm: any) => {
+        const { name, price, image, detailDesc, shortDesc, category } = valuesForm;
         if (dataInit?.id) {
             //update
-            const user = {
+            const product = {
                 id: dataInit.id,
                 name,
-                email,
-                password,
-                age,
-                gender,
-                address,
-                role: { id: role.value, name: "", description: "" },
+                image,
+                price,
+                shortDesc,
+                category: { id: category.value, name: "", description: "" }
             }
-            const res = await callUpdateUser(user.id, user.name, dataImage[0].name, user.age, user.gender, user.address, user.role);
+            const res = await callUpdateProduct(product.id, product.name, product.price, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {
-                message.success("Cập nhật user thành công");
+                message.success("Cập nhật sản phẩm thành công");
                 handleReset();
                 reloadTable();
             } else {
@@ -152,18 +177,16 @@ const ModalUser = (props: IProps) => {
             }
         } else {
             //create
-            const user = {
+            const product = {
                 name,
-                email,
-                password,
-                age,
-                gender,
-                address,
-                role: { id: role.value, name: "", description: "" }
+                image,
+                price,
+                shortDesc,
+                category: { id: category.value, name: "", description: "" }
             }
-            const res = await callCreateUser(user.email, user.name, user.password, dataImage[0].name, user.age, user.gender, user.address, user.role);
+            const res = await callCreateProduct(product.name, product.price, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {
-                message.success("Thêm mới user thành công");
+                message.success("Thêm mới sản phẩm thành công");
                 handleReset();
                 reloadTable();
             } else {
@@ -174,31 +197,10 @@ const ModalUser = (props: IProps) => {
             }
         }
     }
-    async function fetchRoleList(name: string): Promise<ICompanySelect[]> {
-        const res = await callFetchRole(`page=1&size=100&name=/${name}`);
-        if (res && res.data) {
-            const list = res.data.result;
-            const temp = list.map(item => {
-                return {
-                    label: item.name as string,
-                    value: item.id as string
-                }
-            })
-            return temp;
-        } else return [];
-    }
-
-    const handleReset = async () => {
-        form.resetFields();
-        setDataInit(null);
-        setRoles([]);
-        setOpenModal(false);
-    }
-
     return (
         <>
             <ModalForm
-                title={<>{dataInit?.id ? "Cập nhật User" : "Tạo mới User"}</>}
+                title={<>{dataInit?.id ? "Cập nhật  sản phẩm" : "Tạo mới sản phẩm"}</>}
                 open={openModal}
                 modalProps={{
                     onCancel: () => { handleReset() },
@@ -213,88 +215,48 @@ const ModalUser = (props: IProps) => {
                 scrollToFirstError={true}
                 preserve={false}
                 form={form}
-                onFinish={submitUser}
+                onFinish={submitProduct}
                 initialValues={dataInit?.id ? {
                     ...dataInit,
-                    role: { label: dataInit.role?.name, value: dataInit.role?.id },
+                    category: { label: dataInit.category?.name, value: dataInit.category?.id },
                 } : {}}
             >
                 <Row gutter={16}>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProFormText
-                            disabled={dataInit?.id ? true : false}
-                            label="Email"
-                            name="email"
+                            label="Tên sản phẩm"
+                            name="name"
                             rules={[
                                 { required: true, message: 'Vui lòng không bỏ trống' },
-                                { type: 'email', message: 'Vui lòng nhập email hợp lệ' }
                             ]}
-                            placeholder="Nhập email"
-                        />
-                    </Col>
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormText.Password
-                            disabled={!!dataInit?.id}
-                            label="Password"
-                            name="password"
-                            rules={dataInit?.id ? [] : [{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập password"
-                        />
-                    </Col>
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormText
-                            label="Tên hiển thị"
-                            name="name"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập tên hiển thị"
+                            placeholder="Nhập tên sản phẩm"
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
                         <ProFormDigit
-                            label="Tuổi"
-                            name="age"
+                            label="Giá"
+                            name="price"
                             rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập nhập tuổi"
-                        />
-                    </Col>
-
-                    <Col lg={6} md={6} sm={24} xs={24}>
-                        <ProFormText
-                            label="Số điện thoại"
-                            name="address"
-                            placeholder="Nhập số điện thoại"
-                        />
-                    </Col>
-                    <Col lg={6} md={6} sm={24} xs={24}>
-                        <ProFormSelect
-                            name="gender"
-                            label="Giới Tính"
-                            valueEnum={{
-                                Nam: 'Nam',
-                                Nữ: 'Nữ',
-                                Khác: 'Khác',
-                            }}
-                            placeholder="Chọn giới tính"
-                            rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
+                            placeholder="Nhập nhập giá"
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
                         <ProForm.Item
-                            name="role"
-                            label="Vai trò"
-                            rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+                            name="category"
+                            label="Danh mục"
+                            rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
 
                         >
                             <DebounceSelect
                                 allowClear
                                 showSearch
-                                defaultValue={roles}
-                                value={roles}
-                                placeholder="Chọn vai trò"
-                                fetchOptions={fetchRoleList}
+                                defaultValue={categories}
+                                value={categories}
+                                placeholder="Chọn danh mục"
+                                fetchOptions={fetchCategoryList}
                                 onChange={(newValue: any) => {
-                                    if (newValue?.length === 0 || newValue?.length === 1) {
-                                        setRoles(newValue as ICompanySelect[]);
+                                    if (newValue && newValue.value) {
+                                        setCategories(newValue as IProductSelect[]);
                                     }
                                 }}
                                 style={{ width: '100%' }}
@@ -304,18 +266,17 @@ const ModalUser = (props: IProps) => {
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProFormTextArea
-                            label="Địa chỉ"
-                            name="address"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập địa chỉ"
+                            label="Mô tả ngắn"
+                            name="shortDesc"
+                            placeholder="Nhập mô tả ngắn"
                         />
                     </Col>
+
                     <Col span={8}>
                         <Form.Item
                             labelCol={{ span: 24 }}
-                            label="Avatar"
-                            name="avatar"
-                            style={{ marginTop: -30 }}
+                            label="Ảnh sản phẩm"
+                            name="image"
                             rules={[{
                                 required: true,
                                 validator: () => {
@@ -326,7 +287,7 @@ const ModalUser = (props: IProps) => {
                         >
                             <ConfigProvider locale={enUS}>
                                 <Upload
-                                    name="avatar"
+                                    name="image"
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     maxCount={1}
@@ -341,9 +302,9 @@ const ModalUser = (props: IProps) => {
                                             [
                                                 {
                                                     uid: uuidv4(),
-                                                    name: dataInit?.avatar ?? "",
+                                                    name: dataInit?.image ?? "",
                                                     status: 'done',
-                                                    url: `${import.meta.env.VITE_BACKEND_URL}/storage/avatar/${dataInit?.avatar}`,
+                                                    url: `${import.meta.env.VITE_BACKEND_URL}/storage/product/${dataInit?.image}`,
                                                 }
                                             ] : []
                                     }
@@ -358,8 +319,35 @@ const ModalUser = (props: IProps) => {
                         </Form.Item>
 
                     </Col>
+                    <ProCard
+                        title="Miêu tả"
+                        headStyle={{ color: "#d81921" }}
+                        style={{ marginBottom: 20, marginTop: -10 }}
+                        headerBordered
+                        size="small"
+                        bordered
+                    >
+                        <Col span={24}>
+                            <ReactQuill
+                                theme="snow"
+                                value={value}
+                                onChange={setValue}
+                                className="custom-editor"
+                                modules={{
+                                    toolbar: true,
+                                }}
+                            />
+                            <style>
+                                {`
+                        .custom-editor .ql-editor {
+                            min-height: 80px;
+                        }
+                    `}
+                            </style>
+                        </Col>
+                    </ProCard>
                 </Row>
-            </ModalForm>
+            </ModalForm >
             <Modal
                 open={previewOpen}
                 title={previewTitle}
@@ -372,4 +360,4 @@ const ModalUser = (props: IProps) => {
         </>
     )
 }
-export default ModalUser;
+export default ModalProduct;
