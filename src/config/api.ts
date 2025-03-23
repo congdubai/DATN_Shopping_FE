@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICategory, IGetAccount, IModelPaginate, IProduct, IRole, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICategory, IColor, IGetAccount, IModelPaginate, IProduct, IRole, ISize, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -101,4 +101,44 @@ export const callUpdateCategory = (id: string, name: string, image: string, desc
 }
 export const callDeleteCategory = (id: string) => {
     return axios.delete<IBackendRes<ICategory>>(`/api/v1/categories/${id}`);
+}
+
+/**
+ * 
+Module Color
+ */
+export const callFetchColor = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IColor>>>(`/api/v1/colors?${query}`);
+}
+export const callCreateColor = (color: IColor) => {
+    return axios.post<IBackendRes<IColor>>('/api/v1/colors', { ...color });
+}
+export const callUpdateColor = (color: IColor, id: string) => {
+    return axios.put<IBackendRes<IColor>>(`/api/v1/colors`, { id, ...color });
+}
+export const callDeleteColor = (id: string) => {
+    return axios.delete<IBackendRes<IColor>>(`/api/v1/colors/${id}`);
+}
+export const callFetchColorById = (id: string) => {
+    return axios.get<IBackendRes<IColor>>(`/api/v1/colors/${id}`);
+}
+
+/**
+ * 
+Module Size
+ */
+export const callFetchSize = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IColor>>>(`/api/v1/sizes?${query}`);
+}
+export const callCreateSize = (size: ISize) => {
+    return axios.post<IBackendRes<IColor>>('/api/v1/sizes', { ...size });
+}
+export const callUpdateSize = (size: ISize, id: string) => {
+    return axios.put<IBackendRes<ISize>>(`/api/v1/sizes`, { id, ...size });
+}
+export const callDeleteSize = (id: string) => {
+    return axios.delete<IBackendRes<ISize>>(`/api/v1/sizes/${id}`);
+}
+export const callFetchSizeById = (id: string) => {
+    return axios.get<IBackendRes<ISize>>(`/api/v1/sizes/${id}`);
 }

@@ -13,6 +13,8 @@ import { fetchAccount } from "./redux/slice/accountSlide";
 import RolePage from "./pages/admin/role";
 import ProductPage from "./pages/admin/product";
 import CategoryPage from "./pages/admin/category";
+import ColorPage from "./pages/admin/color";
+import SizePage from "./pages/admin/size";
 const LayoutClient = () => {
   return (
     <div className='layout-app'>
@@ -70,6 +72,20 @@ export default function App() {
           element:
             <ProtectedRoute>
               <CategoryPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "color",
+          element:
+            <ProtectedRoute>
+              <ColorPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "size",
+          element:
+            <ProtectedRoute>
+              <SizePage />
             </ProtectedRoute>
         }
       ],

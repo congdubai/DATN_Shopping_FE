@@ -83,3 +83,23 @@ export interface ICategory {
     createdAt?: string;
     updatedAt?: string;
 }
+
+export interface IColor {
+    id?: string;
+    name: string;
+    description: string;
+    createdBy?: string;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface ISize {
+    id?: string;
+    name: string;
+    description: string;
+    createdBy?: string;
+    deletedAt?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}

@@ -8,6 +8,8 @@ import accountReducer from './slice/accountSlide';
 import roleReducer from './slice/roleSlide';
 import productReducer from './slice/productSlide'
 import categoryReducer from './slice/categorySlide'
+import colorReducer from './slice/colorSlide'
+import sizeReducer from './slice/sizeSlide'
 
 export const store = configureStore({
     reducer: {
@@ -15,7 +17,9 @@ export const store = configureStore({
         account: accountReducer,
         role: roleReducer,
         product: productReducer,
-        category: categoryReducer
+        category: categoryReducer,
+        color: colorReducer,
+        size: sizeReducer,
     }
 });
 
