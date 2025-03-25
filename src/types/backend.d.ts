@@ -36,9 +36,9 @@ export interface IUser {
     email: string;
     password?: string;
     avatar: string;
-    age: number;
+    age?: number;
     gender: string;
-    address: string;
+    address?: string;
     role?: {
         id: string;
         name: string;
@@ -54,7 +54,7 @@ export interface IRole {
     name: string;
     description: string;
     createdBy?: string;
-    deletedAt?: boolean | null;
+    updatedBy?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -62,10 +62,10 @@ export interface IRole {
 export interface IProduct {
     id?: string;
     name: string;
-    price: number;
+    price?: number;
     image: string;
-    detailDesc: string;
-    shortDesc: string;
+    detailDesc?: string;
+    shortDesc?: string;
     createdAt?: string;
     updatedAt?: string;
     category?: {
@@ -79,17 +79,18 @@ export interface ICategory {
     image: string;
     description: string;
     createdBy?: string;
-    deletedAt?: boolean | null;
-    createdAt?: string;
-    updatedAt?: string;
+    updatedBy?: boolean | null;
+    createdAt?: string | null;
+    updatedAt?: string | null;
 }
 
 export interface IColor {
     id?: string;
     name: string;
     description: string;
+    hexCode?: string;
     createdBy?: string;
-    deletedAt?: boolean | null;
+    updatedBy?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -99,7 +100,29 @@ export interface ISize {
     name: string;
     description: string;
     createdBy?: string;
-    deletedAt?: boolean | null;
+    updatedBy?: boolean | null;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface IProductDetail {
+    id?: string;
+    imageDetail: string;
+    quantity: number;
+    product?: {
+        id: string;
+        name: string;
+    }
+    size?: {
+        id: string;
+        name: string;
+    }
+    color?: {
+        id: string;
+        name: string;
+    }
+    createdBy?: string;
+    updatedBy?: boolean | null;
     createdAt?: string;
     updatedAt?: string;
 }

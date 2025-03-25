@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import styles from 'styles/app.module.scss';
 import LayoutApp from "./components/share/layout.app";
 import LoginPage from "./pages/auth/login";
-import LayoutAdmin from "./pages/admin/layout.admin";
+import LayoutAdmin from "./components/admin/layout.admin";
 import ProtectedRoute from "./components/share/protected-route.ts";
 import { useAppDispatch, useAppSelector } from "./redux/hooks";
 import { fetchAccount } from "./redux/slice/accountSlide";
@@ -15,6 +15,7 @@ import ProductPage from "./pages/admin/product";
 import CategoryPage from "./pages/admin/category";
 import ColorPage from "./pages/admin/color";
 import SizePage from "./pages/admin/size";
+import ProductDetailPage from "./pages/admin/productDetail";
 const LayoutClient = () => {
   return (
     <div className='layout-app'>
@@ -86,6 +87,13 @@ export default function App() {
           element:
             <ProtectedRoute>
               <SizePage />
+            </ProtectedRoute>
+        },
+        {
+          path: "productDetail",
+          element:
+            <ProtectedRoute>
+              <ProductDetailPage />
             </ProtectedRoute>
         }
       ],

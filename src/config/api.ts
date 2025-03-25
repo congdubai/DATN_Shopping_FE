@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICategory, IColor, IGetAccount, IModelPaginate, IProduct, IRole, ISize, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICategory, IColor, IGetAccount, IModelPaginate, IProduct, IProductDetail, IRole, ISize, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -119,9 +119,7 @@ export const callUpdateColor = (color: IColor, id: string) => {
 export const callDeleteColor = (id: string) => {
     return axios.delete<IBackendRes<IColor>>(`/api/v1/colors/${id}`);
 }
-export const callFetchColorById = (id: string) => {
-    return axios.get<IBackendRes<IColor>>(`/api/v1/colors/${id}`);
-}
+
 
 /**
  * 
@@ -139,6 +137,21 @@ export const callUpdateSize = (size: ISize, id: string) => {
 export const callDeleteSize = (id: string) => {
     return axios.delete<IBackendRes<ISize>>(`/api/v1/sizes/${id}`);
 }
-export const callFetchSizeById = (id: string) => {
-    return axios.get<IBackendRes<ISize>>(`/api/v1/sizes/${id}`);
+
+
+/**
+ * 
+Module Size
+ */
+export const callFetchProductDetail = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IProductDetail>>>(`/api/v1/productDetails?${query}`);
+}
+export const callCreateProductDetail = (imageDetail: string, quantity: number, product: IProduct, color: IColor, size: ISize) => {
+    return axios.post<IBackendRes<IProductDetail>>('/api/v1/productDetails', { imageDetail, quantity, product, color, size });
+}
+export const callUpdateProductDetail = (id: string, imageDetail: string, quantity: number, product: IProduct, color: IColor, size: ISize) => {
+    return axios.put<IBackendRes<IProductDetail>>(`/api/v1/productDetails`, { id, imageDetail, quantity, product, color, size });
+}
+export const callDeleteProductDetail = (id: string) => {
+    return axios.delete<IBackendRes<IProductDetail>>(`/api/v1/productDetails/${id}`);
 }

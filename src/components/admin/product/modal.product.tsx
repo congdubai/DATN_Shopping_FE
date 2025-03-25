@@ -245,7 +245,6 @@ const ModalProduct = (props: IProps) => {
                             name="category"
                             label="Danh mục"
                             rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
-
                         >
                             <DebounceSelect
                                 allowClear

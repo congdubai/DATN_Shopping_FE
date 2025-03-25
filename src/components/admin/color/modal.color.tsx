@@ -28,12 +28,12 @@ const ModalColor = (props: IProps) => {
     }, [dataInit]);
 
     const submitColor = async (valuesForm: any) => {
-        const { description, name } = valuesForm;
+        const { description, name, hexCode } = valuesForm;
 
         if (dataInit?.id) {
             //update
             const color = {
-                name, description
+                name, description, hexCode
             }
             const res = await callUpdateColor(color, dataInit.id);
             if (res.data) {
@@ -49,7 +49,7 @@ const ModalColor = (props: IProps) => {
         } else {
             //create
             const color = {
-                name, description
+                name, description, hexCode
             }
             const res = await callCreateColor(color);
             if (res.data) {
@@ -103,6 +103,13 @@ const ModalColor = (props: IProps) => {
                                 { required: true, message: 'Vui lòng không bỏ trống' },
                             ]}
                             placeholder="Nhập name"
+                        />
+                    </Col>
+                    <Col lg={12} md={12} sm={24} xs={24}>
+                        <ProFormText
+                            label="Mã màu"
+                            name="hexCode"
+                            placeholder="Nhập mã màu"
                         />
                     </Col>
                     <Col span={24}>

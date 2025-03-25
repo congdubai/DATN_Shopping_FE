@@ -1,11 +1,13 @@
 import ModalProduct from "@/components/admin/product/modal.product";
 import ViewDetailProduct from "@/components/admin/product/view.product";
+import ModalProductDetail from "@/components/admin/productDetail/modal.productDetail";
+import ViewDetailProductDetail from "@/components/admin/productDetail/view.productDetail";
 import DataTable from "@/components/client/data-table";
-import Access from "@/components/share/access";
-import { callDeleteProduct } from "@/config/api";
+import { callDeleteProduct, callDeleteProductDetail } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchProductDetail } from "@/redux/slice/productDetailSlide";
 import { fetchProduct } from "@/redux/slice/productSlide";
-import { IProduct } from "@/types/backend";
+import { IProduct, IProductDetail } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from "@ant-design/pro-components";
 import { Button, message, notification, Popconfirm, Space } from "antd";
@@ -14,13 +16,13 @@ import queryString from "query-string";
 import { useRef, useState } from "react";
 import { sfLike } from "spring-filter-query-builder";
 
-const ProductPage = () => {
-    const products = useAppSelector(state => state.product.result);
-    const meta = useAppSelector(state => state.product.meta);
-    const isFetching = useAppSelector(state => state.product.isFetching);
+const ProductDetailPage = () => {
+    const productDetails = useAppSelector(state => state.productDetail.result);
+    const meta = useAppSelector(state => state.productDetail.meta);
+    const isFetching = useAppSelector(state => state.productDetail.isFetching);
     const dispatch = useAppDispatch();
     const tableRef = useRef<ActionType>();
-    const [dataInit, setDataInit] = useState<IProduct | null>(null);
+    const [dataInit, setDataInit] = useState<IProductDetail | null>(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
@@ -30,9 +32,9 @@ const ProductPage = () => {
 
     const handleDeleteProduct = async (id: string | undefined) => {
         if (id) {
-            const res = await callDeleteProduct(id);
+            const res = await callDeleteProductDetail(id);
             if (+res.statusCode === 200) {
-                message.success('Xóa User thành công');
+                message.success('Xóa sản phẩm thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -43,21 +45,19 @@ const ProductPage = () => {
         }
     }
 
-    const columns: ProColumns<IProduct>[] = [
+    const columns: ProColumns<IProductDetail>[] = [
         {
             title: 'Id',
             dataIndex: 'id',
             width: 50,
             render: (text, record, index, action) => {
                 return (
-                    <Access requiredRole="admin" hideChildren>
-                        <a href="#" onClick={() => {
-                            setOpenViewDetail(true);
-                            setDataInit(record);
-                        }}>
-                            {record.id}
-                        </a>
-                    </Access>
+                    <a href="#" onClick={() => {
+                        setOpenViewDetail(true);
+                        setDataInit(record);
+                    }}>
+                        {record.id}
+                    </a>
                 )
             },
             hideInSearch: true,
@@ -67,13 +67,13 @@ const ProductPage = () => {
             dataIndex: 'image',
             align: 'center',
             width: 150,
-            render: (_, entity: IProduct) => {
-                console.log("Original Image Name:", entity.image);
-                console.log("Decoded Image Name:", decodeURIComponent(entity.image));
-                return entity.image ? (
+            render: (_, entity: IProductDetail) => {
+                console.log("Original Image Name:", entity.imageDetail);
+                console.log("Decoded Image Name:", decodeURIComponent(entity.imageDetail));
+                return entity.imageDetail ? (
                     <img
                         alt="Product Image"
-                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/product/${entity.image}`}
+                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/product/${entity.imageDetail}`}
                         style={{ width: 50, height: 50, objectFit: 'cover' }}
 
                     />
@@ -85,18 +85,27 @@ const ProductPage = () => {
         },
         {
 
-            title: 'Name',
-            dataIndex: 'name',
+            title: 'Quantity',
+            dataIndex: 'quantity',
             sorter: true,
         },
         {
-            title: 'Price',
-            dataIndex: 'price',
+            title: 'product',
+            dataIndex: ["product", "name"],
+            width: 200,
             sorter: true,
+            hideInSearch: true
         },
         {
-            title: 'Category',
-            dataIndex: ["category", "name"],
+            title: 'Color',
+            dataIndex: ["color", "name"],
+            width: 200,
+            sorter: true,
+            hideInSearch: true
+        },
+        {
+            title: 'Size',
+            dataIndex: ["size", "name"],
             width: 200,
             sorter: true,
             hideInSearch: true
@@ -132,39 +141,34 @@ const ProductPage = () => {
             width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    <Access requiredRole="admin" hideChildren>
-                        <EditOutlined
-                            style={{
-                                fontSize: 20,
-                                color: '#ffa500',
-                            }}
-                            type=""
-                            onClick={() => {
-                                setOpenModal(true);
-                                setDataInit(entity);
-                            }}
-                        />
-                    </Access>
-                    <Access requiredRole="admin" hideChildren>
-                        <Popconfirm
-                            placement="leftTop"
-                            title={"Xác nhận xóa Sản phẩm"}
-                            onConfirm={() => handleDeleteProduct(entity.id)}
-                            description={"Bạn có chắc chắn muốn xóa Sản phẩm này ?"}
-                            okText="Xác nhận"
-                            cancelText="Hủy"
-                        >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
-                        </Popconfirm>
-                    </Access>
-
+                    <EditOutlined
+                        style={{
+                            fontSize: 20,
+                            color: '#ffa500',
+                        }}
+                        type=""
+                        onClick={() => {
+                            setOpenModal(true);
+                            setDataInit(entity);
+                        }}
+                    />
+                    <Popconfirm
+                        placement="leftTop"
+                        title={"Xác nhận xóa Sản phẩm"}
+                        onConfirm={() => handleDeleteProduct(entity.id)}
+                        description={"Bạn có chắc chắn muốn xóa Sản phẩm này ?"}
+                        okText="Xác nhận"
+                        cancelText="Hủy"
+                    >
+                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
+                            <DeleteOutlined
+                                style={{
+                                    fontSize: 20,
+                                    color: '#ff4d4f',
+                                }}
+                            />
+                        </span>
+                    </Popconfirm>
                 </Space >
             ),
 
@@ -213,56 +217,55 @@ const ProductPage = () => {
     }
     return (
         <div>
-            <Access requiredRole="admin" hideChildren>
-                <DataTable<IProduct>
-                    actionRef={tableRef}
-                    headerTitle="Danh sách Users"
-                    rowKey="id"
-                    columns={columns}
-                    dataSource={products}
-                    loading={isFetching}
-                    request={async (params, sort, filter): Promise<any> => {
-                        const query = buildQuery(params, sort, filter);
-                        dispatch(fetchProduct({ query }))
-                    }}
-                    scroll={{ x: true }}
-                    pagination={
-                        {
-                            current: meta.page,
-                            pageSize: meta.pageSize,
-                            showSizeChanger: true,
-                            total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
-                        }
-                    }
-                    rowSelection={false}
-                    toolBarRender={(_action, _rows): any => {
-                        return (
-                            <Button
-                                icon={<PlusOutlined />}
-                                type="primary"
-                                onClick={() => setOpenModal(true)}
-                            >
-                                Thêm mới
-                            </Button>
-                        );
-                    }}
-                />
-            </Access>
 
-            <ModalProduct
+            <DataTable<IProductDetail>
+                actionRef={tableRef}
+                headerTitle="Danh sách chi tiết sản phẩm"
+                rowKey="id"
+                columns={columns}
+                dataSource={productDetails}
+                loading={isFetching}
+                request={async (params, sort, filter): Promise<any> => {
+                    const query = buildQuery(params, sort, filter);
+                    dispatch(fetchProductDetail({ query }))
+                }}
+                scroll={{ x: true }}
+                pagination={
+                    {
+                        current: meta.page,
+                        pageSize: meta.pageSize,
+                        showSizeChanger: true,
+                        total: meta.total,
+                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                    }
+                }
+                rowSelection={false}
+                toolBarRender={(_action, _rows): any => {
+                    return (
+                        <Button
+                            icon={<PlusOutlined />}
+                            type="primary"
+                            onClick={() => setOpenModal(true)}
+                        >
+                            Thêm mới
+                        </Button>
+                    );
+                }}
+            />
+            <ModalProductDetail
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
-            <ViewDetailProduct
+            <ViewDetailProductDetail
                 onClose={setOpenViewDetail}
                 open={openViewDetail}
                 dataInit={dataInit}
-                setDataInit={setDataInit} />
+                setDataInit={setDataInit}
+            />
         </div >
     )
 }
-export default ProductPage;
+export default ProductDetailPage;

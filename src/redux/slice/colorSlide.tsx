@@ -1,4 +1,4 @@
-import { callFetchColor, callFetchColorById } from "@/config/api";
+import { callFetchColor } from "@/config/api";
 import { IColor } from "@/types/backend";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 

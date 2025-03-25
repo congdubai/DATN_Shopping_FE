@@ -37,10 +37,12 @@ const LayoutAdmin = () => {
         const fixedMenu = [
             { label: <Link to='/admin/user'>User</Link>, key: '/admin/user', icon: <UserOutlined /> },
             { label: <Link to='/admin/product'>Product</Link>, key: '/admin/product', icon: <BankOutlined /> },
+            { label: <Link to='/admin/productDetail'>Product Detail</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
             { label: <Link to='/admin/color'>Color</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
             { label: <Link to='/admin/category'>Category</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
             { label: <Link to='/admin/size'>Size</Link>, key: '/admin/size', icon: <ApiOutlined /> },
             { label: <Link to='/admin/role'>Role</Link>, key: '/admin/role', icon: <ExceptionOutlined /> },
+
         ];
 
         setMenuItems(fixedMenu);
@@ -49,19 +51,6 @@ const LayoutAdmin = () => {
     useEffect(() => {
         setActiveMenu(location.pathname);
     }, [location]); // Cập nhật menu khi thay đổi đường dẫn
-
-
-
-    // if (isMobile) {
-    //     items.push({
-    //         label: <label
-    //             style={{ cursor: 'pointer' }}
-    //             onClick={() => handleLogout()}
-    //         >Đăng xuất</label>,
-    //         key: 'logout',
-    //         icon: <LogoutOutlined />
-    //     })
-    // }
 
     const itemsDropdown = [
         {

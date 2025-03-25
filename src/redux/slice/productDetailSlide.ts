@@ -1,5 +1,5 @@
-import { callFetchSize } from "@/config/api";
-import { ISize } from "@/types/backend";
+import { callFetchProductDetail } from "@/config/api";
+import { IProductDetail } from "@/types/backend";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface IState {
@@ -10,22 +10,20 @@ interface IState {
         pages: number;
         total: number;
     },
-    result: ISize[];
-    isFetchSingle: boolean;
-    singleSize: ISize
+    result: IProductDetail[];
+
 }
 
-export const fetchSize = createAsyncThunk(
-    'size/fetchSize',
+export const fetchProductDetail = createAsyncThunk(
+    'productDetail/fetchProductDetail',
     async ({ query }: { query: string }) => {
-        const res = await callFetchSize(query);
+        const res = await callFetchProductDetail(query);
         return res;
     }
 )
 
 const initialState: IState = {
     isFetching: true,
-    isFetchSingle: true,
     meta: {
         page: 1,
         pageSize: 10,
@@ -33,39 +31,28 @@ const initialState: IState = {
         total: 0
     },
     result: [],
-    singleSize: {
-        id: "",
-        name: "",
-        description: "",
-    }
 };
-export const sizeSlide = createSlice({
-    name: 'size',
+export const productDetailSlide = createSlice({
+    name: 'productDetail',
     initialState,
     reducers: {
-        resetSingleSize: (state, action) => {
-            state.singleSize = {
-                id: "",
-                name: "",
-                description: "",
-            }
-        },
+
     },
     extraReducers: (builder) => {
         // Add reducers for additional action types here, and handle loading state as needed
-        builder.addCase(fetchSize.pending, (state, action) => {
+        builder.addCase(fetchProductDetail.pending, (state, action) => {
             state.isFetching = true;
             // Add user to the state array
             // state.courseOrder = action.payload;
         })
 
-        builder.addCase(fetchSize.rejected, (state, action) => {
+        builder.addCase(fetchProductDetail.rejected, (state, action) => {
             state.isFetching = false;
             // Add user to the state array
             // state.courseOrder = action.payload;
         })
 
-        builder.addCase(fetchSize.fulfilled, (state, action) => {
+        builder.addCase(fetchProductDetail.fulfilled, (state, action) => {
             if (action.payload && action.payload.data) {
                 state.isFetching = false;
                 state.meta = action.payload.data.meta;
@@ -77,8 +64,5 @@ export const sizeSlide = createSlice({
         })
     },
 });
-export const {
-    resetSingleSize
-} = sizeSlide.actions;
 
-export default sizeSlide.reducer;
+export default productDetailSlide.reducer;

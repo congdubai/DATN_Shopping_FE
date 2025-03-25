@@ -10,6 +10,7 @@ import productReducer from './slice/productSlide'
 import categoryReducer from './slice/categorySlide'
 import colorReducer from './slice/colorSlide'
 import sizeReducer from './slice/sizeSlide'
+import productDetailReducer from './slice/productDetailSlide'
 
 export const store = configureStore({
     reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
         category: categoryReducer,
         color: colorReducer,
         size: sizeReducer,
+        productDetail: productDetailReducer
     }
 });
 

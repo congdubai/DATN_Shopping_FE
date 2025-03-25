@@ -2,6 +2,7 @@
 import ModalCategory from "@/components/admin/category/modal.category";
 import ViewDetailCategory from "@/components/admin/category/view.category";
 import DataTable from "@/components/client/data-table";
+import Access from "@/components/share/access";
 import { callDeleteCategory, callDeleteRole } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchCategory } from "@/redux/slice/categorySlide";
@@ -49,12 +50,14 @@ const CategoryPage = () => {
             width: 90,
             render: (text, record, index, action) => {
                 return (
-                    <a href="#" onClick={() => {
-                        setOpenViewDetail(true);
-                        setDataInit(record);
-                    }}>
-                        {record.id}
-                    </a>
+                    <Access requiredRole="admin" hideChildren>
+                        <a href="#" onClick={() => {
+                            setOpenViewDetail(true);
+                            setDataInit(record);
+                        }}>
+                            {record.id}
+                        </a>
+                    </Access>
                 )
             },
             hideInSearch: true,
@@ -122,34 +125,38 @@ const CategoryPage = () => {
             width: 50,
             render: (_value, entity, _index, _action) => (
                 <Space>
-                    <EditOutlined
-                        style={{
-                            fontSize: 20,
-                            color: '#ffa500',
-                        }}
-                        type=""
-                        onClick={() => {
-                            setOpenModal(true);
-                            setDataInit(entity);
-                        }}
-                    />
-                    <Popconfirm
-                        placement="leftTop"
-                        title={"Xác nhận xóa role"}
-                        description={"Bạn có chắc chắn muốn xóa role này ?"}
-                        onConfirm={() => handleDeleteCategory(entity.id)}
-                        okText="Xác nhận"
-                        cancelText="Hủy"
-                    >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }}
-                            />
-                        </span>
-                    </Popconfirm>
+                    <Access requiredRole="admin" hideChildren>
+                        <EditOutlined
+                            style={{
+                                fontSize: 20,
+                                color: '#ffa500',
+                            }}
+                            type=""
+                            onClick={() => {
+                                setOpenModal(true);
+                                setDataInit(entity);
+                            }}
+                        />
+                    </Access>
+                    <Access requiredRole="admin" hideChildren>
+                        <Popconfirm
+                            placement="leftTop"
+                            title={"Xác nhận xóa role"}
+                            description={"Bạn có chắc chắn muốn xóa role này ?"}
+                            onConfirm={() => handleDeleteCategory(entity.id)}
+                            okText="Xác nhận"
+                            cancelText="Hủy"
+                        >
+                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
+                                <DeleteOutlined
+                                    style={{
+                                        fontSize: 20,
+                                        color: '#ff4d4f',
+                                    }}
+                                />
+                            </span>
+                        </Popconfirm>
+                    </Access>
                 </Space>
             ),
 
@@ -191,41 +198,42 @@ const CategoryPage = () => {
     }
     return (
         <div>
-
-            <DataTable<ICategory>
-                actionRef={tableRef}
-                headerTitle="Danh sách Danh mục"
-                rowKey="id"
-                loading={isFetching}
-                columns={columns}
-                dataSource={categories}
-                request={async (params, sort, filter): Promise<any> => {
-                    const query = buildQuery(params, sort, filter);
-                    dispatch(fetchCategory({ query }))
-                }}
-                scroll={{ x: true }}
-                pagination={
-                    {
-                        current: meta.page,
-                        pageSize: meta.pageSize,
-                        showSizeChanger: true,
-                        total: meta.total,
-                        showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+            <Access requiredRole="admin" hideChildren>
+                <DataTable<ICategory>
+                    actionRef={tableRef}
+                    headerTitle="Danh sách Danh mục"
+                    rowKey="id"
+                    loading={isFetching}
+                    columns={columns}
+                    dataSource={categories}
+                    request={async (params, sort, filter): Promise<any> => {
+                        const query = buildQuery(params, sort, filter);
+                        dispatch(fetchCategory({ query }))
+                    }}
+                    scroll={{ x: true }}
+                    pagination={
+                        {
+                            current: meta.page,
+                            pageSize: meta.pageSize,
+                            showSizeChanger: true,
+                            total: meta.total,
+                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                        }
                     }
-                }
-                rowSelection={false}
-                toolBarRender={(_action, _rows): any => {
-                    return (
-                        <Button
-                            icon={<PlusOutlined />}
-                            type="primary"
-                            onClick={() => setOpenModal(true)}
-                        >
-                            Thêm mới
-                        </Button>
-                    );
-                }}
-            />
+                    rowSelection={false}
+                    toolBarRender={(_action, _rows): any => {
+                        return (
+                            <Button
+                                icon={<PlusOutlined />}
+                                type="primary"
+                                onClick={() => setOpenModal(true)}
+                            >
+                                Thêm mới
+                            </Button>
+                        );
+                    }}
+                />
+            </Access>
             <ModalCategory
                 openModal={openModal}
                 setOpenModal={setOpenModal}

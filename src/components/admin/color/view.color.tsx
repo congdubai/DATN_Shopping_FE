@@ -22,6 +22,21 @@ const ViewDetailcolor = (props: IProps) => {
             >
                 <Descriptions title="" bordered column={1} layout="vertical">
                     <Descriptions.Item label="Màu sắc:">{dataInit?.name}</Descriptions.Item>
+                    <Descriptions.Item label="Mã màu:">
+                        {dataInit?.hexCode ? (
+                            <div
+                                style={{
+                                    width: 40,
+                                    height: 20,
+                                    backgroundColor: dataInit?.hexCode,
+                                    border: "1px solid #ccc",
+                                    borderRadius: "4px"
+                                }}
+                            />
+                        ) : (
+                            ""
+                        )}
+                    </Descriptions.Item>
                     <Descriptions.Item label="Ngày tạo:">{dataInit && dataInit.createdAt ? dayjs(dataInit.createdAt).format('DD-MM-YYYY HH:mm:ss') : "Chưa có thông tin"}</Descriptions.Item>
                     <Descriptions.Item label="Ngày sửa:">{dataInit && dataInit.updatedAt ? dayjs(dataInit.updatedAt).format('DD-MM-YYYY HH:mm:ss') : "Chưa có thông tin"}</Descriptions.Item>
                     <Descriptions.Item label="Mô tả:">{dataInit?.description}</Descriptions.Item>
