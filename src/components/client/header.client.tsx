@@ -65,8 +65,8 @@ const Navbar: React.FC = () => {
                 <Row align="middle" justify="space-between" style={{ background: "black", padding: "0 20px", height: "75px", width: "100%" }}>
                     <Col xs={24} sm={4} md={4} lg={4} style={{ marginLeft: "60px" }}>
                         <Link to="/" style={{ display: "flex", alignItems: "center" }}>
-                            <img src={`${import.meta.env.VITE_BACKEND_URL}/storage/slide/slide-1.webp`} alt="Logo"
-                                style={{ height: 40, borderRadius: "50%", marginRight: 10 }} />
+                            <img src={`${import.meta.env.VITE_BACKEND_URL}/storage/slide/logo.png`} alt="Logo"
+                                style={{ width: 40, height: 40, borderRadius: "50%", marginRight: 10 }} />
                             <span className="logo-text" style={{ fontSize: 24, fontWeight: "bold", color: "white" }}>CTStore</span>
                         </Link>
                     </Col>
