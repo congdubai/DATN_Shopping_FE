@@ -1,0 +1,358 @@
+/*** Spinner Start ***/
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@400;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.ant-menu {
+    border-bottom: none !important;
+    box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.15);
+}
+
+.fixed-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 3;
+    background: black !important;
+    box-shadow: 0 1px 5px 2px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+
+}
+
+.slick-dots {
+    z-index: 1 !important;
+}
+
+
+.slick-dots li {
+    width: 7px !important;
+    height: 7px !important;
+    border-radius: 50% !important;
+    border: 1px solid black !important;
+    background: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.slick-dots li button {
+    width: 6px !important;
+    height: 6px !important;
+    background: transparent !important;
+    border: none !important;
+    opacity: 0 !important;
+    display: block;
+}
+
+.slick-dots li.slick-active {
+    background: black !important;
+}
+
+.carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carousel-img {
+    width: 100%;
+    max-height: 465px;
+    object-fit: cover;
+    border-radius: 2px;
+}
+
+::placeholder {
+    color: #333 !important;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    margin: auto;
+}
+
+.custom-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+    font-weight: bold;
+    color: white;
+}
+
+/* Vị trí của nút Previous */
+.custom-arrow.prev {
+    left: 10px;
+}
+
+/* Vị trí của nút Next */
+.custom-arrow.next {
+    right: 10px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+    padding: 0;
+    width: 100%;
+    height: 301px;
+}
+
+.product-card {
+    position: relative;
+    overflow: hidden;
+    padding: 0 !important;
+    margin: 0 !important;
+    transition: transform 0.3s ease-in-out;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+
+.product-image-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.product-image {
+    width: 100%;
+    height: 215px;
+    object-fit: cover;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    color: black;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.product-card:hover .search-icon {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+/* Hiện icon khi hover */
+.product-card:hover .search-icon {
+    opacity: 1;
+}
+
+.new-tag {
+    position: absolute;
+    top: 10px;
+    right: -5px;
+    background: #FFB41D;
+    color: #000;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.cart-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: black;
+    padding: 4px 7px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+}
+
+.cart-icon:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.product-title {
+    margin-top: 10px;
+    font-size: 14px !important;
+    font-weight: 370 !important;
+    color: black;
+    line-height: 18px !important;
+    font-family: 'Geologica', sans-serif;
+}
+
+.product-price {
+    display: block;
+    margin-top: -5px !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: black;
+    font-family: 'Neue', sans-serif;
+    margin-bottom: 10px;
+}
+
+.product-currency {
+    text-decoration: underline;
+    font-size: 12px;
+    vertical-align: 1px;
+    position: relative;
+    top: -2px;
+    font-family: 'Neue', sans-serif;
+    font-weight: 550 !important;
+    margin-left: -2px;
+}
+
+/* Discount card */
+.discount-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.discount-title {
+    margin-bottom: 6px;
+    font-size: 20px;
+    margin-top: 20px;
+    border-left: 3px solid #000;
+    padding-left: 3px;
+    height: 25px;
+}
+
+.discount-card {
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    height: 110px !important;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    border: none;
+    transition: transform 0.3s ease;
+    width: 280px !important;
+    margin-right: 40px;
+}
+
+.discount-card:hover,
+.freeship-card:hover {
+    transform: translateY(-5px);
+}
+
+.discount-code {
+    background: #FFB41D;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    min-width: 50px;
+    display: flex;
+    min-height: 110px;
+    align-items: center;
+    justify-content: center;
+}
+
+.discount-content {
+    padding: 10px;
+    flex: 1;
+    border-left: 2px dashed #ddd;
+}
+
+.discount-text {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.discount-desc {
+    margin: 4px 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.discount-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.discount-meta {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 0;
+}
+
+.copy-button {
+    background: black;
+    color: white;
+    border-radius: 30px !important;
+    font-size: 12px !important;
+    transition: background 0.2s ease;
+    margin: 3px;
+}
+
+.copy-button:active {
+    background: #333;
+}
+
+.copy-button.success {
+    background: green !important;
+}
+
+.freeship-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.freeship-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+}
+
+.freeship-icon {
+    width: 40px;
+    height: 30px;
+}
+
+.freeship-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #FFB41D;
+    text-align: center;
+    height: 110px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.copy-button:hover {
+    color: #FFB41D !important;
+}
+
+.freeship-desc {
+    margin-top: 10px;
+    font-size: 16px;
+}

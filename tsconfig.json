@@ -40,7 +40,7 @@
   },
   "include": [
     "src"
-  ],
+, "homePage.js"  ],
   "exclude": [
     "node_modules"
   ],

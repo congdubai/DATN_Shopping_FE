@@ -1,8 +1,8 @@
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, Outlet, RouterProvider, useLocation } from "react-router-dom"
 import UserPage from "./pages/admin/user";
 import Header from "./components/client/header.client";
 import Footer from "./components/client/footer.client";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from 'styles/app.module.scss';
 import LayoutApp from "./components/share/layout.app";
 import LoginPage from "./pages/auth/login";
@@ -16,9 +16,23 @@ import CategoryPage from "./pages/admin/category";
 import ColorPage from "./pages/admin/color";
 import SizePage from "./pages/admin/size";
 import ProductDetailPage from "./pages/admin/productDetail";
+import NotFound from "./components/share/not.found";
+import HomePage from "./pages/client/home";
+
 const LayoutClient = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const location = useLocation();
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (rootRef && rootRef.current) {
+      rootRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+
+  }, [location]);
+
   return (
-    <div className='layout-app'>
+    <div className='layout-app' ref={rootRef}>
       <Header />
       <div className={styles['content-app']}>
         <Outlet />
@@ -27,6 +41,7 @@ const LayoutClient = () => {
     </div>
   )
 }
+
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -43,6 +58,14 @@ export default function App() {
   }, [])
 
   const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (<LayoutApp><LayoutClient /></LayoutApp>),
+      errorElement: <NotFound />,
+      children: [
+        { index: true, element: <HomePage /> },
+      ],
+    },
     {
       path: "/admin",
       element: (<LayoutApp><LayoutAdmin /> </LayoutApp>),
