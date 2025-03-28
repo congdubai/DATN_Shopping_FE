@@ -108,7 +108,6 @@
     margin: 20px 0;
     padding: 0;
     width: 100%;
-    height: 301px;
 }
 
 .product-card {
@@ -117,6 +116,7 @@
     padding: 0 !important;
     margin: 0 !important;
     transition: transform 0.3s ease-in-out;
+    height: 301px;
 }
 
 .product-card:hover {
@@ -181,19 +181,49 @@
 }
 
 .cart-icon {
+    background: rgba(0, 0, 0, 1);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: width 0.3s ease-in-out, border-radius 0.3s ease-in-out, background 0.3s ease-in-out;
     position: absolute;
     bottom: 10px;
     right: 10px;
-    background: black;
-    padding: 4px 7px;
-    border-radius: 50%;
-    color: white;
-    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.cart-icon .cart-text {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    margin-left: 5px;
+    display: none;
+    /* Ẩn mặc định */
 }
 
 .cart-icon:hover {
-    background: rgba(0, 0, 0, 0.9);
+    width: 120px;
+    border-radius: 20px;
+    justify-content: flex-start;
+    padding-left: 7px;
 }
+
+.cart-icon:hover .cart-text {
+    opacity: 1;
+    transform: translateX(0);
+    display: inline-block;
+    /* Hiện chữ khi hover */
+}
+
+
 
 .product-title {
     margin-top: 10px;

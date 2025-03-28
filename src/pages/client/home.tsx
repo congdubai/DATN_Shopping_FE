@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { fetchProduct } from "../../redux/slice/productSlide";
@@ -16,7 +16,13 @@ const HomePage = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { Title, Text } = Typography;
     const carouselRef = useRef<CarouselRef>(null);
-    const navigate = useNavigate(); // Hook điều hướng
+    const navigate = useNavigate();
+    const [expandedProduct, setExpandedProduct] = useState(null);
+
+    const handleCartClick = (productId: any) => {
+        setExpandedProduct(expandedProduct === productId ? null : productId);
+    };
+
     const coupons = [
         {
             code: "HE10",
@@ -133,10 +139,12 @@ const HomePage = () => {
                                         className="product-image"
                                     />
                                     <Tag className="new-tag">Hàng Mới</Tag>
+
                                     <div className="cart-icon">
                                         <ShoppingOutlined />
+                                        <span className="cart-text">Thêm vào giỏ</span>
                                     </div>
-                                    {/* Icon tìm kiếm ẩn, chỉ hiển thị khi hover */}
+
                                     <div className="search-icon">
                                         <SearchOutlined />
                                     </div>
