@@ -140,7 +140,10 @@ const HomePage = () => {
                                         />
                                         <Tag className="new-tag">Hàng Mới</Tag>
 
-                                        <div className="cart-icon" onClick={() => setIsOpenModal(true)}>
+                                        <div className="cart-icon" onClick={() => {
+                                            setDataInit(product);
+                                            setIsOpenModal(true);
+                                        }}>
                                             <ShoppingOutlined />
                                             <span className="cart-text">Thêm vào giỏ</span>
                                         </div>
@@ -174,6 +177,7 @@ const HomePage = () => {
             <HomeModal
                 isOpenModal={isOpenModal}
                 setIsOpenModal={setIsOpenModal}
+                productId={dataInit?.id}
             />
         </>
     );

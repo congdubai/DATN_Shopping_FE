@@ -112,6 +112,7 @@ export interface IProductDetail {
     product?: {
         id: string;
         name: string;
+        price?: number;
     }
     size?: {
         id: string;
@@ -120,6 +121,7 @@ export interface IProductDetail {
     color?: {
         id: string;
         name: string;
+        hexCode?: string;
     }
     createdBy?: string;
     updatedBy?: boolean | null;

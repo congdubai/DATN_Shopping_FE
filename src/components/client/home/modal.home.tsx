@@ -1,36 +1,168 @@
+import { fetchProductDetailById } from "@/redux/slice/productDetailSlide";
 import { Modal, Button } from "antd";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { IProductDetail } from "@/types/backend";
+import { motion } from "framer-motion";
+
 interface IProps {
     isOpenModal: boolean;
     setIsOpenModal: (v: boolean) => void;
+    productId?: string;
 }
-const HomeModal = (props: IProps) => {
-    const { isOpenModal, setIsOpenModal } = props;
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-    const [selectedSize, setSelectedSize] = useState("S");
 
+const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
+    const dispatch = useAppDispatch();
+    const { result: productDetails = [], isFetching } = useAppSelector(
+        (state: any) => state.productDetail
+    ) as { result: IProductDetail[]; isFetching: boolean };
+
+    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
+    useEffect(() => {
+        if (productId) {
+            dispatch(fetchProductDetailById({ productId })).then((res) =>
+                console.log("Kết quả API trả về:", res));
+        }
+    }, [productId, dispatch]);
+
+    // Kiểm tra nếu productDetails chưa load
+    const colors = productDetails.length ? [...new Set(productDetails.map((p) => p.color?.name))] : [];
+    const sizes = productDetails.length ? [...new Set(productDetails.map((p) => p.size?.name))] : [];
+
+    // State chọn màu & kích thước
+    const [selectedColor, setSelectedColor] = useState<string | undefined>(colors[0]);
+    const [selectedSize, setSelectedSize] = useState<string | undefined>(sizes[0]);
+    const [quantity, setQuantity] = useState<number>(1);
+
+    useEffect(() => {
+        if (colors.length > 0) setSelectedColor(colors[0]);
+        if (sizes.length > 0) setSelectedSize(sizes[0]);
+    }, [productDetails]);
+
+    // Lấy sản phẩm với màu và kích thước đã chọn
+    const selectedProduct = productDetails.find(
+        (p) => p.color?.name === selectedColor && p.size?.name === selectedSize
+    );
+
+    // Lấy số lượng của sản phẩm đã chọn
+    const selectedProductQuantity = selectedProduct?.quantity || 0;
+
+    // Kiểm tra nếu có hàng
+    const isInStock = selectedProductQuantity > 0;
+
+    const selectedImage = selectedProduct?.imageDetail || "";
 
     return (
         <Modal open={isOpenModal} onCancel={() => setIsOpenModal(false)} footer={null} width={800}>
             <div style={{ display: "flex" }}>
-                {/* Ảnh sản phẩm */}
-                <img src={`${backendUrl}/storage/slide/slide-2.jpg`} alt="Product" style={{ width: "50%", height: 400, borderRadius: 10 }} />
+                {selectedImage ? (
+                    <div style={{ width: "50%", height: 420, borderRadius: 10, overflow: "hidden" }}>
+                        <motion.img
+                            key={selectedImage} // Khi `selectedImage` thay đổi, ảnh sẽ trượt
+                            src={`${backendUrl}/storage/product/${selectedImage}`}
+                            alt="Product Image"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                borderRadius: 10,
+                            }}
+                            initial={{ x: 100, opacity: 0 }} // Bắt đầu từ bên phải, ẩn
+                            animate={{ x: 0, opacity: 1 }} // Trượt vào
+                            exit={{ x: -100, opacity: 0 }} // Trượt ra khi đổi ảnh
+                            transition={{ duration: 0.4 }} // Thời gian trượt 0.4s
+                        />
+                    </div>
+                ) : (
+                    <div
+                        style={{
+                            width: "50%",
+                            height: 420,
+                            backgroundColor: "#ffcccc",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "red",
+                            fontSize: 20,
+                            fontWeight: "bold",
+                            borderRadius: 10,
+                            border: "2px dashed red",
+                        }}
+                    >
+                        Not Image
+                    </div>
+                )}
 
                 {/* Thông tin sản phẩm */}
                 <div style={{ marginLeft: 20 }}>
-                    <h2>Áo Thun Nam ICONDENIM Luminous</h2>
-                    <p style={{ marginTop: 5 }}><strong>SKU:</strong> ATID0561-01 <span style={{ color: "white", background: "#38bf57", fontSize: 12, fontWeight: 520, borderRadius: 3, padding: 3 }}>Còn hàng</span></p>
-                    <p style={{ fontSize: "20px", color: "red" }}><strong>299,000đ</strong></p>
+                    <h2>{productDetails[0]?.product?.name || "Sản phẩm"}</h2>
+                    <p style={{ marginTop: 5 }}>
+                        <strong>SKU: </strong> {selectedProduct?.id}{" "}
+                        <span
+                            style={{
+                                color: "white",
+                                background: isInStock ? "#38bf57" : "red",
+                                fontSize: 12,
+                                fontWeight: 520,
+                                borderRadius: 3,
+                                padding: "3px 6px",
+                                marginLeft: 8
+                            }}
+                        >
+                            {isInStock ? "Còn hàng" : "Hết hàng"}
+                        </span>
+                    </p>
+                    <p style={{ fontSize: "20px", color: "red" }}>
+                        <strong>{selectedProduct?.product?.price?.toLocaleString()}đ</strong>
+                    </p>
 
-                    <p><strong>Màu sắc:</strong> Đen-0561</p>
-
-                    <p style={{ marginTop: 8 }}><strong>Kích thước:</strong></p>
+                    <p>
+                        <strong>Màu sắc:</strong>
+                    </p>
                     <div style={{ display: "flex", gap: 10 }}>
-                        {["S", "M", "L", "XL"].map((size) => (
+                        {colors.map((color) => {
+                            const isSelected = selectedColor === color;
+                            const colorCode = productDetails.find((p) => p.color?.name === color)?.color?.hexCode || "#000"; // Lấy mã màu từ API
+
+                            return (
+                                <div
+                                    key={color}
+                                    onClick={() => setSelectedColor(color)}
+                                    style={{
+                                        width: 35,
+                                        height: 30,
+                                        borderRadius: "10%",
+                                        backgroundColor: colorCode,
+                                        border: isSelected ? "2px solid #e4393c" : "1px solid #ccc",
+                                        cursor: "pointer"
+                                    }}
+                                />
+                            );
+                        })}
+                    </div>
+
+                    <p style={{ marginTop: 8 }}>
+                        <strong>Kích thước:</strong>
+                    </p>
+                    <div style={{ display: "flex", gap: 10 }}>
+                        {sizes.map((size) => (
                             <Button
                                 key={size}
-                                type={selectedSize === size ? "primary" : "default"}
-                                style={{ backgroundColor: selectedSize === size ? "black" : "white", color: selectedSize === size ? "white" : "black" }}
+                                type="default"
+                                style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    textAlign: "center",
+                                    backgroundColor: "white",
+                                    width: 40,
+                                    height: 30,
+                                    color: "black",
+                                    border: selectedSize === size ? "2px solid black" : "1px solid #ccc",
+                                    fontWeight: selectedSize === size ? "bold" : "normal",
+                                    padding: 0,
+                                }}
                                 onClick={() => setSelectedSize(size)}
                             >
                                 {size}
@@ -40,18 +172,19 @@ const HomeModal = (props: IProps) => {
 
                     <div style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 20 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                            <Button danger>-</Button>
-                            <span >1</span>
-                            <Button danger>+</Button>
+                            <Button danger onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}>-</Button>
+                            <span>{quantity}</span>
+                            <Button danger onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
                         </div>
                         <Button type="primary" style={{ backgroundColor: "black", color: "white" }}>
                             Thêm vào giỏ
                         </Button>
                     </div>
+
                     {/* Link "Xem chi tiết »" */}
                     <p style={{ marginTop: 20 }}>
                         <a
-                            href={`/product/detail?id=2`}
+                            href={`/product/detail?id=${productId}`}
                             style={{
                                 textDecoration: "underline",
                                 textUnderlineOffset: "4px",
@@ -61,7 +194,6 @@ const HomeModal = (props: IProps) => {
                             Xem chi tiết »
                         </a>
                     </p>
-
                 </div>
             </div>
         </Modal>

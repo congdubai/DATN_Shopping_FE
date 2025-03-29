@@ -141,7 +141,7 @@ export const callDeleteSize = (id: string) => {
 
 /**
  * 
-Module Size
+Module Product Detail
  */
 export const callFetchProductDetail = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IProductDetail>>>(`/api/v1/productDetails?${query}`);
@@ -154,4 +154,7 @@ export const callUpdateProductDetail = (id: string, imageDetail: string, quantit
 }
 export const callDeleteProductDetail = (id: string) => {
     return axios.delete<IBackendRes<IProductDetail>>(`/api/v1/productDetails/${id}`);
+}
+export const callFetchProductDetailById = (id: string) => {
+    return axios.get<IBackendRes<IProductDetail>>(`/api/v1/productDetails/${id}`);
 }

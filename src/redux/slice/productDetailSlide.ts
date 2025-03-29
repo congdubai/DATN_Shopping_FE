@@ -1,4 +1,4 @@
-import { callFetchProductDetail } from "@/config/api";
+import { callFetchProductDetail, callFetchProductDetailById } from "@/config/api";
 import { IProductDetail } from "@/types/backend";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -21,6 +21,14 @@ export const fetchProductDetail = createAsyncThunk(
         return res;
     }
 )
+export const fetchProductDetailById = createAsyncThunk(
+    'productDetail/fetchProductDetailById',
+    async ({ productId }: { productId: string }) => {
+        const res = await callFetchProductDetailById(productId);
+        return res;
+    }
+);
+
 
 const initialState: IState = {
     isFetching: true,
@@ -62,6 +70,23 @@ export const productDetailSlide = createSlice({
 
             // state.courseOrder = action.payload;
         })
+        builder.addCase(fetchProductDetailById.pending, (state) => {
+            state.isFetching = true;
+        });
+
+        builder.addCase(fetchProductDetailById.fulfilled, (state, action) => {
+            state.isFetching = false;
+            if (action.payload && Array.isArray(action.payload.data)) {
+                state.result = action.payload.data;
+            } else if (action.payload && action.payload.data) {
+                state.result = [action.payload.data];
+            }
+        });
+
+
+        builder.addCase(fetchProductDetailById.rejected, (state) => {
+            state.isFetching = false;
+        });
     },
 });
 

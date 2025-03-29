@@ -110,6 +110,9 @@ const ModalColor = (props: IProps) => {
                             label="Mã màu"
                             name="hexCode"
                             placeholder="Nhập mã màu"
+                            rules={[
+                                { required: true, message: 'Vui lòng không bỏ trống' },
+                            ]}
                         />
                     </Col>
                     <Col span={24}>
