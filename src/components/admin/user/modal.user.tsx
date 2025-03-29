@@ -350,13 +350,11 @@ const ModalUser = (props: IProps) => {
                             labelCol={{ span: 24 }}
                             label="Avatar"
                             name="avatar"
-                            rules={[{
-                                required: true,
-                                validator: () => {
-                                    if (dataImage.length > 0) return Promise.resolve();
-                                    else return Promise.reject(false);
+                            rules={[
+                                {
+                                    validator: () => Promise.resolve()
                                 }
-                            }]}
+                            ]}
                         >
                             <ConfigProvider locale={enUS}>
                                 <Upload
@@ -393,7 +391,7 @@ const ModalUser = (props: IProps) => {
 
                     </Col>
                 </Row>
-            </ModalForm>
+            </ModalForm >
             <Modal
                 open={previewOpen}
                 title={previewTitle}

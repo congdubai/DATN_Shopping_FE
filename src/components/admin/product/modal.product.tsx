@@ -277,7 +277,7 @@ const ModalProduct = (props: IProps) => {
                             label="Ảnh sản phẩm"
                             name="image"
                             rules={[{
-                                required: true,
+                                required: true, message: 'Vui lòng không bỏ trống',
                                 validator: () => {
                                     if (dataImage.length > 0) return Promise.resolve();
                                     else return Promise.reject(false);
