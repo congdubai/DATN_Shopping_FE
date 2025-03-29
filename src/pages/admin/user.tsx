@@ -78,8 +78,6 @@ const UserPage = () => {
             align: 'center',
             width: 150,
             render: (_, entity: IUser) => {
-                console.log("Original Image Name:", entity.avatar);
-                console.log("Decoded Image Name:", decodeURIComponent(entity.avatar));
                 return entity.avatar ? (
                     <img
                         alt="Product Image"

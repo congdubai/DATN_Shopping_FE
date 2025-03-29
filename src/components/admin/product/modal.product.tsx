@@ -87,7 +87,7 @@ const ModalProduct = (props: IProps) => {
 
     const handleRemoveFile = (file: any) => {
         setDataImage([])
-    }   
+    }
 
     async function fetchCategoryList(name: string): Promise<IProductSelect[]> {
         const res = await callFetchCategory(`page=1&size=100&name=/${name}`);

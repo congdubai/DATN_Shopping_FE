@@ -68,8 +68,6 @@ const ProductPage = () => {
             align: 'center',
             width: 150,
             render: (_, entity: IProduct) => {
-                console.log("Original Image Name:", entity.image);
-                console.log("Decoded Image Name:", decodeURIComponent(entity.image));
                 return entity.image ? (
                     <img
                         alt="Product Image"

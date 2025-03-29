@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { fetchProduct } from "../../redux/slice/productSlide";
-import { Button, Card, Carousel, Col, Row, Tag, Typography } from "antd";
+import { Button, Card, Carousel, Col, Pagination, Row, Tag, Typography } from "antd";
 import "styles/main.css"
 import { CarouselRef } from "antd/es/carousel";
 import { CarOutlined, CopyOutlined, EyeOutlined, LeftOutlined, RightOutlined, SearchOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
@@ -21,6 +21,8 @@ const HomePage = () => {
     const navigate = useNavigate();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [dataInit, setDataInit] = useState<IProduct | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
 
     const coupons = [
         {
@@ -44,9 +46,8 @@ const HomePage = () => {
     ];
 
     useEffect(() => {
-        dispatch(fetchProduct({ query: "page=1&size=10" }));
-    }, [dispatch]); // Gọi API khi component render
-
+        dispatch(fetchProduct({ query: `page=${currentPage}&size=${pageSize}` }));
+    }, [dispatch]);
     return (
         <>
             <Row justify="center">
@@ -159,14 +160,14 @@ const HomePage = () => {
                     </div>
 
                     {/* Pagination */}
-                    <Row justify="center" className="mt-4">
-                        {Array.from({ length: meta.pages || 1 }, (_, i) => (
-                            <Col key={i}>
-                                <Link to={`?page=${i}&size=8`} className={meta.page === i ? "active" : ""}>
-                                    {i + 1}
-                                </Link>
-                            </Col>
-                        ))}
+                    <Row justify="center" style={{ marginTop: 10, padding: 10 }}>
+                        <Pagination
+                            current={meta.page}
+                            pageSize={meta.pageSize}
+                            showSizeChanger
+                            total={meta.total}
+                            showTotal={(total, range) => `${range[0]}-${range[1]} trên ${total} rows`}
+                        />
                     </Row>
                 </Col>
             </Row>

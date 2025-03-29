@@ -8,6 +8,7 @@ import { DebounceSelect } from "./debouce.select";
 import { v4 as uuidv4 } from 'uuid';
 import enUS from 'antd/lib/locale/en_US';
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import AddressSelector from "./location.user";
 
 interface IProps {
     openModal: boolean;
@@ -41,22 +42,26 @@ const ModalUser = (props: IProps) => {
     useEffect(() => {
         if (dataInit?.id) {
             if (dataInit.role) {
-                setRoles([
-                    {
-                        label: dataInit.role?.name,
-                        value: dataInit.role?.id,
-                        key: dataInit.role?.id,
-                    }
-                ])
+                setRoles([{
+                    label: dataInit.role?.name,
+                    value: dataInit.role?.id,
+                    key: dataInit.role?.id,
+                }])
             }
             form.setFieldsValue({
                 ...dataInit,
                 role: { label: dataInit.role?.name, value: dataInit.role?.id },
+                address: Array.isArray(dataInit.address)
+                    ? dataInit.address
+                    : dataInit.address?.split(", ") || []
             })
+            console.log("Dữ liệu address trong form:", form.getFieldValue("address"));
+
             setDataImage([{
                 name: dataInit.avatar,
                 uid: uuidv4(),
             }])
+
         }
     }, [dataInit]);
 
@@ -81,8 +86,9 @@ const ModalUser = (props: IProps) => {
     };
 
     const handleRemoveFile = (file: any) => {
-        setDataImage([])
-    }
+        setDataImage([]);
+    };
+
     const beforeUpload = (file: any) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
         if (!isJpgOrPng) {
@@ -104,9 +110,10 @@ const ModalUser = (props: IProps) => {
         }
         if (info.file.status === 'error') {
             setLoadingUpload(false);
-            message.error(info?.file?.error?.event?.message ?? "Đã có lỗi xảy ra khi upload file.")
+            message.error(info?.file?.error?.event?.message ?? "Đã có lỗi xảy ra khi upload file.");
         }
     };
+
     const handleUploadFileImage = async ({ file, onSuccess, onError }: any) => {
         const res = await callUploadSingleFile(file, "avatar");
         if (res && res.data) {
@@ -114,21 +121,29 @@ const ModalUser = (props: IProps) => {
                 name: res.data.fileName,
                 uid: uuidv4()
             }])
-            if (onSuccess) onSuccess('ok')
+            if (onSuccess) onSuccess('ok');
         } else {
             if (onError) {
-                setDataImage([])
+                setDataImage([]);
                 const error = new Error(res.message);
                 onError({ event: error });
             }
         }
     };
 
-
     const submitUser = async (valuesForm: any) => {
         const { name, email, password, address, age, gender, role } = valuesForm;
+        console.log("Giá trị address trước khi submit:", address);
+        // Format address if it's in an array or object
+        const formattedAddress = Array.isArray(address)
+            ? address.join(", ")
+            : (typeof address === "object" && address !== null
+                ? `${address.city}, ${address.district}, ${address.ward}`
+                : String(address)
+            );
+
         if (dataInit?.id) {
-            //update
+            // update
             const user = {
                 id: dataInit.id,
                 name,
@@ -136,44 +151,61 @@ const ModalUser = (props: IProps) => {
                 password,
                 age,
                 gender,
-                address,
+                address: formattedAddress, // Đảm bảo địa chỉ đúng format
                 role: { id: role.value, name: "", description: "" },
-            }
-            const res = await callUpdateUser(user.id, user.name, dataImage[0].name, user.age, user.gender, user.address, user.role);
+            };
+            const res = await callUpdateUser(
+                user.id,
+                user.name,
+                dataImage[0]?.name || "",
+                user.age,
+                user.gender,
+                user.address,
+                user.role
+            );
             if (res.data) {
                 message.success("Cập nhật user thành công");
                 handleReset();
                 reloadTable();
             } else {
                 notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
+                    message: "Có lỗi xảy ra",
+                    description: res.message,
                 });
             }
         } else {
-            //create
             const user = {
                 name,
                 email,
                 password,
                 age,
                 gender,
-                address,
-                role: { id: role.value, name: "", description: "" }
-            }
-            const res = await callCreateUser(user.email, user.name, user.password, dataImage[0].name, user.age, user.gender, user.address, user.role);
+                address: formattedAddress,
+                role: { id: role.value, name: "", description: "" },
+            };
+            const res = await callCreateUser(
+                user.email,
+                user.name,
+                user.password,
+                dataImage[0]?.name || "",
+                user.age,
+                user.gender,
+                user.address,
+                user.role
+            );
             if (res.data) {
                 message.success("Thêm mới user thành công");
                 handleReset();
                 reloadTable();
             } else {
                 notification.error({
-                    message: 'Có lỗi xảy ra',
-                    description: res.message
+                    message: "Có lỗi xảy ra",
+                    description: res.message,
                 });
             }
         }
-    }
+    };
+
     async function fetchRoleList(name: string): Promise<ICompanySelect[]> {
         const res = await callFetchRole(`page=1&size=100&name=/${name}`);
         if (res && res.data) {
@@ -182,8 +214,8 @@ const ModalUser = (props: IProps) => {
                 return {
                     label: item.name as string,
                     value: item.id as string
-                }
-            })
+                };
+            });
             return temp;
         } else return [];
     }
@@ -193,7 +225,7 @@ const ModalUser = (props: IProps) => {
         setDataInit(null);
         setRoles([]);
         setOpenModal(false);
-    }
+    };
 
     return (
         <>
@@ -217,6 +249,10 @@ const ModalUser = (props: IProps) => {
                 initialValues={dataInit?.id ? {
                     ...dataInit,
                     role: { label: dataInit.role?.name, value: dataInit.role?.id },
+                    address: Array.isArray(dataInit.address)
+                        ? dataInit.address
+                        : dataInit.address?.split(", ") || []
+
                 } : {}}
             >
                 <Row gutter={16}>
@@ -261,10 +297,16 @@ const ModalUser = (props: IProps) => {
                     <Col lg={6} md={6} sm={24} xs={24}>
                         <ProFormText
                             label="Số điện thoại"
-                            name="address"
+                            name="phone"
                             placeholder="Nhập số điện thoại"
                         />
                     </Col>
+                    <Col lg={12} md={12} sm={24} xs={24}>
+                        <ProForm.Item label="Địa chỉ" name="address">
+                            <AddressSelector onChange={(value: string[]) => form.setFieldsValue({ address: value })} />
+                        </ProForm.Item>
+                    </Col>
+
                     <Col lg={6} md={6} sm={24} xs={24}>
                         <ProFormSelect
                             name="gender"
@@ -302,20 +344,12 @@ const ModalUser = (props: IProps) => {
                         </ProForm.Item>
 
                     </Col>
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormTextArea
-                            label="Địa chỉ"
-                            name="address"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập địa chỉ"
-                        />
-                    </Col>
+
                     <Col span={8}>
                         <Form.Item
                             labelCol={{ span: 24 }}
                             label="Avatar"
                             name="avatar"
-                            style={{ marginTop: -30 }}
                             rules={[{
                                 required: true,
                                 validator: () => {
@@ -326,7 +360,7 @@ const ModalUser = (props: IProps) => {
                         >
                             <ConfigProvider locale={enUS}>
                                 <Upload
-                                    name="avatar"
+                                    name="image"
                                     listType="picture-card"
                                     className="avatar-uploader"
                                     maxCount={1}
@@ -370,6 +404,7 @@ const ModalUser = (props: IProps) => {
                 <img alt="example" style={{ width: '100%' }} src={previewImage} />
             </Modal>
         </>
-    )
-}
+    );
+};
+
 export default ModalUser;
