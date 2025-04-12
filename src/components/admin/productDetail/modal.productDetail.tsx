@@ -1,4 +1,4 @@
-import { callCreateProduct, callCreateProductDetail, callFetchCategory, callFetchColor, callFetchProduct, callFetchSize, callUpdateProduct, callUpdateProductDetail, callUploadSingleFile } from "@/config/api";
+import { callCreateProduct, callCreateProductDetail, callFetchCategory, callFetchColor, callFetchProduct, callFetchProductDetailByColor, callFetchSize, callUpdateProduct, callUpdateProductDetail, callUploadSingleFile } from "@/config/api";
 import { useAppDispatch } from "@/redux/hooks";
 import { IProduct, IProductDetail } from "@/types/backend";
 import { ModalForm, ProCard, ProForm, ProFormDigit, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
@@ -30,7 +30,6 @@ interface IProductImage {
 
 const ModalProductDetail = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
-    const dispatch = useAppDispatch();
     const [form] = Form.useForm();
     const [dataImage, setDataImage] = useState<IProductImage[]>([]);
     const [colors, setColors] = useState<IProductSelect[]>([]);
@@ -41,6 +40,8 @@ const ModalProductDetail = (props: IProps) => {
     const [previewImage, setPreviewImage] = useState('');
     const [previewTitle, setPreviewTitle] = useState('');
     const [value, setValue] = useState<string>("");
+    const [isColorExists, setIsColorExists] = useState(false);
+
 
     useEffect(() => {
         if (dataInit?.id) {
@@ -82,7 +83,11 @@ const ModalProductDetail = (props: IProps) => {
                 uid: uuidv4(),
             }])
         }
-    }, [dataInit]);
+        if (isColorExists) {
+            console.log("check data ", dataImage[0].name)
+        }
+    }, [dataInit, isColorExists]);
+
     async function fetchProductList(name: string): Promise<IProductSelect[]> {
         const res = await callFetchProduct(`page=1&size=100&name=/${name}`);
         if (res && res.data) {
@@ -145,6 +150,35 @@ const ModalProductDetail = (props: IProps) => {
         reader.readAsDataURL(img);
     };
 
+    const handleColorChange = async (colorValue: any) => {
+        setIsColorExists(false);
+        const product = form.getFieldValue("product");
+
+        try {
+            const image = await callFetchProductDetailByColor(String(product.value), String(colorValue));
+            console.log("check image ", image);
+            const imageObj = {
+                name: image,
+                uid: uuidv4(),
+            };
+
+            // Cập nhật ảnh và form
+            setDataImage([imageObj]);
+
+            form.setFieldsValue({
+                color: { label: "", value: colorValue },
+                imageDetail: imageObj.name
+            });
+
+            setIsColorExists(true);
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            message.error('Đã xảy ra lỗi khi tải dữ liệu.');
+        }
+    };
+
+
+
     const handleRemoveFile = (file: any) => {
         setDataImage([])
     }
@@ -157,6 +191,7 @@ const ModalProductDetail = (props: IProps) => {
         setSizes([]);
         setColors([]);
         setValue("");
+        setDataImage([]);
     }
 
     const beforeUpload = (file: any) => {
@@ -183,20 +218,25 @@ const ModalProductDetail = (props: IProps) => {
             message.error(info?.file?.error?.event?.message ?? "Đã có lỗi xảy ra khi upload file.")
         }
     };
+
     const handleUploadFileImage = async ({ file, onSuccess, onError }: any) => {
-        const res = await callUploadSingleFile(file, "product");
-        if (res && res.data) {
-            setDataImage([{
-                name: res.data.fileName,
-                uid: uuidv4()
-            }])
-            if (onSuccess) onSuccess('ok')
-        } else {
-            if (onError) {
-                setDataImage([])
-                const error = new Error(res.message);
-                onError({ event: error });
+        try {
+            setLoadingUpload(true);
+            const res = await callUploadSingleFile(file, "product");
+            if (res && res.data) {
+                setDataImage([{
+                    name: res.data.fileName,
+                    uid: uuidv4()
+                }]);
+                setLoadingUpload(false);
+                onSuccess?.('ok');
+            } else {
+                throw new Error(res.message);
             }
+        } catch (err: any) {
+            setLoadingUpload(false);
+            setDataImage([]);
+            onError?.({ event: err });
         }
     };
 
@@ -271,55 +311,9 @@ const ModalProductDetail = (props: IProps) => {
                     product: { label: dataInit.product?.name, value: dataInit.product?.id },
                     size: { label: dataInit.size?.name, value: dataInit.size?.id },
                 } : {}}
+
             >
                 <Row gutter={16}>
-                    <Col span={24}>
-                        <Form.Item
-                            style={{ marginTop: 10 }}
-                            labelCol={{ span: 24 }}
-                            label="Ảnh sản phẩm"
-                            name="imageDetail"
-                        >
-                            <ConfigProvider locale={enUS}>
-                                <Upload
-                                    name="imageDetail"
-                                    listType="picture-card"
-                                    className="avatar-uploader"
-                                    maxCount={1}
-                                    multiple={false}
-                                    customRequest={handleUploadFileImage}
-                                    beforeUpload={beforeUpload}
-                                    onChange={handleChange}
-                                    onRemove={(file) => handleRemoveFile(file)}
-                                    onPreview={handlePreview}
-                                    defaultFileList={
-                                        dataInit?.id ?
-                                            [
-                                                {
-                                                    uid: uuidv4(),
-                                                    name: dataInit?.imageDetail ?? "",
-                                                    status: 'done',
-                                                    url: `${import.meta.env.VITE_BACKEND_URL}/storage/product/${dataInit?.imageDetail}`,
-                                                }
-                                            ] : []
-                                    }
-                                >
-                                    <div>
-                                        {loadingUpload ? <LoadingOutlined /> : <PlusOutlined />}
-                                        <div style={{ marginTop: 8 }}>Upload</div>
-                                    </div>
-                                </Upload>
-                            </ConfigProvider>
-                        </Form.Item>
-                    </Col>
-                    <Col lg={24} md={24} sm={24} xs={24}>
-                        <ProFormDigit
-                            label="Số lượng"
-                            name="quantity"
-                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập số lượng"
-                        />
-                    </Col>
                     <Col lg={24} md={24} sm={24} xs={24}>
                         <ProForm.Item
                             name="product"
@@ -356,15 +350,15 @@ const ModalProductDetail = (props: IProps) => {
                                 value={colors}
                                 placeholder="Chọn màu sắc"
                                 fetchOptions={fetchColorList}
-                                onChange={(newValue: any) => {
+                                onChange={async (newValue: any) => {
                                     if (newValue && newValue.value) {
                                         setColors(newValue as IProductSelect[]);
+                                        await handleColorChange(newValue.value);
                                     }
                                 }}
                                 style={{ width: '100%' }}
                             />
                         </ProForm.Item>
-
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>
                         <ProForm.Item
@@ -389,17 +383,70 @@ const ModalProductDetail = (props: IProps) => {
                         </ProForm.Item>
 
                     </Col>
+                    <Col lg={24} md={24} sm={24} xs={24}>
+                        <ProFormDigit
+                            label="Số lượng"
+                            name="quantity"
+                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                            placeholder="Nhập số lượng"
+                        />
+                    </Col>
+                    <Col span={24}>
+                        <Form.Item
+                            labelCol={{ span: 24 }}
+                            label="Ảnh sản phẩm"
+                            name="imageDetail"
+                            rules={[{
+                                required: true, message: 'Vui lòng không bỏ trống',
+                                validator: () => {
+                                    if (dataImage.length > 0) return Promise.resolve();
+                                    else return Promise.reject(false);
+                                }
+                            }]}
+                        >
+                            <ConfigProvider locale={enUS}>
+                                <Upload
+                                    name="imageDetail"
+                                    listType="picture-card"
+                                    className="avatar-uploader"
+                                    maxCount={1}
+                                    multiple={false}
+                                    customRequest={handleUploadFileImage}
+                                    beforeUpload={beforeUpload}
+                                    onChange={handleChange}
+                                    onRemove={(file) => handleRemoveFile(file)}
+                                    onPreview={handlePreview}
+                                    fileList={
+                                        dataInit?.id ? [
+                                            {
+                                                uid: uuidv4(),
+                                                name: dataInit?.imageDetail ?? "",
+                                                status: 'done',
+                                                url: `${import.meta.env.VITE_BACKEND_URL}/storage/product/${dataInit?.imageDetail ?? ""}`,
+                                            }
+                                        ] : dataImage.length > 0 ? [
+                                            {
+                                                uid: dataImage[0].uid,
+                                                name: dataImage[0]?.name ?? "",
+                                                status: "done",
+                                                url: `${import.meta.env.VITE_BACKEND_URL}/storage/product/${dataImage[0]?.name ?? ""}`,
+                                            },
+                                        ] : []
+                                    }
+
+                                >
+                                    <div>
+                                        {loadingUpload ? <LoadingOutlined /> : <PlusOutlined />}
+                                        <div style={{ marginTop: 8 }}>Upload</div>
+                                    </div>
+                                </Upload>
+                            </ConfigProvider>
+                        </Form.Item>
+
+                    </Col>
                 </Row>
             </ModalForm >
-            <Modal
-                open={previewOpen}
-                title={previewTitle}
-                footer={null}
-                onCancel={() => setPreviewOpen(false)}
-                style={{ zIndex: 1500 }}
-            >
-                <img alt="example" style={{ width: '100%' }} src={previewImage} />
-            </Modal>
+
         </>
     )
 }

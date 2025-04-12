@@ -112,7 +112,7 @@ const Navbar: React.FC = () => {
                             <Col>
                                 <Link to="/contact" style={{ color: "white" }}>
                                     <Flex vertical align="center">
-                                        <EnvironmentOutlined style={{ fontSize: "24px" }} />
+                                        <img style={{ height: 24, width: 24, imageRendering: "crisp-edges" }} src={`${import.meta.env.VITE_BACKEND_URL}/storage/slide/location.png`} alt="Logo" />
                                         <p style={{ marginTop: "11px" }}>Cửa hàng</p>
                                     </Flex>
                                 </Link>

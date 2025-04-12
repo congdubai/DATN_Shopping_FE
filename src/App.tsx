@@ -18,6 +18,7 @@ import SizePage from "./pages/admin/size";
 import ProductDetailPage from "./pages/admin/productDetail";
 import NotFound from "./components/share/not.found";
 import HomePage from "./pages/client/home";
+import CartPage from "./pages/client/cart";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -64,6 +65,11 @@ export default function App() {
       errorElement: <NotFound />,
       children: [
         { index: true, element: <HomePage /> },
+        {
+          path: "cart",
+          element:
+            <CartPage />
+        },
       ],
     },
     {

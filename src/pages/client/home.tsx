@@ -50,7 +50,7 @@ const HomePage = () => {
     }, [dispatch]);
     return (
         <>
-            <Row justify="center">
+            <Row justify="center" style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
                 <Col span={19} style={{ padding: "0 20px" }}>
                     <Row justify="center">
                         <Col className="carousel-container" span={24} style={{ marginTop: "170px", position: "relative" }}>
@@ -163,7 +163,7 @@ const HomePage = () => {
                     </div>
 
                     {/* Pagination */}
-                    <Row justify="center" style={{ marginTop: 10, padding: 10 }}>
+                    <Row justify="center" style={{ marginTop: 10, padding: 10, marginBottom: 15 }}>
                         <Pagination
                             current={meta.page}
                             pageSize={meta.pageSize}

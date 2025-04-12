@@ -158,3 +158,10 @@ export const callDeleteProductDetail = (id: string) => {
 export const callFetchProductDetailById = (id: string) => {
     return axios.get<IBackendRes<IProductDetail>>(`/api/v1/productDetails/${id}`);
 }
+export const callFetchProductDetailByColor = (productId: string, colorId: string) => {
+    return axios.get<string>(
+        `/api/v1/productDetailByColor/${productId}/${colorId}`
+    );
+};
+
+

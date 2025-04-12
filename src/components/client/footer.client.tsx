@@ -7,7 +7,7 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const AppFooter: React.FC = () => {
     return (
-        <Row style={{ background: "#000", color: "#ccc", padding: "20px 0", maxWidth: "100%", overflow: "hidden", marginTop: 20 }}>
+        <Row style={{ background: "#000", color: "#ccc", padding: "20px 0", maxWidth: "100%", overflow: "hidden" }}>
             {/* Phần đầu với logo và mạng xã hội */}
             <Col span={24} style={{ paddingBottom: 16, borderBottom: "1px solid rgba(226, 175, 24, 0.5)" }}>
                 <Row justify="space-around" align="middle">
@@ -37,7 +37,7 @@ const AppFooter: React.FC = () => {
                         <Text style={{ color: "white" }}>Mã QR Donate</Text>
                     </Col>
                     <Col xs={24} md={14} style={{ textAlign: "center" }}>
-                        <img src={`${backendUrl}/storage/slide/location.png`} alt="Logo Steaven"
+                        <img src={`${backendUrl}/storage/slide/myLocation.png`} alt="Logo Steaven"
                             style={{ width: "350px", height: "150px", display: "block", margin: "0 auto", borderRadius: 5 }} />
                     </Col>
                 </Row>

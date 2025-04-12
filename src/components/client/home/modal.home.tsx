@@ -1,9 +1,10 @@
 import { fetchProductDetailById } from "@/redux/slice/productDetailSlide";
-import { Modal, Button } from "antd";
+import { Modal, Button, Flex } from "antd";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IProductDetail } from "@/types/backend";
 import { motion } from "framer-motion";
+import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 
 interface IProps {
     isOpenModal: boolean;
@@ -59,7 +60,7 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                 {selectedImage ? (
                     <div style={{ width: "50%", height: 420, borderRadius: 10, overflow: "hidden" }}>
                         <motion.img
-                            key={selectedImage} // Khi `selectedImage` thay đổi, ảnh sẽ trượt
+                            key={selectedImage}
                             src={`${backendUrl}/storage/product/${selectedImage}`}
                             alt="Product Image"
                             style={{
@@ -68,10 +69,10 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                                 objectFit: "cover",
                                 borderRadius: 10,
                             }}
-                            initial={{ x: 100, opacity: 0 }} // Bắt đầu từ bên phải, ẩn
-                            animate={{ x: 0, opacity: 1 }} // Trượt vào
-                            exit={{ x: -100, opacity: 0 }} // Trượt ra khi đổi ảnh
-                            transition={{ duration: 0.4 }} // Thời gian trượt 0.4s
+                            initial={{ x: 100, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            exit={{ x: -100, opacity: 0 }}
+                            transition={{ duration: 0.4 }}
                         />
                     </div>
                 ) : (
@@ -130,11 +131,11 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                                     key={color}
                                     onClick={() => setSelectedColor(color)}
                                     style={{
-                                        width: 35,
+                                        width: 31,
                                         height: 30,
-                                        borderRadius: "10%",
+                                        borderRadius: "50%",
                                         backgroundColor: colorCode,
-                                        border: isSelected ? "2px solid #e4393c" : "1px solid #ccc",
+                                        border: isSelected ? "2px solid black" : "1px solid #ccc",
                                         cursor: "pointer"
                                     }}
                                 />
@@ -171,12 +172,29 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 20 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                            <Button danger onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}>-</Button>
-                            <span>{quantity}</span>
-                            <Button danger onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
-                        </div>
-                        <Button type="primary" style={{ backgroundColor: "black", color: "white" }}>
+                        <Flex
+                            align="center"
+                            justify="space-between"
+                            style={{
+                                border: "1px solid #ccc",
+                                borderRadius: "5px",
+                                padding: "5px 10px",
+                                display: "inline-flex",
+                                width: "120px",
+                            }}
+                        >
+                            <Button
+                                type="text"
+                                icon={<MinusOutlined style={{ fontSize: 16 }} />}
+                            />
+                            <span style={{ fontSize: "16px", fontWeight: "bold" }}>1</span>
+                            <Button
+                                type="text"
+                                icon={<PlusOutlined style={{ fontSize: 16 }} />}
+                            />
+                        </Flex>
+
+                        <Button type="primary" style={{ backgroundColor: "black", color: "white", height: 40, width: 150 }}>
                             Thêm vào giỏ
                         </Button>
                     </div>
