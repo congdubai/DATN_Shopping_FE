@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Breadcrumb, Button, Card, Col, Divider, Input, Row } from "antd";
+import { Breadcrumb, Button, Card, Col, Divider, Input, notification, Row } from "antd";
 import { callDeleteCartDetail, callFetchCartDetail } from "@/config/api";
 import { useLocalCart } from "@/components/client/cart/useLocalCart";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { setRedirectPath } from "@/redux/slice/accountSlide";
+import { useDispatch } from "react-redux";
 
 
 const CartPage = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { cartItems, updateQuantity, removeItem, setCartItems } = useLocalCart();
     const [loading, setLoading] = useState(false);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         updateCartData();
@@ -49,7 +52,7 @@ const CartPage = () => {
     };
 
     const handleCheckout = () => {
-        navigate("/checkout");  
+        navigate("/checkout");
     };
 
     const handleDelete = async (productId: string, colorName: string, sizeName: string) => {
@@ -259,7 +262,21 @@ const CartPage = () => {
                                 />
 
                                 <Button type="primary" block style={{ backgroundColor: "black", fontFamily: "'Geologica', sans-serif", height: 40, borderRadius: 2, marginTop: 15 }}
-                                    onClick={handleCheckout}
+                                    onClick={() => {
+                                        const accessToken = localStorage.getItem('access_token');
+
+                                        if (!accessToken) {
+                                            notification.error({
+                                                message: 'Thông báo',
+                                                description: 'Vui lòng đăng nhập để tiếp tục!',
+                                                placement: 'topRight',
+                                            });
+                                            dispatch(setRedirectPath(location.pathname));
+                                            navigate('/login');
+                                        } else {
+                                            handleCheckout();
+                                        }
+                                    }}
                                 >
                                     THANH TOÁN NGAY
                                 </Button>

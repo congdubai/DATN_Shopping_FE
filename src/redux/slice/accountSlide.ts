@@ -15,6 +15,7 @@ interface IState {
     isLoading: boolean;
     isRefreshToken: boolean;
     errorRefreshToken: string;
+    redirectPath?: string;
     user: {
         id: string;
         email: string;
@@ -82,6 +83,12 @@ export const accountSlide = createSlice({
             state.isRefreshToken = action.payload?.status ?? false;
             state.errorRefreshToken = action.payload?.message ?? "";
         }
+        , setRedirectPath: (state, action) => {
+            state.redirectPath = action.payload;
+        },
+        clearRedirectPath: (state) => {
+            state.redirectPath = '';
+        }
 
     },
     extraReducers: (builder) => {
@@ -117,7 +124,8 @@ export const accountSlide = createSlice({
 });
 
 export const {
-    setActiveMenu, setUserLoginInfo, setLogoutAction, setRefreshTokenAction
+    setActiveMenu, setUserLoginInfo, setLogoutAction, setRefreshTokenAction, setRedirectPath,
+    clearRedirectPath
 } = accountSlide.actions;
 
 export default accountSlide.reducer;

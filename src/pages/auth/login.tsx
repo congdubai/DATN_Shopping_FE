@@ -4,16 +4,18 @@ import { setUserLoginInfo } from '@/redux/slice/accountSlide';
 import { Button, Divider, Form, Input, message, notification } from 'antd';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from 'styles/auth.module.scss';
 
 const LoginPage = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [isSubmit, setIsSubmit] = useState(false);
     const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
     let location = useLocation();
     let params = new URLSearchParams(location.search);
     const callback = params?.get("callback");
+    const redirectPath = useAppSelector(state => state.account.redirectPath);
 
 
     const getCartFromLocalStorage = () => {
@@ -55,13 +57,12 @@ const LoginPage = () => {
         setIsSubmit(false);
 
         if (res?.data) {
-            // Lưu token và user
             localStorage.setItem('access_token', res.data.access_token);
             dispatch(setUserLoginInfo(res.data.user));
             await syncCartWithServer();
+            const isAdmin = res.data.user?.role?.name === 'ADMIN';
 
-            // Luôn redirect dù sync lỗi hay thành công
-            window.location.href = callback ? callback : '/admin/user';
+            window.location.href = redirectPath || (isAdmin ? '/admin/user' : '/');
         } else {
             notification.error({
                 message: "Có lỗi xảy ra",
@@ -69,7 +70,9 @@ const LoginPage = () => {
                 duration: 5
             });
         }
-    }
+
+
+    };
 
 
     return (
