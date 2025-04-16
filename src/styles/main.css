@@ -387,3 +387,17 @@
     margin-top: 10px;
     font-size: 16px;
 }
+
+.ant-radio-checked .ant-radio-inner {
+    background-color: black !important;
+    border-color: black !important;
+}
+
+.ant-radio-inner:hover {
+    border-color: black !important;
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.ant-radio-inner {
+    border-color: black !important;
+}

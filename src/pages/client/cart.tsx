@@ -3,6 +3,7 @@ import axios from "axios";
 import { Breadcrumb, Button, Card, Col, Divider, Input, Row } from "antd";
 import { callDeleteCartDetail, callFetchCartDetail } from "@/config/api";
 import { useLocalCart } from "@/components/client/cart/useLocalCart";
+import { Navigate, useNavigate } from "react-router-dom";
 
 
 const CartPage = () => {
@@ -10,15 +11,16 @@ const CartPage = () => {
     const { cartItems, updateQuantity, removeItem, setCartItems } = useLocalCart();
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        updateCartData();
+    }, []);
+
     const totalPrice = cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
     );
-    useEffect(() => {
-        // Chỉ fetch cart 1 lần khi component mount
-        updateCartData();
-    }, []);
 
+    const navigate = useNavigate();
     const updateCartData = async () => {
         const token = localStorage.getItem("access_token");
 
@@ -44,6 +46,10 @@ const CartPage = () => {
                 setLoading(false);
             }
         }
+    };
+
+    const handleCheckout = () => {
+        navigate("/checkout");  
     };
 
     const handleDelete = async (productId: string, colorName: string, sizeName: string) => {
@@ -252,8 +258,9 @@ const CartPage = () => {
                                         </div>}
                                 />
 
-
-                                <Button type="primary" block style={{ backgroundColor: "black", fontFamily: "'Geologica', sans-serif", height: 40, borderRadius: 2, marginTop: 15 }}>
+                                <Button type="primary" block style={{ backgroundColor: "black", fontFamily: "'Geologica', sans-serif", height: 40, borderRadius: 2, marginTop: 15 }}
+                                    onClick={handleCheckout}
+                                >
                                     THANH TOÁN NGAY
                                 </Button>
                                 <Button type="link" block style={{

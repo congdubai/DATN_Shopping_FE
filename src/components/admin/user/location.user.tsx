@@ -40,7 +40,9 @@ const AddressSelector: React.FC<AddressSelectorProps & { value?: string[] }> = (
             placeholder="Chọn địa chỉ"
             onChange={(val) => onChange(val as string[])}
             changeOnSelect
-            style={{ width: "100%" }}
+            style={{
+                width: "100%", height: 50,
+            }}
             value={value || []}
         />
     );

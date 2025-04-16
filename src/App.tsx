@@ -19,6 +19,8 @@ import ProductDetailPage from "./pages/admin/productDetail";
 import NotFound from "./components/share/not.found";
 import HomePage from "./pages/client/home";
 import CartPage from "./pages/client/cart";
+import CheckOut from "./pages/client/checkout";
+import CheckOutPage from "./pages/client/checkout";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,6 +71,11 @@ export default function App() {
           path: "cart",
           element:
             <CartPage />
+        },
+        {
+          path: "checkout",
+          element:
+            <CheckOutPage />
         },
       ],
     },

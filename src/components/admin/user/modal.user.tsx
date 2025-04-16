@@ -55,7 +55,6 @@ const ModalUser = (props: IProps) => {
                     ? dataInit.address
                     : dataInit.address?.split(", ") || []
             })
-            console.log("Dữ liệu address trong form:", form.getFieldValue("address"));
 
             setDataImage([{
                 name: dataInit.avatar,
