@@ -14,6 +14,11 @@ const CartPage = () => {
         (sum, item) => sum + item.price * item.quantity,
         0
     );
+    useEffect(() => {
+        // Chỉ fetch cart 1 lần khi component mount
+        updateCartData();
+    }, []);
+
     const updateCartData = async () => {
         const token = localStorage.getItem("access_token");
 
@@ -23,7 +28,16 @@ const CartPage = () => {
                 const res = await axios.get(`${backendUrl}/api/v1/cart`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setCartItems(res.data.data);
+                // Gán dữ liệu cart lấy từ server vào localStorage luôn
+                const serverCart = res.data.data;
+                setCartItems(serverCart);
+                localStorage.setItem("cart", JSON.stringify(serverCart));
+
+                // Cập nhật cart_quantity từ server
+                const totalQuantity = serverCart.reduce((sum: number, item: any) => sum + 1, 0);
+                localStorage.setItem("cart_quantity", totalQuantity.toString());
+                window.dispatchEvent(new Event("cartQuantityChanged"));
+
                 setLoading(false);
             } catch (err) {
                 console.error("Error fetching cart data:", err);
@@ -31,10 +45,6 @@ const CartPage = () => {
             }
         }
     };
-
-    useEffect(() => {
-        updateCartData();  // Gọi API khi trang được tải hoặc người dùng đăng nhập
-    }, []);
 
     const handleDelete = async (productId: string, colorName: string, sizeName: string) => {
         const token = localStorage.getItem("access_token");
