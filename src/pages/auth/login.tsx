@@ -1,9 +1,7 @@
-import { callLogin } from '@/config/api';
+import { callAddToCart, callLogin } from '@/config/api';
 import { useAppSelector } from '@/redux/hooks';
 import { setUserLoginInfo } from '@/redux/slice/accountSlide';
 import { Button, Divider, Form, Input, message, notification } from 'antd';
-import { values } from 'lodash';
-import { assert } from 'node:console';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link, useLocation } from 'react-router-dom';
@@ -17,33 +15,63 @@ const LoginPage = () => {
     let params = new URLSearchParams(location.search);
     const callback = params?.get("callback");
 
-    useEffect(() => {
-        //đã login => redirect to '/'
-        if (isAuthenticated) {
-            // navigate('/');
-            window.location.href = '/admin/user';
+
+    const getCartFromLocalStorage = () => {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        return cart;
+    };
+
+    const syncCartWithServer = async () => {
+        const cart = getCartFromLocalStorage();
+
+        try {
+            for (const item of cart) {
+                const { productId, colorId, sizeId, quantity } = item;
+                await callAddToCart(productId, sizeId, colorId, quantity);
+            }
+
+            localStorage.removeItem('cart');
+            notification.success({
+                message: 'Đồng bộ giỏ hàng',
+                description: 'Giỏ hàng đã được đồng bộ lên server!',
+            });
+        } catch (err) {
+            console.error('Lỗi khi đồng bộ giỏ hàng:', err);
+            notification.error({
+                message: 'Lỗi đồng bộ',
+                description: 'Có lỗi xảy ra khi đồng bộ giỏ hàng!',
+            });
+            throw err;
         }
-    }, [])
+
+    };
+
+
     const onFinish = async (values: any) => {
         const { username, password } = values;
         setIsSubmit(true);
+
         const res = await callLogin(username, password);
         setIsSubmit(false);
+
         if (res?.data) {
+            // Lưu token và user
             localStorage.setItem('access_token', res.data.access_token);
-            dispatch(setUserLoginInfo(res.data.user))
-            message.success('Đăng nhập tài khoản thành công!');
+            dispatch(setUserLoginInfo(res.data.user));
+            await syncCartWithServer();
+
+            // Luôn redirect dù sync lỗi hay thành công
             window.location.href = callback ? callback : '/admin/user';
         } else {
             notification.error({
                 message: "Có lỗi xảy ra",
-                description:
-                    res.message && Array.isArray(res.message) ? res.message[0] : res.message,
+                description: res.message && Array.isArray(res.message) ? res.message[0] : res.message,
                 duration: 5
-            })
+            });
         }
-
     }
+
+
     return (
         <div className={styles["login-page"]}>
             <main className={styles.main}>

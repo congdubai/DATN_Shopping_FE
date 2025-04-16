@@ -1,10 +1,11 @@
 import { fetchProductDetailById } from "@/redux/slice/productDetailSlide";
-import { Modal, Button, Flex } from "antd";
+import { Modal, Button, Flex, message, notification } from "antd";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IProductDetail } from "@/types/backend";
 import { motion } from "framer-motion";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
+import { callAddToCart } from "@/config/api";
 
 interface IProps {
     isOpenModal: boolean;
@@ -22,37 +23,174 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
 
     useEffect(() => {
         if (productId) {
-            dispatch(fetchProductDetailById({ productId })).then((res) =>
-                console.log("Kết quả API trả về:", res));
+            dispatch(fetchProductDetailById({ productId }))
         }
-    }, [productId, dispatch]);
+        if (!isOpenModal) {
+            setQuantity(1);
+        }
+    }, [productId, dispatch, isOpenModal]);
 
-    // Kiểm tra nếu productDetails chưa load
+    const [quantity, setQuantity] = useState(1);
+
+    const increase = () => {
+        setQuantity(prev => (prev < selectedProductQuantity ? prev + 1 : prev));
+    };
+
+    const decrease = () => {
+        setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+    };
     const colors = productDetails.length ? [...new Set(productDetails.map((p) => p.color?.name))] : [];
     const sizes = productDetails.length ? [...new Set(productDetails.map((p) => p.size?.name))] : [];
 
-    // State chọn màu & kích thước
     const [selectedColor, setSelectedColor] = useState<string | undefined>(colors[0]);
     const [selectedSize, setSelectedSize] = useState<string | undefined>(sizes[0]);
-    const [quantity, setQuantity] = useState<number>(1);
 
     useEffect(() => {
         if (colors.length > 0) setSelectedColor(colors[0]);
         if (sizes.length > 0) setSelectedSize(sizes[0]);
     }, [productDetails]);
 
-    // Lấy sản phẩm với màu và kích thước đã chọn
     const selectedProduct = productDetails.find(
         (p) => p.color?.name === selectedColor && p.size?.name === selectedSize
     );
-
-    // Lấy số lượng của sản phẩm đã chọn
     const selectedProductQuantity = selectedProduct?.quantity || 0;
-
-    // Kiểm tra nếu có hàng
     const isInStock = selectedProductQuantity > 0;
 
     const selectedImage = selectedProduct?.imageDetail || "";
+
+
+    const updateLocalStorageCart = (item: {
+        productId: string;
+        colorId: string;
+        sizeId: string;
+        quantity: number;
+    }) => {
+        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+        const foundIndex = existingCart.findIndex(
+            (p: any) =>
+                String(p.productId) === String(item.productId) &&
+                String(p.colorId) === String(item.colorId) &&
+                String(p.sizeId) === String(item.sizeId)
+        );
+
+        if (foundIndex !== -1) {
+            return;
+        } else {
+            const newItem = {
+                ...item,
+                productName: selectedProduct?.product?.name || "",
+                productImage: selectedProduct?.imageDetail || "",
+                price: selectedProduct?.product?.price || 0,
+                colorName: selectedProduct?.color?.name || "",
+                sizeName: selectedProduct?.size?.name || "",
+            };
+            existingCart.push(newItem);
+        }
+
+        localStorage.setItem("cart", JSON.stringify(existingCart));
+
+        const totalQuantity = existingCart.reduce((sum: number, item: any) => sum + 1, 0);
+        localStorage.setItem("cart_quantity", totalQuantity.toString());
+        window.dispatchEvent(new Event("cartQuantityChanged"));
+    };
+
+    const updateCartQuantityInLocalStorage = (cartItem: { productId: string, sizeId: string, colorId: string, quantity: number }) => {
+        const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+        const foundIndex = existingCart.findIndex(
+            (item: any) =>
+                String(item.productId) === String(cartItem.productId) &&
+                String(item.colorId) === String(cartItem.colorId) &&
+                String(item.sizeId) === String(cartItem.sizeId)
+        );
+
+        if (foundIndex !== -1) {
+            return;
+        }
+
+        // Nếu chưa có sản phẩm trong giỏ, thêm sản phẩm vào giỏ hàng
+        existingCart.push({
+            ...cartItem,
+            productName: selectedProduct?.product?.name || "",
+            productImage: selectedProduct?.imageDetail || "",
+            price: selectedProduct?.product?.price || 0,
+            colorName: selectedProduct?.color?.name || "",
+            sizeName: selectedProduct?.size?.name || "",
+            quantity: 1,
+        });
+
+        // Lưu giỏ hàng vào localStorage
+        localStorage.setItem("cart", JSON.stringify(existingCart));
+
+        // Cập nhật tổng số lượng sản phẩm trong giỏ hàng
+        const totalQuantity = existingCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
+        localStorage.setItem("cart_quantity", totalQuantity.toString());
+
+        // Gửi sự kiện cập nhật giỏ hàng
+        window.dispatchEvent(new Event("cartQuantityChanged"));
+    };
+
+    const handleAddToCart = async () => {
+        if (!selectedProduct) {
+            message.error("Vui lòng chọn đầy đủ màu và kích thước!");
+            return;
+        }
+
+        // Tạo đối tượng giỏ hàng
+        const cartItem = {
+            productId: selectedProduct.product!.id,
+            sizeId: selectedProduct.size!.id,
+            colorId: selectedProduct.color!.id,
+            quantity: quantity,
+        };
+
+        // Kiểm tra xem người dùng đã đăng nhập hay chưa
+        const isLoggedIn = Boolean(localStorage.getItem('access_token'));  // Kiểm tra token
+
+        if (isLoggedIn) {
+            // Nếu đã đăng nhập, gọi API để thêm sản phẩm vào giỏ hàng
+            try {
+                const res = await callAddToCart(
+                    selectedProduct.product!.id,
+                    selectedProduct.size!.id.toString(),
+                    selectedProduct.color!.id.toString(),
+                    quantity.toString()
+                );
+
+                if (res.statusCode === 200) {
+                    setIsOpenModal(false);
+                    notification.success({
+                        message: 'Thành công',
+                        description: 'Bạn đã thêm sản phẩm vào giỏ!',
+                        placement: 'topRight',
+                    });
+
+                    // Cập nhật lại số lượng giỏ hàng trong localStorage sau khi đăng nhập
+                    updateCartQuantityInLocalStorage(cartItem);
+                } else {
+                    notification.error({
+                        message: 'Thất bại',
+                        description: 'Thêm giỏ hàng thất bại!',
+                        placement: 'topRight',
+                    });
+                }
+            } catch (err) {
+                console.error("Lỗi thêm vào giỏ:", err);
+                message.error("Đã xảy ra lỗi khi thêm vào giỏ hàng!");
+            }
+        } else {
+            updateLocalStorageCart(cartItem);
+            setIsOpenModal(false);
+            notification.success({
+                message: 'Thành công',
+                description: 'Bạn đã thêm sản phẩm vào giỏ!',
+                placement: 'topRight',
+            });
+        }
+    };
+
+
 
     return (
         <Modal open={isOpenModal} onCancel={() => setIsOpenModal(false)} footer={null} width={800}>
@@ -96,10 +234,10 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                 )}
 
                 {/* Thông tin sản phẩm */}
-                <div style={{ marginLeft: 20 }}>
+                <div style={{ marginLeft: 20, marginRight: 10, width: "50%" }}>
                     <h2>{productDetails[0]?.product?.name || "Sản phẩm"}</h2>
                     <p style={{ marginTop: 5 }}>
-                        <strong>SKU: </strong> {selectedProduct?.id}{" "}
+                        <strong>SLg: </strong> {selectedProduct?.quantity}{" "}
                         <span
                             style={{
                                 color: "white",
@@ -186,17 +324,26 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                             <Button
                                 type="text"
                                 icon={<MinusOutlined style={{ fontSize: 16 }} />}
+                                onClick={decrease}
                             />
-                            <span style={{ fontSize: "16px", fontWeight: "bold" }}>1</span>
+                            <span style={{ fontSize: "16px", fontWeight: "bold" }}>{quantity}</span>
                             <Button
                                 type="text"
                                 icon={<PlusOutlined style={{ fontSize: 16 }} />}
+                                onClick={increase}
+                                disabled={quantity >= selectedProductQuantity}
                             />
                         </Flex>
 
-                        <Button type="primary" style={{ backgroundColor: "black", color: "white", height: 40, width: 150 }}>
+                        <Button
+                            type="primary"
+                            style={{ backgroundColor: "black", color: "white", height: 40, width: 150 }}
+                            disabled={selectedProductQuantity === 0}
+                            onClick={handleAddToCart}
+                        >
                             Thêm vào giỏ
                         </Button>
+
                     </div>
 
                     {/* Link "Xem chi tiết »" */}

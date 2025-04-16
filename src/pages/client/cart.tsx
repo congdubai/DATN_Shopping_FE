@@ -1,8 +1,85 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { Breadcrumb, Button, Card, Col, Divider, Input, Row } from "antd";
+import { callDeleteCartDetail, callFetchCartDetail } from "@/config/api";
+import { useLocalCart } from "@/components/client/cart/useLocalCart";
+
 
 const CartPage = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const { cartItems, updateQuantity, removeItem, setCartItems } = useLocalCart();
+    const [loading, setLoading] = useState(false);
+
+    const totalPrice = cartItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+    const updateCartData = async () => {
+        const token = localStorage.getItem("access_token");
+
+        if (token) {
+            try {
+                setLoading(true);
+                const res = await axios.get(`${backendUrl}/api/v1/cart`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                setCartItems(res.data.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching cart data:", err);
+                setLoading(false);
+            }
+        }
+    };
+
+    useEffect(() => {
+        updateCartData();  // Gọi API khi trang được tải hoặc người dùng đăng nhập
+    }, []);
+
+    const handleDelete = async (productId: string, colorName: string, sizeName: string) => {
+        const token = localStorage.getItem("access_token");
+
+        const updateCartQuantity = () => {
+            const currentQuantity = parseInt(localStorage.getItem("cart_quantity") || "0", 10);
+            const newQuantity = Math.max(currentQuantity - 1, 0); // không bao giờ âm
+            localStorage.setItem("cart_quantity", newQuantity.toString());
+        };
+
+        if (!token) {
+            // Chưa đăng nhập => Xóa local
+            removeItem(productId, colorName, sizeName);
+            updateCartQuantity();
+            window.dispatchEvent(new Event("cartQuantityChanged"));
+        } else {
+            try {
+                const res = await axios.get(`${backendUrl}/api/v1/cart`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const cartItems = res.data.data;
+                console.log("check value, ", cartItems);
+                const itemToDelete = cartItems.find(
+                    (item: any) =>
+                        item.productId === productId &&
+                        item.colorName === colorName &&
+                        item.sizeName === sizeName
+                );
+
+                if (itemToDelete) {
+                    const deleteRes = await callDeleteCartDetail(itemToDelete.id);
+                    if (deleteRes.statusCode === 200) {
+                        updateCartData();
+                        removeItem(productId, colorName, sizeName);
+                        updateCartQuantity();
+                        window.dispatchEvent(new Event("cartQuantityChanged"));
+                    }
+                }
+            } catch (err) {
+                console.error("Error deleting cart item:", err);
+            }
+        }
+    };
+
+
 
     return (
         <div style={{ padding: "20px", paddingTop: 160, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
@@ -39,7 +116,7 @@ const CartPage = () => {
                                                     color: "black"
                                                 }}
                                             >
-                                                1 Sản phẩm
+                                                {cartItems.length} Sản phẩm
                                             </a>
                                         </p>
                                     </Col>
@@ -48,46 +125,65 @@ const CartPage = () => {
                                     <Col span={24}>
                                         <div style={{ borderRadius: 5, backgroundColor: "#fcf4ec", padding: "8px 5px" }}>Bạn được <b>giảm 10%</b> tối đa 10K, mua đơn hàng trên 350,000₫ để giảm ngay 50K!</div>
                                     </Col>
-                                    <Row style={{ marginTop: 25, alignItems: "start" }}>
-                                        {/* Ảnh sản phẩm */}
-                                        <Col span={6}>
-                                            <img
-                                                src={`${backendUrl}/storage/slide/slide-2.jpg`}
-                                                alt="Sản phẩm"
-                                                style={{ width: "100%", borderRadius: "2px" }}
-                                            />
-                                        </Col>
-
-                                        {/* Thông tin sản phẩm */}
-                                        <Col flex="1" style={{ marginLeft: 10, display: "flex", flexDirection: "column" }}>
-                                            <h3 style={{ margin: 0 }}>Áo Thun Nam ICONDENIM Baseball ICDN Star</h3>
-                                            <p style={{ margin: "5px 0" }}>Size: S - Màu: Kem</p>
-
-                                            {/* Số lượng và giá */}
-                                            <Col
-                                                style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "space-between",
-                                                    width: "100%",
-                                                    marginTop: 8
-                                                }}
-                                            >
-                                                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                                                    <Button danger>-</Button>
-                                                    <span style={{ fontSize: "16px", color: "black", fontWeight: "700" }}>1</span>
-                                                    <Button danger>+</Button>
-                                                </div>
-                                                <h3 style={{ margin: 0 }}>349,000đ</h3>
+                                    {cartItems.map((item, index) => (
+                                        <Row key={index} style={{ marginTop: 25, alignItems: "start" }}>
+                                            {/* Ảnh sản phẩm */}
+                                            <Col span={6}>
+                                                <img
+                                                    src={`${backendUrl}/storage/product/${item.productImage}`}
+                                                    alt="Sản phẩm"
+                                                    style={{ width: "100%", borderRadius: "2px", height: "140px" }}
+                                                />
                                             </Col>
-                                        </Col>
 
-                                        <Col span={4} style={{ textAlign: "right" }}>
-                                            <img
-                                                src={`${backendUrl}/storage/slide/close.png`}
-                                                style={{ width: 12, height: 12 }}
-                                            />                                        </Col>
-                                    </Row>
+                                            {/* Thông tin sản phẩm */}
+                                            <Col flex="1" style={{ marginLeft: 10, display: "flex", flexDirection: "column" }}>
+                                                <h3 style={{ margin: 0 }}>{item.productName}</h3>
+                                                <p style={{ margin: "5px 0" }}>
+                                                    Size: {item.sizeName} - Màu: {item.colorName}
+                                                </p>
+
+                                                <Col
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "space-between",
+                                                        width: "100%",
+                                                        marginTop: 8
+                                                    }}
+                                                >
+                                                    <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                                                        <Button danger onClick={() =>
+                                                            updateQuantity(item.productId, item.colorId, item.sizeId, item.quantity - 1)
+                                                        }>-</Button>
+
+                                                        <span style={{ fontSize: "16px", color: "black", fontWeight: "700" }}>
+                                                            {item.quantity}
+                                                        </span>
+
+                                                        <Button danger onClick={() =>
+                                                            updateQuantity(item.productId, item.colorId, item.sizeId, item.quantity + 1)
+                                                        }>+</Button>
+
+                                                    </div>
+                                                    <h3 style={{ margin: 0 }}>
+                                                        {(item.price * item.quantity).toLocaleString()}đ
+                                                    </h3>
+                                                </Col>
+                                            </Col>
+
+                                            {/* Nút xóa */}
+                                            <Col span={4} style={{ textAlign: "right" }}>
+                                                <img
+                                                    src={`${backendUrl}/storage/slide/close.png`}
+                                                    style={{ width: 12, height: 12, cursor: "pointer" }}
+                                                    onClick={() => handleDelete(item.productId, item.colorName, item.sizeName)}
+                                                />
+                                            </Col>
+                                            <Divider style={{ margin: "5px 0" }} />
+                                        </Row>
+                                    ))}
+
                                 </Row>
                             </Card>
                         </Col>
@@ -105,7 +201,7 @@ const CartPage = () => {
                                         }}
                                     >
                                         <p style={{ fontSize: 18, margin: 0 }}>Tạm tính:</p>
-                                        <p style={{ fontSize: 18, margin: 0 }}>349,000đ</p>
+                                        <p style={{ fontSize: 18, margin: 0 }}>{totalPrice.toLocaleString()}đ</p>
                                     </div>
 
                                     <div
@@ -126,7 +222,7 @@ const CartPage = () => {
                                         }}
                                     >
                                         <p style={{ fontSize: 18, margin: 0 }}>Tổng tiền:</p>
-                                        <h3 style={{ margin: 0 }}>349,000đ</h3>
+                                        <h3 style={{ margin: 0 }}>{totalPrice.toLocaleString()}đ</h3>
                                     </div>
                                 </div>
 

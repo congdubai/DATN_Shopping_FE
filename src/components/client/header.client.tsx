@@ -1,25 +1,40 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu, Dropdown, Avatar, Badge, Typography, Input, Row, Col, Flex, Affix } from "antd";
 import { HomeOutlined, AppstoreOutlined, ShoppingCartOutlined, UserOutlined, LogoutOutlined, MailOutlined, EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
-import { Header } from "antd/lib/layout/layout";
 
 interface User {
     name: string;
     avatar: string;
     isAuthenticated: boolean;
-    cartQuantity: number;
     adminMessageCount: number;
 }
 
 const Navbar: React.FC = () => {
+    const [quantity, setQuantity] = useState<number>(0);
+
+    useEffect(() => {
+        const updateCartQuantity = () => {
+            const storedQuantity = parseInt(localStorage.getItem("cart_quantity") || "0");
+            setQuantity(storedQuantity);
+        };
+
+        window.addEventListener("cartQuantityChanged", updateCartQuantity);
+        updateCartQuantity(); // gọi khi mount
+
+        return () => {
+            window.removeEventListener("cartQuantityChanged", updateCartQuantity);
+        };
+    }, []);
+
+
     const [user, setUser] = useState<User>({
         name: "Admin",
         avatar: "/images/avatar/default.png",
         isAuthenticated: true,
-        cartQuantity: 2,
         adminMessageCount: 5,
     });
+
 
     const handleLogout = () => {
         setUser({ ...user, isAuthenticated: false });
@@ -121,7 +136,7 @@ const Navbar: React.FC = () => {
                             <Col>
                                 <Link to="/cart" style={{ color: "white" }}>
                                     <Flex vertical align="center">
-                                        <Badge count={user.cartQuantity} offset={[0, 5]}>
+                                        <Badge count={quantity} offset={[0, 5]}>
                                             <ShoppingCartOutlined style={{ fontSize: "24px", color: "white" }} />
                                         </Badge>
                                         <p style={{ marginTop: "12px" }}>Giỏ hàng</p>
@@ -161,7 +176,7 @@ const Navbar: React.FC = () => {
                             </Menu.Item>
                             <Menu.Item key="cart" icon={<ShoppingCartOutlined />}>
                                 <Link to="/cart">Giỏ hàng</Link>
-                                <Badge count={user.cartQuantity} offset={[10, 0]} />
+                                <Badge count={quantity} offset={[10, 0]} />
                             </Menu.Item>
                             <Menu.Item key="contact" icon={<MailOutlined />}>
                                 <Link to="/user/contact">Liên hệ</Link>

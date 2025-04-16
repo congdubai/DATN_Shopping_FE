@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICategory, IColor, IGetAccount, IModelPaginate, IProduct, IProductDetail, IRole, ISize, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IModelPaginate, IProduct, IProductDetail, IRole, ISize, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -12,6 +12,10 @@ export const callLogin = (username: string, password: string) => {
 
 export const callFetchAccount = () => {
     return axios.get<IBackendRes<IGetAccount>>('/api/v1/auth/account')
+}
+
+export const callRefreshToken = () => {
+    return axios.get<IBackendRes<IAccount>>('/api/v1/auth/refresh')
 }
 
 /**
@@ -164,4 +168,19 @@ export const callFetchProductDetailByColor = (productId: string, colorId: string
     );
 };
 
+/**
+ * 
+Module Cart
+ */
+export const callAddToCart = (productId: string, sizeId: string, colorId: string, quantity: string) => {
+    return axios.post<IBackendRes<void>>(
+        `/api/v1/add-to-cart?productId=${productId}&size=${sizeId}&color=${colorId}&quantity=${quantity}`
+    );
+};
 
+export const callFetchCartDetail = () => {
+    return axios.get<IBackendRes<ICartItem>>(`/api/v1/cart`);
+}
+export const callDeleteCartDetail = (id: string) => {
+    return axios.delete<IBackendRes<ICartItem>>(`/api/v1/cart/${id}`);
+}

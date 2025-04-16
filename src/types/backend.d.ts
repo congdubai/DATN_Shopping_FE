@@ -128,3 +128,15 @@ export interface IProductDetail {
     createdAt?: string;
     updatedAt?: string;
 }
+export interface ICartItem {
+    productId: string;
+    colorId: string;
+    colorName: string;
+    sizeId: string;
+    sizeName: string;
+    productName: string;
+    productImage: string;
+    quantity: number;
+    price: number;
+    id?: number;
+}
