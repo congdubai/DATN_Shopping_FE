@@ -21,6 +21,7 @@ import HomePage from "./pages/client/home";
 import CartPage from "./pages/client/cart";
 import CheckOut from "./pages/client/checkout";
 import CheckOutPage from "./pages/client/checkout";
+import DashboardPage from "./pages/admin/dashboard";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -82,7 +83,14 @@ export default function App() {
     {
       path: "/admin",
       element: (<LayoutApp><LayoutAdmin /> </LayoutApp>),
+      errorElement: <NotFound />,
       children: [
+        {
+          index: true, element:
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+        },
         {
           path: "user",
           element:
