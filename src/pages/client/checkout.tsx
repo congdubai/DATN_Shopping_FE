@@ -1,7 +1,8 @@
 import AddressSelector from "@/components/admin/user/location.user";
 import { useLocalCart } from "@/components/client/cart/useLocalCart";
+import { callPlaceOrder } from "@/config/api";
 import { ProForm, ProFormText } from "@ant-design/pro-components";
-import { Breadcrumb, Button, Card, Col, Divider, Input, Row, Form, Radio } from "antd";
+import { Breadcrumb, Button, Card, Col, Divider, Input, Row, Form, Radio, message, notification } from "antd";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -16,8 +17,35 @@ const CheckOutPage = () => {
     );
     const [form] = Form.useForm();
 
-    const handleSubmit = () => {
+    const handleSubmit = async (values: any) => {
 
+        const { name, phone, address } = values;
+        const fullAddress = Array.isArray(address) ? address.join(", ") : address;
+
+        const res = await callPlaceOrder(
+            name,
+            phone,
+            fullAddress,
+            paymentMethod,
+            totalPrice.toString()
+        );
+
+        if (res.statusCode === 200) {
+            localStorage.removeItem("cart");
+            localStorage.setItem("cart_quantity", "0");
+            window.dispatchEvent(new Event("cartQuantityChanged"));
+            notification.success({
+                message: 'Đặt hàng hành công',
+                description: 'Cảm ơn bạn đã mua hàng!',
+                placement: 'topRight',
+            });
+            navigate("/");
+        } else {
+            notification.error({
+                message: 'Có lỗi xảy ra',
+                description: res.message
+            });
+        }
     };
 
     return (
@@ -169,7 +197,8 @@ const CheckOutPage = () => {
 
                                         </Radio.Group>
 
-                                        <Button type="primary" block style={{ backgroundColor: "black", fontFamily: "'Geologica', sans-serif", height: 40, borderRadius: 2, marginTop: 20 }}>
+                                        <Button type="primary" block htmlType="submit"
+                                            style={{ backgroundColor: "black", fontFamily: "'Geologica', sans-serif", height: 40, borderRadius: 2, marginTop: 20 }}>
                                             HOÀN TẤT ĐƠN HÀNG
                                         </Button>
                                         <Button type="link" block style={{

@@ -9,7 +9,7 @@ export const fetchAccount = createAsyncThunk(
         return response.data;
     }
 )
-
+    
 interface IState {
     isAuthenticated: boolean;
     isLoading: boolean;

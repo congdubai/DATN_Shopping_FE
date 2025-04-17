@@ -15,8 +15,8 @@ import { useRef, useState } from "react";
 import { sfLike } from "spring-filter-query-builder";
 
 const UserPage = () => {
-    const users = useAppSelector(state => state.user.result);
-    const meta = useAppSelector(state => state.user.meta);
+    const users = useAppSelector(state => state.user?.result);
+    const meta = useAppSelector(state => state.user?.meta);
     const isFetching = useAppSelector(state => state.user.isFetching);
     const dispatch = useAppDispatch();
     const [openModal, setOpenModal] = useState<boolean>(false);

@@ -184,3 +184,16 @@ export const callFetchCartDetail = () => {
 export const callDeleteCartDetail = (id: string) => {
     return axios.delete<IBackendRes<ICartItem>>(`/api/v1/cart/${id}`);
 }
+export const callUpdateQuantity = (id: string, quantity: string) => {
+    return axios.put<IBackendRes<ICartItem>>(`/api/v1/cart?id=${id}&quantity=${quantity}`);
+}
+
+/**
+ * 
+Module Order
+ */
+export const callPlaceOrder = (name: string, phone: string, address: string, method: string, totalPrice: string) => {
+    return axios.post<IBackendRes<void>>(
+        `/api/v1/place-order?receiverName=${name}&receiverPhone=${phone}&receiverAddress=${address}&paymentMethod=${method}&totalPrice=${totalPrice}`
+    );
+};
