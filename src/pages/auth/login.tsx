@@ -62,7 +62,7 @@ const LoginPage = () => {
             await syncCartWithServer();
             const isAdmin = res.data.user?.role?.name === 'ADMIN';
 
-            window.location.href = redirectPath || (isAdmin ? '/admin/user' : '/');
+            window.location.href = redirectPath || (isAdmin ? '/admin' : '/');
         } else {
             notification.error({
                 message: "Có lỗi xảy ra",

@@ -23,7 +23,6 @@ const { Content, Sider } = Layout;
 
 const LayoutAdmin = () => {
     const location = useLocation();
-
     const [collapsed, setCollapsed] = useState(false);
     const [activeMenu, setActiveMenu] = useState('');
     const user = useAppSelector(state => state.account.user);
@@ -35,6 +34,7 @@ const LayoutAdmin = () => {
 
     useEffect(() => {
         const fixedMenu = [
+            { label: <Link to='/admin'>DashBoard</Link>, key: '/admin', icon: <ScheduleOutlined /> },
             { label: <Link to='/admin/user'>User</Link>, key: '/admin/user', icon: <UserOutlined /> },
             { label: <Link to='/admin/product'>Product</Link>, key: '/admin/product', icon: <BankOutlined /> },
             { label: <Link to='/admin/productDetail'>Product Detail</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
