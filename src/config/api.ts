@@ -197,3 +197,11 @@ export const callPlaceOrder = (name: string, phone: string, address: string, met
         `/api/v1/place-order?receiverName=${name}&receiverPhone=${phone}&receiverAddress=${address}&paymentMethod=${method}&totalPrice=${totalPrice}`
     );
 };
+
+/**
+ * 
+Module DashBoard
+ */
+export const callFetchCountUsersByDay = () => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-user-by-day`);
+}
