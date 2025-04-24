@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ant-design/charts": "^1.4.3",
     "@ant-design/icons": "4.8.0",
     "@ant-design/pro-components": "2.6.46",
     "@ant-design/pro-layout": "7.17.19",
@@ -29,6 +30,7 @@
     "react-countup": "6.4.2",
     "react-device-detect": "2.2.3",
     "react-dom": "18.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-icons": "4.8.0",
     "react-quill": "2.0.0",
     "react-redux": "8.0.5",
@@ -40,6 +42,7 @@
     "uuid": "9.0.0"
   },
   "devDependencies": {
+    "@storybook/react": "^7.6.15",
     "@types/lodash": "4.14.195",
     "@types/node": "20.2.3",
     "@types/react": "18.0.28",
@@ -53,6 +56,8 @@
     "vite": "4.2.0"
   },
   "overrides": {
-    "dayjs": "1.11.8"
+    "dayjs": "1.11.8",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }

@@ -22,6 +22,7 @@ import CartPage from "./pages/client/cart";
 import CheckOut from "./pages/client/checkout";
 import CheckOutPage from "./pages/client/checkout";
 import DashboardPage from "./pages/admin/dashboard";
+import { HelmetProvider } from "react-helmet-async";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
