@@ -14,10 +14,9 @@ import {
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { useAppSelector } from '@/redux/hooks';
 import { isMobile } from 'react-device-detect';
 import type { MenuProps } from 'antd';
-import { setLogoutAction } from '@/redux/slice/accountSlide';
 
 const { Content, Sider } = Layout;
 
@@ -26,31 +25,33 @@ const LayoutAdmin = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [activeMenu, setActiveMenu] = useState('');
     const user = useAppSelector(state => state.account.user);
-
     const [menuItems, setMenuItems] = useState<MenuProps['items']>([]);
-
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
+    const roleName = useAppSelector(state => state.account.user.role.name);
 
     useEffect(() => {
+        if (!roleName) return;
+
         const fixedMenu = [
-            { label: <Link to='/admin'>DashBoard</Link>, key: '/admin', icon: <ScheduleOutlined /> },
-            { label: <Link to='/admin/user'>User</Link>, key: '/admin/user', icon: <UserOutlined /> },
-            { label: <Link to='/admin/product'>Product</Link>, key: '/admin/product', icon: <BankOutlined /> },
-            { label: <Link to='/admin/productDetail'>Product Detail</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
-            { label: <Link to='/admin/color'>Color</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
-            { label: <Link to='/admin/category'>Category</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
-            { label: <Link to='/admin/size'>Size</Link>, key: '/admin/size', icon: <ApiOutlined /> },
-            { label: <Link to='/admin/role'>Role</Link>, key: '/admin/role', icon: <ExceptionOutlined /> },
-
+            ...(roleName === 'ADMIN' ? [
+                { label: <Link to='/admin'>DashBoard</Link>, key: '/admin', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin/user'>User</Link>, key: '/admin/user', icon: <UserOutlined /> },
+                { label: <Link to='/admin/product'>Product</Link>, key: '/admin/product', icon: <BankOutlined /> },
+                { label: <Link to='/admin/productDetail'>Product Detail</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
+                { label: <Link to='/admin/color'>Color</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin/category'>Category</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
+                { label: <Link to='/admin/size'>Size</Link>, key: '/admin/size', icon: <ApiOutlined /> },
+            ] : []),
+            ...(roleName === 'STAFF' ? [
+                { label: <Link to='/admin'>DashBoard</Link>, key: '/admin', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin/order'>Tạo đơn hàng</Link>, key: '/admin/order', icon: <ExceptionOutlined /> }
+            ] : [])
         ];
-
         setMenuItems(fixedMenu);
-    }, []); // Chỉ chạy 1 lần khi component mount
+    }, [roleName]);
 
     useEffect(() => {
         setActiveMenu(location.pathname);
-    }, [location]); // Cập nhật menu khi thay đổi đường dẫn
+    }, [location]);
 
     const itemsDropdown = [
         {

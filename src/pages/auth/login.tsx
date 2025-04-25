@@ -60,9 +60,19 @@ const LoginPage = () => {
             localStorage.setItem('access_token', res.data.access_token);
             dispatch(setUserLoginInfo(res.data.user));
             await syncCartWithServer();
-            const isAdmin = res.data.user?.role?.name === 'ADMIN';
+            const roleName = res.data.user?.role?.name;
+            const isAdmin = roleName === 'ADMIN';
+            const isStaff = roleName === 'STAFF';
 
-            window.location.href = redirectPath || (isAdmin ? '/admin' : '/');
+            if (redirectPath) {
+                window.location.href = redirectPath;
+            } else if (isAdmin) {
+                window.location.href = '/admin';
+            } else if (isStaff) {
+                window.location.href = '/admin';
+            } else {
+                window.location.href = '/';
+            }
         } else {
             notification.error({
                 message: "Có lỗi xảy ra",

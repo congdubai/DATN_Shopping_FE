@@ -205,3 +205,9 @@ Module DashBoard
 export const callFetchCountUsersByDay = () => {
     return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-user-by-day`);
 }
+export const callFetchCountOrdersByDay = () => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-order-by-day`);
+}
+export const callFetchTotalPriceByDay = () => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/total-price-by-day`);
+}

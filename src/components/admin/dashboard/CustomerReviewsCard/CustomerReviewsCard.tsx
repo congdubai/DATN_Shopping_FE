@@ -9,7 +9,7 @@ import {
   Typography,
 } from 'antd';
 import { green, lime, orange, red, yellow } from '@ant-design/colors';
-import { QuestionOutlined } from '@ant-design/icons';
+import { QuestionOutlined, StarFilled } from '@ant-design/icons';
 import { Card } from '../Card/Card';
 
 const PROGRESS_PROPS: ProgressProps = {
@@ -23,7 +23,7 @@ type Props = CardProps;
 export const CustomerReviewsCard = ({ ...others }: Props) => {
   return (
     <Card
-      title="Customer reviews"
+      title="Đánh giá của khách hàng"
       extra={
         <Popover content="Overall rating of 5k reviews" title="Review ratings">
           <Button icon={<QuestionOutlined />} size="small" type="text" />
@@ -41,15 +41,15 @@ export const CustomerReviewsCard = ({ ...others }: Props) => {
         </Flex>
         <Flex vertical gap="small">
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography.Text>Excellent</Typography.Text>
+            <Typography.Text> <StarFilled /> 5</Typography.Text>
             <Progress percent={35} strokeColor={lime[6]} {...PROGRESS_PROPS} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography.Text>Good</Typography.Text>
+            <Typography.Text> <StarFilled /> 4</Typography.Text>
             <Progress percent={25} strokeColor={green[5]} {...PROGRESS_PROPS} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography.Text>Average</Typography.Text>
+            <Typography.Text> <StarFilled /> 3</Typography.Text>
             <Progress
               percent={30}
               strokeColor={yellow[6]}
@@ -57,7 +57,7 @@ export const CustomerReviewsCard = ({ ...others }: Props) => {
             />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography.Text>Poor</Typography.Text>
+            <Typography.Text> <StarFilled /> 2</Typography.Text>
             <Progress
               percent={30}
               strokeColor={orange[5]}
@@ -65,7 +65,7 @@ export const CustomerReviewsCard = ({ ...others }: Props) => {
             />
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography.Text>Critical</Typography.Text>
+            <Typography.Text><StarFilled /> 1 </Typography.Text>
             <Progress percent={30} strokeColor={red[6]} {...PROGRESS_PROPS} />
           </div>
         </Flex>
