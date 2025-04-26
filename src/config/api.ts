@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IModelPaginate, IProduct, IProductDetail, IRole, ISize, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IModelPaginate, IOrder, IProduct, IProductDetail, IRole, ISize, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -210,4 +210,7 @@ export const callFetchCountOrdersByDay = () => {
 }
 export const callFetchTotalPriceByDay = () => {
     return axios.get<IBackendRes<number>>(`/api/v1/dashboard/total-price-by-day`);
+}
+export const callFetchCurrentOrder = (query: string) => {
+    return axios.get<IBackendRes<IOrder[]>>(`/api/v1/dashboard/currentOrder`);
 }

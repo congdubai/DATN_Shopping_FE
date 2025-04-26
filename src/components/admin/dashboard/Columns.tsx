@@ -9,7 +9,7 @@ const { Text, Title } = Typography;
 
 export const PRODUCTS_COLUMNS = [
     {
-        title: 'Name',
+        title: 'Sản phẩm',
         dataIndex: 'product_name',
         key: 'product_name',
         render: (_: any, { product_name, brand }: any) => (
@@ -20,19 +20,19 @@ export const PRODUCTS_COLUMNS = [
         ),
     },
     {
-        title: 'Category',
+        title: 'Số lượng',
         dataIndex: 'category',
         key: 'category',
         render: (_: any) => <span className="text-capitalize">{_}</span>,
     },
     {
-        title: 'Price',
+        title: 'Giá',
         dataIndex: 'price',
         key: 'price',
         render: (_: any) => <span>$ {_}</span>,
     },
     {
-        title: 'Avg rating',
+        title: 'Đánh giá',
         dataIndex: 'average_rating',
         key: 'average_rating',
         render: (_: any) => (
@@ -44,22 +44,34 @@ export const PRODUCTS_COLUMNS = [
     },
 ];
 
-export const CATEGORIES_COLUMNS = [
+export const SNOW_PRODUCTS_COLUMNS = [
     {
-        title: 'Category',
-        dataIndex: 'category',
-        key: 'category',
+        title: 'Sản phẩm',
+        dataIndex: 'product_name',
+        key: 'product_name',
+        render: (_: any, { product_name, brand }: any) => (
+            <Flex gap="small" align="center">
+                <Image src={brand} width={16} height={16} />
+                <Text style={{ width: 160 }}>{product_name}</Text>
+            </Flex>
+        ),
     },
     {
-        title: 'Price',
+        title: 'Số lượng',
+        dataIndex: 'category',
+        key: 'category',
+        render: (_: any) => <span className="text-capitalize">{_}</span>,
+    },
+    {
+        title: 'Giá',
         dataIndex: 'price',
         key: 'price',
         render: (_: any) => <span>$ {_}</span>,
     },
     {
-        title: 'Avg rating',
-        dataIndex: 'rating',
-        key: 'rating',
+        title: 'Đánh giá',
+        dataIndex: 'average_rating',
+        key: 'average_rating',
         render: (_: any) => (
             <Flex align="center" gap="small">
                 {_}
@@ -130,34 +142,29 @@ export const SELLER_COLUMNS = [
 
 export const ORDERS_COLUMNS = [
     {
-        title: 'Tracking No.',
-        dataIndex: 'tracking_number',
-        key: 'tracking_number',
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
     },
     {
-        title: 'Customer',
-        dataIndex: 'customer_name',
-        key: 'customer_name',
+        title: 'Khách hàng',
+        dataIndex: 'receiverName',
+        key: 'receiverName',
         render: (_: any) => <UserAvatar fullName={_} />,
     },
     {
-        title: 'Date',
-        dataIndex: 'order_date',
-        key: 'order_date',
+        title: 'Ngày đặt',
+        dataIndex: 'orderDate',
+        key: 'orderDate',
     },
     {
-        title: 'Price',
-        dataIndex: 'price',
-        key: 'price',
+        title: 'Tổng tiền',
+        dataIndex: 'totalPrice',
+        key: 'totalPrice',
         render: (_: any) => <span>$ {_}</span>,
     },
     {
-        title: 'Quantity',
-        dataIndex: 'quantity',
-        key: 'quantity',
-    },
-    {
-        title: 'Status',
+        title: 'Trạng thái',
         dataIndex: 'status',
         key: 'status',
         render: (_: any) => {
@@ -166,7 +173,7 @@ export const ORDERS_COLUMNS = [
             if (_ === 'shipped') {
                 color = 'magenta-inverse';
                 icon = ClockCircleOutlined;
-            } else if (_ === 'processing') {
+            } else if (_ === 'Đang xử lý') {
                 color = 'blue-inverse';
                 icon = SyncOutlined;
             } else if (_ === 'delivered') {
@@ -189,13 +196,14 @@ export const ORDERS_COLUMNS = [
         },
     },
     {
-        title: 'Country',
-        dataIndex: 'country',
-        key: 'country',
+        title: 'Điện thoại',
+        dataIndex: 'receiverPhone',
+        key: 'receiverPhone',
     },
     {
-        title: 'Address',
-        dataIndex: 'shipping_address',
-        key: 'shipping_address',
+        title: 'Địa chỉ',
+        dataIndex: 'receiverAddress',
+        key: 'receiverAddress',
+        align: 'center' as const,
     },
 ];

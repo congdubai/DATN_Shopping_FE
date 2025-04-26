@@ -23,6 +23,9 @@ import CheckOut from "./pages/client/checkout";
 import CheckOutPage from "./pages/client/checkout";
 import DashboardPage from "./pages/admin/dashboard";
 import { HelmetProvider } from "react-helmet-async";
+import CreateOrder from "./components/admin/createOrder/CreateOrder";
+import CreateOrderPage from "./components/admin/createOrder/CreateOrder";
+import HistoryPage from "./pages/client/history";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,6 +81,11 @@ export default function App() {
           path: "checkout",
           element:
             <CheckOutPage />
+        },
+        {
+          path: "order-history",
+          element:
+            <HistoryPage />
         },
       ],
     },
@@ -139,6 +147,12 @@ export default function App() {
           element:
             <ProtectedRoute>
               <ProductDetailPage />
+            </ProtectedRoute>
+        }, {
+          path: "createOrder",
+          element:
+            <ProtectedRoute>
+              <CreateOrderPage />
             </ProtectedRoute>
         }
       ],

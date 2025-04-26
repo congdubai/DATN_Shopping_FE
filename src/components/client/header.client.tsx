@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
                 </Link>
             </Menu.Item>
             <Menu.Item key="history">
-                <Link to="/user/order-history">Lịch sử mua hàng</Link>
+                <Link to="/order-history">Lịch sử mua hàng</Link>
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item key="logout" onClick={handleLogout}>

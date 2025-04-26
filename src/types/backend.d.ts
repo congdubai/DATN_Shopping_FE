@@ -140,3 +140,13 @@ export interface ICartItem {
     price: number;
     id?: number;
 }
+
+export interface IOrder {
+    id?: string;
+    status: string;
+    receiverName: string;
+    receiverPhone: string;
+    receiverAddress: string;
+    totalPrice: number;
+    orderDate?: string;
+}

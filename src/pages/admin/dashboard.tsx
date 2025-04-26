@@ -8,13 +8,14 @@ import { Card } from '@/components/admin/dashboard/Card/Card';
 import { CustomerReviewsCard } from '@/components/admin/dashboard/CustomerReviewsCard/CustomerReviewsCard';
 import { RevenueCard } from '@/components/admin/dashboard/RevenueCard/RevenueCard';
 import "@/styles/dashboard.css"
-import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchTotalPriceByDay } from '@/config/api';
+import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchTotalPriceByDay } from '@/config/api';
 import SalesChart from '@/components/admin/dashboard/chart/SalesChart';
 import CategoriesChart from '@/components/admin/dashboard/chart/CategoriesChart';
 import OrdersStatusChart from '@/components/admin/dashboard/chart/OrdersStatusChart';
 import CustomerRateChart from '@/components/admin/dashboard/chart/CustomerRateChart';
-import { CATEGORIES_COLUMNS, ORDERS_COLUMNS, PRODUCTS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
+import { SNOW_PRODUCTS_COLUMNS, ORDERS_COLUMNS, PRODUCTS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
 import { useAppSelector } from '@/redux/hooks';
+import { IOrder } from '@/types/backend';
 
 export const COLOR = {
     50: '#e0f1ff',
@@ -46,7 +47,9 @@ export const DashboardPage = () => {
     const [countOrder, setCountOrder] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const roleName = useAppSelector(state => state.account.user.role.name);
-
+    const [recentOrders, setRecentOrders] = useState<IOrder[]>([]);
+    const [recentOrdersLoading, setRecentOrdersLoading] = useState<boolean>(false);
+    const [recentOrdersError, setRecentOrdersError] = useState<any>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -61,7 +64,21 @@ export const DashboardPage = () => {
                 console.error('Lỗi khi lấy dữ liệu dashboard:', error);
             }
         };
-
+        const fetchRecentOrders = async () => {
+            try {
+                setRecentOrdersLoading(true);
+                const res = await callFetchCurrentOrder('');
+                if (res && res.data) {
+                    setRecentOrders(res.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch recent orders:', error);
+                setRecentOrdersError(error);
+            } finally {
+                setRecentOrdersLoading(false);
+            }
+        };
+        fetchRecentOrders();
         fetchData();
     }, []);
 
@@ -71,22 +88,12 @@ export const DashboardPage = () => {
         error: topProductsError,
         loading: topProductsLoading,
     } = useFetchData('../mocks/TopProducts.json');
-    const {
-        data: topCategories,
-        error: topCategoriesError,
-        loading: topCategoriesLoading,
-    } = useFetchData('../mocks/TopCategories.json');
+
     const {
         data: topSellers,
         error: topSellersError,
         loading: topSellersLoading,
     } = useFetchData('../mocks/TopSeller.json');
-    const {
-        data: recentOrders,
-        error: recentOrdersError,
-        loading: recentOrdersLoading,
-    } = useFetchData('../mocks/RecentOrders.json');
-
     return (
         <>
             <ConfigProvider
@@ -126,7 +133,6 @@ export const DashboardPage = () => {
                         }}
                     >
                         {roleName === 'STAFF' ? (
-                            // Chỉ hiển thị mỗi phần "Top Sellers"
                             <Col span={24}>
                                 <Card title="Top sellers">
                                     {topSellersError ? (
@@ -311,7 +317,7 @@ export const DashboardPage = () => {
                                     </Flex>
                                 </Col>
                                 <Col xs={24} lg={12}>
-                                    <Card title="Popular products" style={cardStyles}>
+                                    <Card title="Top sản phẩm bán chạy" style={cardStyles}>
                                         {topProductsError ? (
                                             <Alert
                                                 message="Error"
@@ -330,19 +336,19 @@ export const DashboardPage = () => {
                                     </Card>
                                 </Col>
                                 <Col xs={24} lg={12}>
-                                    <Card title="Popular categories" style={cardStyles}>
-                                        {topCategoriesError ? (
+                                    <Card title="Top sản phẩm bán chậm" style={cardStyles}>
+                                        {topProductsError ? (
                                             <Alert
                                                 message="Error"
-                                                description={topCategoriesError.toString()}
+                                                description={topProductsError.toString()}
                                                 type="error"
                                                 showIcon
                                             />
                                         ) : (
                                             <Table
-                                                columns={CATEGORIES_COLUMNS}
-                                                dataSource={topCategories}
-                                                loading={topCategoriesLoading}
+                                                columns={SNOW_PRODUCTS_COLUMNS}
+                                                dataSource={topProducts}
+                                                loading={topProductsLoading}
                                                 className="overflow-scroll"
                                             />
                                         )}
@@ -368,7 +374,7 @@ export const DashboardPage = () => {
                                     </Card>
                                 </Col>
                                 <Col span={24}>
-                                    <Card title="Recent orders">
+                                    <Card title="Đơn hàng gần đây">
                                         {recentOrdersError ? (
                                             <Alert
                                                 message="Error"

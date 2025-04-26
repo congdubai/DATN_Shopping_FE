@@ -56,7 +56,7 @@ export const UserAvatar = ({
           }}
           {...avatarProps}
         >
-          {getNameInitials(fullName)}
+          {getNameInitials(fullName || '')}
         </Avatar>
       )}
       <Typography.Text
@@ -65,7 +65,7 @@ export const UserAvatar = ({
           width: textWidth || 160,
         }}
       >
-        {fullName}
+        {fullName || ''}
       </Typography.Text>
       {verified && (
         <CheckCircleFilled style={{ fontSize: 14, color: blue[6] }} />

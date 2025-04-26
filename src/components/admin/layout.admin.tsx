@@ -43,7 +43,7 @@ const LayoutAdmin = () => {
             ] : []),
             ...(roleName === 'STAFF' ? [
                 { label: <Link to='/admin'>DashBoard</Link>, key: '/admin', icon: <ScheduleOutlined /> },
-                { label: <Link to='/admin/order'>Tạo đơn hàng</Link>, key: '/admin/order', icon: <ExceptionOutlined /> }
+                { label: <Link to='/admin/createOrder'>Tạo đơn hàng</Link>, key: '/admin/createOrder', icon: <ExceptionOutlined /> }
             ] : [])
         ];
         setMenuItems(fixedMenu);
@@ -68,34 +68,59 @@ const LayoutAdmin = () => {
 
     return (
         <>
-            <Layout
-                style={{ minHeight: '100vh' }}
+            <Layout style={{ marginLeft: !isMobile ? (collapsed ? 80 : 200) : 0, transition: 'all 0.2s' }}
                 className="layout-admin"
             >
-                {!isMobile ?
+                {!isMobile ? (
                     <Sider
                         theme='light'
                         collapsible
                         collapsed={collapsed}
-                        onCollapse={(value) => setCollapsed(value)}>
-                        <div style={{ height: 32, margin: 16, textAlign: 'center' }}>
-                            <BugOutlined />  ADMIN
+                        onCollapse={(value) => setCollapsed(value)}
+                        width={200} // bạn có thể thay đổi width tùy theo thiết kế
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            height: '100vh',
+                            zIndex: 1000,
+                            overflow: 'auto',
+                            background: '#fff',
+                            boxShadow: '2px 0 6px rgba(0, 0, 0, 0.1)',
+                        }}
+                    >
+                        <div
+                            style={{
+                                height: 64,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontWeight: 'bold',
+                                fontSize: 18,
+                                borderBottom: '1px solid #f0f0f0',
+                            }}
+                        >
+                            <BugOutlined style={{ marginRight: 8 }} />
+                            {!collapsed && 'ADMIN'}
                         </div>
+
                         <Menu
                             selectedKeys={[activeMenu]}
                             mode="inline"
                             items={menuItems}
                             onClick={(e) => setActiveMenu(e.key)}
+                            style={{ borderRight: 0 }}
                         />
                     </Sider>
-                    :
+                ) : (
                     <Menu
                         selectedKeys={[activeMenu]}
                         items={menuItems}
                         onClick={(e) => setActiveMenu(e.key)}
                         mode="horizontal"
                     />
-                }
+                )}
+
 
                 <Layout>
                     {!isMobile &&

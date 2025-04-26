@@ -1,9 +1,19 @@
-export const getNameInitials = (fullName: string): string => {
-    const fInitial = Array.from(fullName.split(' ')[0])[0],
-        lInitial = Array.from(fullName.split(' ')[1])[0];
+export const getNameInitials = (fullName?: string): string => {
+    if (!fullName) return '';
 
-    return `${fInitial}${lInitial}`;
+    const words = fullName.trim().split(/\s+/);
+
+    if (words.length === 1) {
+        const firstWord = words[0];
+        return firstWord.slice(0, 2).toUpperCase();
+    }
+
+    const fInitial = words[0][0];
+    const lInitial = words[1][0];
+
+    return `${fInitial}${lInitial}`.toUpperCase();
 };
+
 
 export const colourNameToHex = (color: string): string => {
     const colours: any = {
