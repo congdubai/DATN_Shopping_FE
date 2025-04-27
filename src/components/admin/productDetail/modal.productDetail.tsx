@@ -94,6 +94,7 @@ const ModalProductDetail = (props: IProps) => {
             const list = res.data.result;
             const temp = list.map(item => {
                 return {
+                    key: item.id,
                     label: item.name as string,
                     value: item.id as string
                 }
@@ -108,6 +109,7 @@ const ModalProductDetail = (props: IProps) => {
             const list = res.data.result;
             const temp = list.map(item => {
                 return {
+                    key: item.id,
                     label: item.name as string,
                     value: item.id as string
                 }
@@ -122,6 +124,7 @@ const ModalProductDetail = (props: IProps) => {
             const list = res.data.result;
             const temp = list.map(item => {
                 return {
+                    key: item.id,
                     label: item.name as string,
                     value: item.id as string
                 }

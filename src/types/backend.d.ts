@@ -150,3 +150,26 @@ export interface IOrder {
     totalPrice: number;
     orderDate?: string;
 }
+
+export interface IHistory {
+    id?: string;
+    orderId?: string;
+    productId?: string;
+    name: string;
+    image: string;
+    size: string;
+    color: string;
+    quantity: number;
+    quantity: number;
+    status: string;
+    price: number;
+}
+
+export interface IReview {
+    id?: string;
+    user?: { id: string };
+    product?: { id: string };
+    order?: { id: string };
+    rating: number;
+    comment: string;
+}

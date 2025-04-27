@@ -22,6 +22,9 @@ export default defineConfig(({ command, mode }) => {
     server: {
       port: parseInt(env.PORT)
     },
+    define: {
+      global: {},
+    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src/"),

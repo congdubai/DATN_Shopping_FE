@@ -27,6 +27,7 @@ const CreateOrderPage = () => {
             const list = res.data.result;
             const temp = list.map(item => {
                 return {
+                    key: item.id,
                     label: item.name as string,
                     value: item.id as string
                 }
@@ -41,6 +42,7 @@ const CreateOrderPage = () => {
             const list = res.data.result;
             const temp = list.map(item => {
                 return {
+                    key: item.id,
                     label: item.name as string,
                     value: item.id as string
                 }
@@ -55,6 +57,7 @@ const CreateOrderPage = () => {
             const list = res.data.result;
             const temp = list.map(item => {
                 return {
+                    key: item.id,
                     label: item.name as string,
                     value: item.id as string
                 }
@@ -284,7 +287,7 @@ const CreateOrderPage = () => {
                                         </Col>
                                         <Divider style={{ margin: "5px 0" }} />
                                         {cartItems.map((item, index) => (
-                                            <Row key={index} style={{ marginTop: 25, alignItems: "start" }}>
+                                            <Row key={item.id} style={{ marginTop: 25, alignItems: "start" }}>
                                                 {/* Ảnh sản phẩm */}
                                                 <Col span={6}>
                                                     <img

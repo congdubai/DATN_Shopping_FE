@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IModelPaginate, IOrder, IProduct, IProductDetail, IRole, ISize, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IProduct, IProductDetail, IReview, IRole, ISize, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -213,4 +213,20 @@ export const callFetchTotalPriceByDay = () => {
 }
 export const callFetchCurrentOrder = (query: string) => {
     return axios.get<IBackendRes<IOrder[]>>(`/api/v1/dashboard/currentOrder`);
+}
+
+/**
+ * 
+Module History
+ */
+export const callFetchOrderHistory = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IHistory>>>(`/api/v1/history?${query}`);
+}
+
+/**
+ * 
+Module Rate
+ */
+export const callCreateRate = (review: IReview) => {
+    return axios.post<IBackendRes<IReview>>('/api/v1/review', { ...review });
 }
