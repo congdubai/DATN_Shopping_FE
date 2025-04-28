@@ -401,3 +401,7 @@
 .ant-radio-inner {
     border-color: black !important;
 }
+
+.custom-padding {
+    padding-left: 20px !important;
+}

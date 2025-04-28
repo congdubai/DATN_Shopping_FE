@@ -26,6 +26,7 @@ import { HelmetProvider } from "react-helmet-async";
 import CreateOrder from "./components/admin/createOrder/CreateOrder";
 import CreateOrderPage from "./components/admin/createOrder/CreateOrder";
 import HistoryPage from "./pages/client/history";
+import ProductDetailClientPage from "./pages/client/productDetail";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,6 +87,11 @@ export default function App() {
           path: "order-history",
           element:
             <HistoryPage />
+        },
+        {
+          path: "product-detail/:productId",
+          element:
+            <ProductDetailClientPage />
         },
       ],
     },

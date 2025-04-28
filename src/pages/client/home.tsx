@@ -148,7 +148,10 @@ const HomePage = () => {
                                             <span className="cart-text">Thêm vào giỏ</span>
                                         </div>
 
-                                        <div className="search-icon">
+                                        <div className="search-icon" onClick={() => {
+                                            setDataInit(product);
+                                            navigate(`/product-detail/${product.id}`);
+                                        }}>
                                             <SearchOutlined />
                                         </div>
                                     </div>
@@ -179,6 +182,7 @@ const HomePage = () => {
                 setIsOpenModal={setIsOpenModal}
                 productId={dataInit?.id}
             />
+            
         </>
     );
 };

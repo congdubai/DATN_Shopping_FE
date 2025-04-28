@@ -113,6 +113,10 @@ export interface IProductDetail {
         id: string;
         name: string;
         price?: number;
+        category?: {
+            id: string;
+            name: string;
+        }
     }
     size?: {
         id: string;
