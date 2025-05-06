@@ -33,6 +33,11 @@ const initialState: IState = {
     },
     result: [],
 };
+export const updateHistory = (updatedHistories: IHistory[]) => ({
+    type: 'history/updateHistory',
+    payload: updatedHistories,
+});
+
 export const historySlide = createSlice({
     name: 'history',
     initialState,

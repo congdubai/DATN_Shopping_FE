@@ -1,5 +1,5 @@
 import { ICategory } from "@/types/backend";
-import { ModalForm, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
+import { ModalForm, ProFormSelect, ProFormText, ProFormTextArea } from "@ant-design/pro-components";
 import { Col, ConfigProvider, Form, message, notification, Row, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { isMobile } from "react-device-detect";
@@ -41,14 +41,14 @@ const ModalCategory = (props: IProps) => {
         }
     }, [dataInit]);
     const submitCategory = async (valuesForm: any) => {
-        const { description, name } = valuesForm;
+        const { description, name, path, gender } = valuesForm;
 
         if (dataInit?.id) {
             //update
             const category = {
-                name, description
+                name, description, path, gender
             }
-            const res = await callUpdateCategory(dataInit.id, category.name, dataImage[0].name, category.description);
+            const res = await callUpdateCategory(dataInit.id, category.name, dataImage[0].name, category.description, category.path, category.gender);
             if (res.data) {
                 message.success("Cập nhật role thành công");
                 handleReset();
@@ -62,9 +62,9 @@ const ModalCategory = (props: IProps) => {
         } else {
             //create
             const category = {
-                name, description
+                name, description, path, gender
             }
-            const res = await callCreateCategory(category.name, dataImage[0].name, category.description);
+            const res = await callCreateCategory(category.name, dataImage[0].name, category.description, category.path, category.gender);
             if (res.data) {
                 message.success("Thêm mới role thành công");
                 handleReset();
@@ -179,6 +179,19 @@ const ModalCategory = (props: IProps) => {
                                 { required: true, message: 'Vui lòng không bỏ trống' },
                             ]}
                             placeholder="Nhập tên"
+                        />
+                    </Col>
+                    <Col lg={12} md={12} sm={24} xs={24}>
+                        <ProFormSelect
+                            name="gender"
+                            label="Giới Tính"
+                            valueEnum={{
+                                Nam: 'Nam',
+                                Nữ: 'Nữ',
+                                Khác: 'Khác',
+                            }}
+                            placeholder="Chọn giới tính"
+                            rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
                         />
                     </Col>
                     <Col span={8}>

@@ -27,6 +27,8 @@ import CreateOrder from "./components/admin/createOrder/CreateOrder";
 import CreateOrderPage from "./components/admin/createOrder/CreateOrder";
 import HistoryPage from "./pages/client/history";
 import ProductDetailClientPage from "./pages/client/productDetail";
+import CategoryHomePage from "./pages/client/CategoryHome";
+import CategoryGenderPage from "./pages/client/categoryGender";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -93,6 +95,14 @@ export default function App() {
           element:
             <ProductDetailClientPage />
         },
+        {
+          path: "/category/:categoryId",
+          element: <CategoryHomePage />
+        },
+        {
+          path: "/products/:gender",
+          element: <CategoryGenderPage />
+        }
       ],
     },
     {

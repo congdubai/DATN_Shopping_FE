@@ -20,7 +20,7 @@ export default defineConfig(({ command, mode }) => {
       // visualizer() as PluginOption
     ],
     server: {
-      port: parseInt(env.PORT)
+      port: parseInt(env.PORT),
     },
     define: {
       global: {},

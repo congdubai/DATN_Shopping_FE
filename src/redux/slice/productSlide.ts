@@ -1,4 +1,4 @@
-import { callFetchProduct } from "@/config/api";
+import { callFetchProduct, callFetchProductsByCategory, callFetchProductsByGender } from "@/config/api";
 import { IProduct } from "@/types/backend";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -20,6 +20,22 @@ export const fetchProduct = createAsyncThunk(
         return res;
     }
 )
+
+export const fetchProductByCategory = createAsyncThunk(
+    'product/fetchProductByCategory',
+    async ({ categoryId, query }: { categoryId: string; query: string }) => {
+        const res = await callFetchProductsByCategory(categoryId, query);
+        return res;
+    }
+)
+export const fetchProductByGender = createAsyncThunk(
+    'product/fetchProductByGender',
+    async ({ gender, query }: { gender: string; query: string }) => {
+        const res = await callFetchProductsByGender(gender, query);
+        return res;
+    }
+);
+
 const initialState: IState = {
     isFetching: true,
     meta: {
@@ -30,24 +46,18 @@ const initialState: IState = {
     },
     result: [],
 };
+
 export const productSlide = createSlice({
     name: 'product',
     initialState,
-    reducers: {
-
-    },
+    reducers: {},
     extraReducers: (builder) => {
-        // Add reducers for additional action types here, and handle loading state as needed
-        builder.addCase(fetchProduct.pending, (state, action) => {
+        builder.addCase(fetchProduct.pending, (state) => {
             state.isFetching = true;
-            // Add user to the state array
-            // state.courseOrder = action.payload;
         })
 
-        builder.addCase(fetchProduct.rejected, (state, action) => {
+        builder.addCase(fetchProduct.rejected, (state) => {
             state.isFetching = false;
-            // Add user to the state array
-            // state.courseOrder = action.payload;
         })
 
         builder.addCase(fetchProduct.fulfilled, (state, action) => {
@@ -56,10 +66,38 @@ export const productSlide = createSlice({
                 state.meta = action.payload.data.meta;
                 state.result = action.payload.data.result;
             }
-            // Add user to the state array
-
-            // state.courseOrder = action.payload;
         })
+
+        builder.addCase(fetchProductByCategory.pending, (state) => {
+            state.isFetching = true;
+        })
+
+        builder.addCase(fetchProductByCategory.rejected, (state) => {
+            state.isFetching = false;
+        })
+
+        builder.addCase(fetchProductByCategory.fulfilled, (state, action) => {
+            if (action.payload && action.payload.data) {
+                state.isFetching = false;
+                state.meta = action.payload.data.meta;
+                state.result = action.payload.data.result;
+            }
+        })
+        builder.addCase(fetchProductByGender.pending, (state) => {
+            state.isFetching = true;
+        });
+
+        builder.addCase(fetchProductByGender.rejected, (state) => {
+            state.isFetching = false;
+        });
+
+        builder.addCase(fetchProductByGender.fulfilled, (state, action) => {
+            if (action.payload && action.payload.data) {
+                state.isFetching = false;
+                state.meta = action.payload.data.meta;
+                state.result = action.payload.data.result;
+            }
+        });
 
     },
 });

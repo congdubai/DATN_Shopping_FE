@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Image, Carousel, Typography, Tag, Button, InputNumber, Radio, Tabs, Flex, notification, message } from "antd";
-import { MinusOutlined, PlusOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { Row, Col, Image, Carousel, Typography, Tag, Button, InputNumber, Radio, Tabs, Flex, notification, message, Rate, Avatar, Dropdown, Menu, Pagination } from "antd";
+import { DownOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined, StarFilled, UserOutlined } from "@ant-design/icons";
 import { callAddToCart } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IProductDetail } from "@/types/backend";
 import { fetchProductDetailById } from "@/redux/slice/productDetailSlide";
 import { useParams } from "react-router-dom";
+import { fetchReviewByProductId } from "@/redux/slice/reviewSlide";
+import dayjs from "dayjs";
 
 
 const { Title, Text } = Typography;
@@ -14,6 +16,11 @@ const ProductDetailClientPage = () => {
     const { productId } = useParams<{ productId: string }>();
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const dispatch = useAppDispatch();
+    const reviews = useAppSelector(state => state.review.result);
+    const meta = useAppSelector(state => state.review.meta);
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 10;
+
     const { result: productDetails = [], isFetching } = useAppSelector(
         (state: any) => state.productDetail
     ) as { result: IProductDetail[]; isFetching: boolean };
@@ -25,13 +32,21 @@ const ProductDetailClientPage = () => {
         `${backendUrl}/storage/slide/slide-4.webp`,
     ];
 
+
     useEffect(() => {
-        console.log("check value", productId)
+        if (!productId) return;
+        dispatch(fetchReviewByProductId({ id: productId, query: `page=${currentPage}&size=10` }));
+    }, [dispatch, productId, currentPage, reviews]);
+
+    useEffect(() => {
         if (productId) {
             dispatch(fetchProductDetailById({ productId }))
+            dispatch(fetchReviewByProductId({
+                id: productId!,
+                query: `page=${currentPage}&size=${pageSize}`
+            }));
         }
-
-    }, [productId, dispatch]);
+    }, [productId, dispatch, currentPage, pageSize]);
 
     const [quantity, setQuantity] = useState(1);
 
@@ -190,180 +205,278 @@ const ProductDetailClientPage = () => {
 
     const [selectedImage1, setSelectedImage1] = useState(productImages[0]);
 
+    const starMenuItems = [
+        {
+            key: '1',
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <Rate disabled defaultValue={1} /> 1 sao
+                </div>
+            ),
+        },
+        {
+            key: '2',
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <Rate disabled defaultValue={2} /> 2 sao
+                </div>
+            ),
+        },
+        {
+            key: '3',
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <Rate disabled defaultValue={3} /> 3 sao
+                </div>
+            ),
+        },
+        {
+            key: '4',
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <Rate disabled defaultValue={4} /> 4 sao
+                </div>
+            ),
+        },
+        {
+            key: '5',
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                    <Rate disabled defaultValue={5} /> 5 sao
+                </div>
+            ),
+        },
+    ];
+
+
     return (
-        <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "160px", backgroundColor: "#f5f5f5" }}>
-            <div style={{ maxWidth: 1400, padding: "20px" }}>
-                <Row gutter={[32, 32]} style={{ marginLeft: 120 }}>
-                    <Col md={10} style={{ backgroundColor: "white", padding: "10px" }}>
-                        <Carousel>
-                            {productImages.map((img, index) => (
-                                <Image
-                                    key={index}
-                                    src={selectedImage1}
-                                    width={500}
-                                    height={450}
-                                    style={{ objectFit: "cover" }}
-                                />
-                            ))}
-                        </Carousel>
-                        <Row gutter={8} style={{ marginTop: 10 }}>
-                            {productImages.map((img, index) => (
-                                <Col key={index}>
-                                    <img
-                                        src={img}
-                                        alt={`Thumbnail ${index}`}
-                                        width={80}
-                                        height={80}
-                                        onClick={() => setSelectedImage1(img)}
-                                        style={{
-                                            cursor: "pointer",
-                                            border: img === selectedImage1 ? "2px solid #000" : "none",
-                                        }}
+        <>
+            <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "160px", backgroundColor: "#f5f5f5" }}>
+                <div style={{ maxWidth: 1400, padding: "20px" }}>
+                    <Row gutter={[32, 32]} style={{ marginLeft: 120 }}>
+                        <Col md={10} style={{ backgroundColor: "white", padding: "10px" }}>
+                            <Carousel>
+                                {productImages.map((img, index) => (
+                                    <Image
+                                        key={index}
+                                        src={selectedImage1}
+                                        width={500}
+                                        height={450}
+                                        style={{ objectFit: "cover" }}
                                     />
-                                </Col>
-                            ))}
-                        </Row>
-                    </Col>
+                                ))}
+                            </Carousel>
+                            <Row gutter={8} style={{ marginTop: 10 }}>
+                                {productImages.map((img, index) => (
+                                    <Col key={index}>
+                                        <img
+                                            src={img}
+                                            alt={`Thumbnail ${index}`}
+                                            width={80}
+                                            height={80}
+                                            onClick={() => setSelectedImage1(img)}
+                                            style={{
+                                                cursor: "pointer",
+                                                border: img === selectedImage1 ? "2px solid #000" : "none",
+                                            }}
+                                        />
+                                    </Col>
+                                ))}
+                            </Row>
+                        </Col>
 
-                    {/* Thông tin sản phẩm */}
-                    <Col
-                        className="custom-padding"
-                        md={10}
-                        style={{
-                            backgroundColor: "white",
-                            marginLeft: 20,
-                            padding: "8px",
-                            margin: "0 !important",
-                        }}
-                    >
+                        {/* Thông tin sản phẩm */}
+                        <Col
+                            className="custom-padding"
+                            md={10}
+                            style={{
+                                backgroundColor: "white",
+                                marginLeft: 20,
+                                padding: "8px",
+                                margin: "0 !important",
+                            }}
+                        >
 
-                        <Title level={4}>{productDetails[0]?.product?.name || "Sản phẩm"}</Title>
-                        <div style={{ marginTop: -10 }}>
-                            <Text style={{ fontSize: 12 }}>Loại:</Text> <Text strong style={{ fontSize: 12 }}>{productDetails[0]?.product?.category?.name}</Text>
-                            <span style={{ margin: '0 8px', color: "gray", fontSize: 12 }}>|</span>
-                            <Text style={{ fontSize: 12 }}>MSP:</Text> <Text strong style={{ fontSize: 12 }}>{productDetails[0]?.product?.id}</Text>
-                        </div>
-                        <p style={{ marginTop: 5 }}>
-                            <strong>SLg: </strong> {selectedProduct?.quantity}{" "}
-                            <span
-                                style={{
-                                    color: "white",
-                                    background: isInStock ? "#38bf57" : "red",
-                                    fontSize: 12,
-                                    fontWeight: 520,
-                                    borderRadius: 3,
-                                    padding: "3px 6px",
-                                    marginLeft: 8
-                                }}
-                            >
-                                {isInStock ? "Còn hàng" : "Hết hàng"}
-                            </span>
-                        </p>
-
-                        <Title level={3} style={{ color: "#ff0000", display: "inline-block", marginRight: 10, marginTop: 10 }}>{productDetails[0]?.product?.price}</Title>
-                        <Text delete style={{ fontSize: 16, color: "gray", marginTop: 8 }}>499.000đ</Text>
-                        <p>
-                            <strong>Màu sắc:</strong>
-                        </p>
-                        <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                            {colors.map((color) => {
-                                const isSelected = selectedColor === color;
-                                const colorCode = productDetails.find((p) => p.color?.name === color)?.color?.hexCode || "#000"; // Lấy mã màu từ API
-
-                                return (
-                                    <div
-                                        key={color}
-                                        onClick={() => setSelectedColor(color)}
-                                        style={{
-                                            width: 31,
-                                            height: 30,
-                                            borderRadius: "50%",
-                                            backgroundColor: colorCode,
-                                            border: isSelected ? "2px solid black" : "1px solid #ccc",
-                                            cursor: "pointer"
-                                        }}
-                                    />
-                                );
-                            })}
-                        </div>
-
-                        <p style={{ marginTop: 8 }}>
-                            <strong>Kích thước:</strong>
-                        </p>
-                        <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
-                            {sizes.map((size) => (
-                                <Button
-                                    key={size}
-                                    type="default"
+                            <Title level={4}>{productDetails[0]?.product?.name || "Sản phẩm"}</Title>
+                            <div style={{ marginTop: -10 }}>
+                                <Text style={{ fontSize: 12 }}>Loại:</Text> <Text strong style={{ fontSize: 12 }}>{productDetails[0]?.product?.category?.name}</Text>
+                                <span style={{ margin: '0 8px', color: "gray", fontSize: 12 }}>|</span>
+                                <Text style={{ fontSize: 12 }}>MSP:</Text> <Text strong style={{ fontSize: 12 }}>{productDetails[0]?.product?.id}</Text>
+                            </div>
+                            <p style={{ marginTop: 5 }}>
+                                <strong>SLg: </strong> {selectedProduct?.quantity}{" "}
+                                <span
                                     style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        textAlign: "center",
-                                        backgroundColor: "white",
-                                        width: 40,
-                                        height: 30,
-                                        color: "black",
-                                        border: selectedSize === size ? "2px solid black" : "1px solid #ccc",
-                                        fontWeight: selectedSize === size ? "bold" : "normal",
-                                        padding: 0,
+                                        color: "white",
+                                        background: isInStock ? "#38bf57" : "red",
+                                        fontSize: 12,
+                                        fontWeight: 520,
+                                        borderRadius: 3,
+                                        padding: "3px 6px",
+                                        marginLeft: 8
                                     }}
-                                    onClick={() => setSelectedSize(size)}
                                 >
-                                    {size}
+                                    {isInStock ? "Còn hàng" : "Hết hàng"}
+                                </span>
+                            </p>
+
+                            <Title level={3} style={{ color: "#ff0000", display: "inline-block", marginRight: 10, marginTop: 10 }}>{productDetails[0]?.product?.price}</Title>
+                            <Text delete style={{ fontSize: 16, color: "gray", marginTop: 8 }}>499.000đ</Text>
+                            <p>
+                                <strong>Màu sắc:</strong>
+                            </p>
+                            <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                                {colors.map((color) => {
+                                    const isSelected = selectedColor === color;
+                                    const colorCode = productDetails.find((p) => p.color?.name === color)?.color?.hexCode || "#000"; // Lấy mã màu từ API
+
+                                    return (
+                                        <div
+                                            key={color}
+                                            onClick={() => setSelectedColor(color)}
+                                            style={{
+                                                width: 31,
+                                                height: 30,
+                                                borderRadius: "50%",
+                                                backgroundColor: colorCode,
+                                                border: isSelected ? "2px solid black" : "1px solid #ccc",
+                                                cursor: "pointer"
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+
+                            <p style={{ marginTop: 8 }}>
+                                <strong>Kích thước:</strong>
+                            </p>
+                            <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                                {sizes.map((size) => (
+                                    <Button
+                                        key={size}
+                                        type="default"
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            textAlign: "center",
+                                            backgroundColor: "white",
+                                            width: 40,
+                                            height: 30,
+                                            color: "black",
+                                            border: selectedSize === size ? "2px solid black" : "1px solid #ccc",
+                                            fontWeight: selectedSize === size ? "bold" : "normal",
+                                            padding: 0,
+                                        }}
+                                        onClick={() => setSelectedSize(size)}
+                                    >
+                                        {size}
+                                    </Button>
+                                ))}
+                            </div>
+
+                            <div style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 20 }}>
+                                <Flex
+                                    align="center"
+                                    justify="space-between"
+                                    style={{
+                                        border: "1px solid #ccc",
+                                        borderRadius: "5px",
+                                        padding: "5px 10px",
+                                        display: "inline-flex",
+                                        width: "120px",
+                                    }}
+                                >
+                                    <Button
+                                        type="text"
+                                        icon={<MinusOutlined style={{ fontSize: 16 }} />}
+                                        onClick={decrease}
+                                    />
+                                    <span style={{ fontSize: "16px", fontWeight: "bold" }}>{quantity}</span>
+                                    <Button
+                                        type="text"
+                                        icon={<PlusOutlined style={{ fontSize: 16 }} />}
+                                        onClick={increase}
+                                        disabled={quantity >= selectedProductQuantity}
+                                    />
+                                </Flex>
+
+                                <Button
+                                    type="primary"
+                                    style={{ backgroundColor: "black", color: "white", height: 40, width: 150 }}
+                                    disabled={selectedProductQuantity === 0}
+                                    onClick={handleAddToCart}
+                                >
+                                    Thêm vào giỏ
                                 </Button>
-                            ))}
-                        </div>
 
-                        <div style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 20 }}>
-                            <Flex
-                                align="center"
-                                justify="space-between"
-                                style={{
-                                    border: "1px solid #ccc",
-                                    borderRadius: "5px",
-                                    padding: "5px 10px",
-                                    display: "inline-flex",
-                                    width: "120px",
-                                }}
-                            >
-                                <Button
-                                    type="text"
-                                    icon={<MinusOutlined style={{ fontSize: 16 }} />}
-                                    onClick={decrease}
-                                />
-                                <span style={{ fontSize: "16px", fontWeight: "bold" }}>{quantity}</span>
-                                <Button
-                                    type="text"
-                                    icon={<PlusOutlined style={{ fontSize: 16 }} />}
-                                    onClick={increase}
-                                    disabled={quantity >= selectedProductQuantity}
-                                />
-                            </Flex>
+                            </div>
+                        </Col>
+                    </Row>
+                    <Tabs defaultActiveKey="1" style={{ backgroundColor: "white", marginTop: 20, width: 1070, marginLeft: 120 }}
+                        tabBarStyle={{ marginLeft: 10, fontWeight: 500 }}>
+                        <Tabs.TabPane tab="Mô tả" key="1" style={{ marginLeft: 20, marginBottom: 10 }}>
+                            <span dangerouslySetInnerHTML={{ __html: productDetails[0]?.product?.detailDesc || "" }} />
+                        </Tabs.TabPane>
+                        <Tabs.TabPane tab="Đánh giá" key="2" style={{ marginLeft: 20, marginBottom: 10 }}>
+                            <div>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                                    {/* Bên trái: 4.6 + Rate + 45 lượt đánh giá */}
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                        <span style={{ fontSize: 24, fontWeight: "bold" }}>4.6</span>
+                                        <Rate allowHalf disabled defaultValue={4.6} style={{ fontSize: 20 }} />
+                                        <span style={{ color: "#888" }}>{reviews.length} lượt đánh giá</span>
+                                    </div>
 
-                            <Button
-                                type="primary"
-                                style={{ backgroundColor: "black", color: "white", height: 40, width: 150 }}
-                                disabled={selectedProductQuantity === 0}
-                                onClick={handleAddToCart}
-                            >
-                                Thêm vào giỏ
-                            </Button>
+                                    {/* Bên phải: Nút Sao ★ */}
+                                    <Dropdown menu={{ items: starMenuItems }} placement="bottomLeft">
+                                        <Button type="text" style={{ border: "1px solid #d9d9d9", color: "#000", marginRight: 20, width: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                            <h4 style={{ margin: 0 }}>Sao</h4>
+                                            <span style={{ color: "#fadb14", marginLeft: 5, fontSize: 14 }}>
+                                                <StarFilled />
+                                            </span>
+                                            <DownOutlined style={{ marginLeft: 10, color: "gray" }} />
+                                        </Button>
+                                    </Dropdown>
+                                </div>
+                                {/* Một đánh giá */}
+                                {reviews.map((review) => (
+                                    <div key={review.id} style={{ paddingTop: 20, borderTop: "1px solid #f0f0f0" }}>
+                                        <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+                                            <Avatar size="large" icon={<UserOutlined />} />
+                                            <div>
+                                                <div style={{ fontWeight: "bold" }}>{review.name || "Ẩn danh"}</div>
+                                                <Rate disabled defaultValue={review.rating} style={{ fontSize: 16, margin: "4px 0" }} />
+                                                <div style={{ marginTop: 8, color: "#888" }}>Đánh giá vào: <>{review.createdAt ? dayjs(review.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</></div>
+                                                <div style={{ marginTop: 8, lineHeight: 1.6 }}>
+                                                    <div>
+                                                        <span style={{ color: "#888" }}>Bình luận: </span>
+                                                        <span style={{ fontWeight: "bold" }} dangerouslySetInnerHTML={{ __html: review.comment || "Không có bình luận" }} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                                {reviews.length > 0 && (
+                                    <div style={{ textAlign: "right", marginTop: 10, marginRight: 20 }}>
+                                        <Pagination
+                                            current={meta.page}
+                                            pageSize={meta.pageSize}
+                                            showSizeChanger
+                                            total={meta.total}
+                                            showTotal={(total, range) => `${range[0]}-${range[1]} trên ${total} rows`}
+                                            onChange={(page, pageSize) => setCurrentPage(page)}
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </Tabs.TabPane>
+                    </Tabs>
 
-                        </div>
-                    </Col>
-                </Row>
-                <Tabs defaultActiveKey="1" style={{ backgroundColor: "white", marginTop: 20, width: 1070, marginLeft: 120 }}
-                    tabBarStyle={{ marginLeft: 10, fontWeight: 500 }}>
-                    <Tabs.TabPane tab="Mô tả" key="1" style={{ margin: 10 }}>
-                        Nội dung mô tả sản phẩm...
-                    </Tabs.TabPane>
-                    <Tabs.TabPane tab="Đánh giá" key="2" style={{ margin: 10 }}>
-                        Nội dung chính sách giao hàng...
-                    </Tabs.TabPane>
-                </Tabs>
+                </div >
             </div >
-        </div >
+        </>
     );
 };
 

@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout, Menu, Dropdown, Avatar, Badge, Typography, Input, Row, Col, Flex, Affix } from "antd";
-import { HomeOutlined, AppstoreOutlined, ShoppingCartOutlined, UserOutlined, LogoutOutlined, MailOutlined, EnvironmentOutlined, SearchOutlined } from "@ant-design/icons";
+import { HomeOutlined, AppstoreOutlined, ShoppingCartOutlined, UserOutlined, LogoutOutlined, MailOutlined, EnvironmentOutlined, SearchOutlined, UnorderedListOutlined, DownOutlined, CaretDownOutlined } from "@ant-design/icons";
+import SubMenu from "antd/es/menu/SubMenu";
+import { callFetchMenuCategory } from "@/config/api";
+import { ICategory } from "@/types/backend";
 
 interface User {
     name: string;
@@ -12,6 +15,31 @@ interface User {
 
 const Navbar: React.FC = () => {
     const [quantity, setQuantity] = useState<number>(0);
+    const [categoryItems, setCategoryItems] = useState<{ label: string, path: string }[]>([]);
+
+    const convertCategoryToMenu = (data: ICategory[]) => {
+        return data.map((cat) => ({
+            label: cat.name,
+            path: `/category/${cat.id}`, // thay vì slug
+        }));
+    };
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await callFetchMenuCategory();
+                if (res.data && Array.isArray(res.data)) {
+                    const menu = convertCategoryToMenu(res.data);
+                    setCategoryItems(menu);
+                }
+            } catch (error) {
+                console.error("Lỗi khi fetch category:", error);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         const updateCartQuantity = () => {
@@ -168,11 +196,18 @@ const Navbar: React.FC = () => {
                             <Menu.Item key="home" icon={<HomeOutlined />}>
                                 <Link to="/">Trang chủ</Link>
                             </Menu.Item>
-                            <Menu.Item key="category" icon={<AppstoreOutlined />}>
-                                <Link to="/categories">Danh mục sản phẩm</Link>
+                            <SubMenu key="category" icon={<AppstoreOutlined />} title="Danh mục sản phẩm">
+                                {categoryItems.map((item) => (
+                                    <Menu.Item key={item.path}>
+                                        <Link to={item.path}>{item.label}</Link>
+                                    </Menu.Item>
+                                ))}
+                            </SubMenu>
+                            <Menu.Item key="product-male" icon={<CaretDownOutlined />}>
+                                <Link to="/products/Nam">Đồ Nam</Link>
                             </Menu.Item>
-                            <Menu.Item key="product" icon={<AppstoreOutlined />}>
-                                <Link to="/products">Sản phẩm</Link>
+                            <Menu.Item key="product-female" icon={<CaretDownOutlined />}>
+                                <Link to="/products/Nữ">Đồ Nữ</Link>
                             </Menu.Item>
                             <Menu.Item key="cart" icon={<ShoppingCartOutlined />}>
                                 <Link to="/cart">Giỏ hàng</Link>

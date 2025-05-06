@@ -405,3 +405,12 @@
 .custom-padding {
     padding-left: 20px !important;
 }
+
+/* Tăng độ đậm chữ cho menu con */
+.ant-menu .ant-menu-item {
+    font-weight: 600;
+}
+
+.ant-menu-submenu-title {
+    font-weight: 600 !important;
+}

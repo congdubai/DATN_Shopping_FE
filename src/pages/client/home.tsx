@@ -47,7 +47,7 @@ const HomePage = () => {
 
     useEffect(() => {
         dispatch(fetchProduct({ query: `page=${currentPage}&size=${pageSize}` }));
-    }, [dispatch]);
+    }, [dispatch, currentPage]);
     return (
         <>
             <Row justify="center" style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
@@ -173,6 +173,10 @@ const HomePage = () => {
                             showSizeChanger
                             total={meta.total}
                             showTotal={(total, range) => `${range[0]}-${range[1]} trên ${total} rows`}
+                            onChange={(page) => {
+                                setCurrentPage(page);
+                                dispatch(fetchProduct({ query: `page=${page}&size=${pageSize}` })); // Gọi lại API để tải sản phẩm cho trang mới
+                            }}
                         />
                     </Row>
                 </Col>
@@ -182,7 +186,7 @@ const HomePage = () => {
                 setIsOpenModal={setIsOpenModal}
                 productId={dataInit?.id}
             />
-            
+
         </>
     );
 };

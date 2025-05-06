@@ -77,6 +77,8 @@ export interface ICategory {
     id?: string;
     name: string;
     image: string;
+    path?: string;
+    gender?: string;
     description: string;
     createdBy?: string;
     updatedBy?: boolean | null;
@@ -117,6 +119,8 @@ export interface IProductDetail {
             id: string;
             name: string;
         }
+        detailDesc?: string;
+        shortDesc?: string;
     }
     size?: {
         id: string;
@@ -159,14 +163,15 @@ export interface IHistory {
     id?: string;
     orderId?: string;
     productId?: string;
+    userId?: string;
     name: string;
     image: string;
     size: string;
     color: string;
     quantity: number;
-    quantity: number;
     status: string;
     price: number;
+    rating: boolean;
 }
 
 export interface IReview {
@@ -176,4 +181,15 @@ export interface IReview {
     order?: { id: string };
     rating: number;
     comment: string;
+    name?: string,
+    avatar?: string;
+    createdAt?: string;
+}
+
+export interface ITopProduct {
+    id?: string;
+    name: string;
+    quantity: number;
+    price: number;
+    averageRating: number;
 }

@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IProduct, IProductDetail, IReview, IRole, ISize, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IProduct, IProductDetail, IReview, IRole, ISize, ITopProduct, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -89,6 +89,14 @@ export const callUpdateProduct = (id: string, name: string, price: number, image
 export const callDeleteProduct = (id: string) => {
     return axios.delete<IBackendRes<IProduct>>(`/api/v1/products/${id}`);
 }
+export const callFetchProductsByCategory = (categoryId: string, query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IProduct>>>(`/api/v1/products/by-category/${categoryId}?${query}`);
+}
+export const callFetchProductsByGender = (gender: string, query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IProduct>>>(`/api/v1/products/${gender}?${query}`);
+}
+
+
 
 /**
  * 
@@ -97,16 +105,18 @@ export const callDeleteProduct = (id: string) => {
 export const callFetchCategory = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<ICategory>>>(`/api/v1/categories?${query}`);
 }
-export const callCreateCategory = (name: string, image: string, description: string) => {
-    return axios.post<IBackendRes<ICategory>>('/api/v1/categories', { name, image, description });
+export const callCreateCategory = (name: string, image: string, description: string, path: string, gender: string) => {
+    return axios.post<IBackendRes<ICategory>>('/api/v1/categories', { name, image, description, path, gender });
 }
-export const callUpdateCategory = (id: string, name: string, image: string, description: string) => {
-    return axios.put<IBackendRes<ICategory>>(`/api/v1/categories`, { id, name, image, description });
+export const callUpdateCategory = (id: string, name: string, image: string, description: string, path: string, gender: string) => {
+    return axios.put<IBackendRes<ICategory>>(`/api/v1/categories`, { id, name, image, description, path, gender });
 }
 export const callDeleteCategory = (id: string) => {
     return axios.delete<IBackendRes<ICategory>>(`/api/v1/categories/${id}`);
 }
-
+export const callFetchMenuCategory = () => {
+    return axios.get<IBackendRes<ICategory[]>>(`/api/v1/list-categories`);
+}
 /**
  * 
 Module Color
@@ -215,6 +225,16 @@ export const callFetchCurrentOrder = (query: string) => {
     return axios.get<IBackendRes<IOrder[]>>(`/api/v1/dashboard/currentOrder`);
 }
 
+export const callFetchTopSellingProducts = (
+    startDate: string,
+    endDate: string,
+    query: string   
+) => {
+    return axios.get<IBackendRes<ITopProduct[]>>(
+        `/api/v1/orders/top-selling?startDate=${startDate}&endDate=${endDate}&${query}`
+    );
+};
+
 /**
  * 
 Module History
@@ -229,4 +249,7 @@ Module Rate
  */
 export const callCreateRate = (review: IReview) => {
     return axios.post<IBackendRes<IReview>>('/api/v1/review', { ...review });
+}
+export const callFetchReview = (id: string, query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IReview>>>(`/api/v1/review?id=${id}&${query}`);
 }
