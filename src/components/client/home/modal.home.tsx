@@ -1,4 +1,3 @@
-import { fetchProductDetailById } from "@/redux/slice/productDetailSlide";
 import { Modal, Button, Flex, message, notification } from "antd";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -6,6 +5,7 @@ import { IProductDetail } from "@/types/backend";
 import { motion } from "framer-motion";
 import { MinusOutlined, PlusOutlined } from "@ant-design/icons";
 import { callAddToCart } from "@/config/api";
+import { fetchProductDetailByProductId } from "@/redux/slice/productDetailSlide";
 
 interface IProps {
     isOpenModal: boolean;
@@ -23,7 +23,7 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
 
     useEffect(() => {
         if (productId) {
-            dispatch(fetchProductDetailById({ productId }))
+            dispatch(fetchProductDetailByProductId({ productId }))
         }
         if (!isOpenModal) {
             setQuantity(1);

@@ -4,10 +4,10 @@ import { DownOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined, StarFi
 import { callAddToCart } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IProductDetail } from "@/types/backend";
-import { fetchProductDetailById } from "@/redux/slice/productDetailSlide";
 import { useParams } from "react-router-dom";
 import { fetchReviewByProductId } from "@/redux/slice/reviewSlide";
 import dayjs from "dayjs";
+import { fetchProductDetailByProductId } from "@/redux/slice/productDetailSlide";
 
 
 const { Title, Text } = Typography;
@@ -40,7 +40,7 @@ const ProductDetailClientPage = () => {
 
     useEffect(() => {
         if (productId) {
-            dispatch(fetchProductDetailById({ productId }))
+            dispatch(fetchProductDetailByProductId({ productId }))
             dispatch(fetchReviewByProductId({
                 id: productId!,
                 query: `page=${currentPage}&size=${pageSize}`

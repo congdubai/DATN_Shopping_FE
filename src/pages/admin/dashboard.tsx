@@ -8,14 +8,17 @@ import { Card } from '@/components/admin/dashboard/Card/Card';
 import { CustomerReviewsCard } from '@/components/admin/dashboard/CustomerReviewsCard/CustomerReviewsCard';
 import { RevenueCard } from '@/components/admin/dashboard/RevenueCard/RevenueCard';
 import "@/styles/dashboard.css"
-import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchTotalPriceByDay } from '@/config/api';
+import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
 import SalesChart from '@/components/admin/dashboard/chart/SalesChart';
 import CategoriesChart from '@/components/admin/dashboard/chart/CategoriesChart';
 import OrdersStatusChart from '@/components/admin/dashboard/chart/OrdersStatusChart';
 import CustomerRateChart from '@/components/admin/dashboard/chart/CustomerRateChart';
-import { SNOW_PRODUCTS_COLUMNS, ORDERS_COLUMNS, PRODUCTS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
-import { useAppSelector } from '@/redux/hooks';
-import { IOrder } from '@/types/backend';
+import { SNOW_PRODUCTS_COLUMNS, ORDERS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
+import { IOrder, IProductDetail, ITopProduct } from '@/types/backend';
+import { ColumnsType } from 'antd/lib/table/interface';
+import ViewTopProductDetail from '@/components/admin/dashboard/product/view.topProduct';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export const COLOR = {
     50: '#e0f1ff',
@@ -50,6 +53,12 @@ export const DashboardPage = () => {
     const [recentOrders, setRecentOrders] = useState<IOrder[]>([]);
     const [recentOrdersLoading, setRecentOrdersLoading] = useState<boolean>(false);
     const [recentOrdersError, setRecentOrdersError] = useState<any>(null);
+    const [topProducts, setTopProducts] = useState<ITopProduct[]>([]);
+    const [topProductsLoading, setTopProductsLoading] = useState(false);
+    const [topProductsError, setTopProductsError] = useState<any>(null);
+    const [openDrawer, setOpenDrawer] = useState(false);
+    const [productID, setProductId] = useState<string | null>(null);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -82,18 +91,76 @@ export const DashboardPage = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const fetchTopProducts = async () => {
+            setTopProductsLoading(true);
+            try {
+                const startDate = "2025-01-01T00:00:00";
+                const endDate = "2025-05-20T23:59:59";
 
-    const {
-        data: topProducts,
-        error: topProductsError,
-        loading: topProductsLoading,
-    } = useFetchData('../mocks/TopProducts.json');
+                const res = await callFetchTopSellingProducts(startDate, endDate);
+                setTopProducts(res.data!);
+            } catch (error: any) {
+                setTopProductsError(error);
+            } finally {
+                setTopProductsLoading(false);
+            }
+        };
+
+        fetchTopProducts();
+    }, []);
+
 
     const {
         data: topSellers,
         error: topSellersError,
         loading: topSellersLoading,
     } = useFetchData('../mocks/TopSeller.json');
+
+    const PRODUCTS_COLUMNS: ColumnsType<ITopProduct> = [
+        {
+            title: "Sản phẩm",
+            dataIndex: "productName",
+            key: "productName",
+            render: (_: any, { productName, productImage, productId }: ITopProduct) => (
+                <Flex gap="small" align="center" onClick={() => {
+                    setOpenDrawer(true);
+                    setProductId(productId!);
+                }}>
+                    <Image src={`${backendUrl}/storage/product/${productImage}`} width={35} height={35} />
+                    <Text style={{ width: 160 }} ellipsis>
+                        {productName}
+                    </Text>
+                </Flex>
+            ),
+        },
+        {
+            title: "Số lượng",
+            dataIndex: "totalQuantitySold",
+            key: "totalQuantitySold",
+            align: 'center',
+            render: (totalQuantitySold: number) => <span className="text-capitalize">{totalQuantitySold}</span>,
+        },
+        {
+            title: "Giá",
+            dataIndex: "productPrice",
+            key: "productPrice",
+            align: 'center',
+            render: (productPrice: number) => <span>{productPrice.toLocaleString()} ₫</span>,
+        },
+        {
+            title: "Đánh giá",
+            dataIndex: "averageRating",
+            key: "averageRating",
+            align: 'center',
+            render: (rating: number) => (
+                <Row justify="center" align="middle" gutter={[8, 0]}>
+                    <Col>{rating}</Col>
+                    <Col><StarFilled style={{ fontSize: 12, color: "#fadb14" }} /></Col>
+                </Row>
+            ),
+        },
+    ];
     return (
         <>
             <ConfigProvider
@@ -330,6 +397,7 @@ export const DashboardPage = () => {
                                                 columns={PRODUCTS_COLUMNS}
                                                 dataSource={topProducts}
                                                 loading={topProductsLoading}
+                                                rowKey="id"
                                                 className="overflow-scroll"
                                             />
                                         )}
@@ -397,6 +465,13 @@ export const DashboardPage = () => {
                     </Row>
                 </div>
             </ConfigProvider >
+
+            <ViewTopProductDetail
+                onClose={setOpenDrawer}
+                open={openDrawer}
+                productId={productID}
+                setProductId={setProductId}
+            />
         </>
     );
 };

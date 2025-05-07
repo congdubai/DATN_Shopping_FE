@@ -187,9 +187,10 @@ export interface IReview {
 }
 
 export interface ITopProduct {
-    id?: string;
-    name: string;
-    quantity: number;
-    price: number;
+    productId?: string;
+    productName: string;
+    productImage: string
+    totalQuantitySold: number;
+    productPrice: number;
     averageRating: number;
 }

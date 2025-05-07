@@ -1,48 +1,15 @@
-import { createElement } from 'react';
+import { createElement, useState } from 'react';
 import { blue, green, red, yellow } from '@ant-design/colors';
-import { Flex, Image, Progress, Tag, TagProps, Typography } from 'antd';
+import { Col, Flex, Image, Progress, Row, Tag, TagProps, Typography } from 'antd';
 import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, StarFilled, SyncOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { numberWithCommas } from '@/utils';
 import { UserAvatar } from '@/components/admin/dashboard/UserAvatar/UserAvatar';
+import { ITopProduct } from '@/types/backend';
+import { ColumnsType } from 'antd/es/table';
+import { useAppDispatch } from '@/redux/hooks';
 const { Text, Title } = Typography;
 
-export const PRODUCTS_COLUMNS = [
-    {
-        title: 'Sản phẩm',
-        dataIndex: 'product_name',
-        key: 'product_name',
-        render: (_: any, { product_name, brand }: any) => (
-            <Flex gap="small" align="center">
-                <Image src={brand} width={16} height={16} />
-                <Text style={{ width: 160 }}>{product_name}</Text>
-            </Flex>
-        ),
-    },
-    {
-        title: 'Số lượng',
-        dataIndex: 'category',
-        key: 'category',
-        render: (_: any) => <span className="text-capitalize">{_}</span>,
-    },
-    {
-        title: 'Giá',
-        dataIndex: 'price',
-        key: 'price',
-        render: (_: any) => <span>$ {_}</span>,
-    },
-    {
-        title: 'Đánh giá',
-        dataIndex: 'average_rating',
-        key: 'average_rating',
-        render: (_: any) => (
-            <Flex align="center" gap="small">
-                {_}
-                <StarFilled style={{ fontSize: 12 }} />{' '}
-            </Flex>
-        ),
-    },
-];
 
 export const SNOW_PRODUCTS_COLUMNS = [
     {
@@ -50,7 +17,7 @@ export const SNOW_PRODUCTS_COLUMNS = [
         dataIndex: 'product_name',
         key: 'product_name',
         render: (_: any, { product_name, brand }: any) => (
-            <Flex gap="small" align="center">
+            <Flex gap="small" align="center" >
                 <Image src={brand} width={16} height={16} />
                 <Text style={{ width: 160 }}>{product_name}</Text>
             </Flex>

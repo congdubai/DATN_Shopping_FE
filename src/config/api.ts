@@ -172,6 +172,9 @@ export const callDeleteProductDetail = (id: string) => {
 export const callFetchProductDetailById = (id: string) => {
     return axios.get<IBackendRes<IProductDetail>>(`/api/v1/productDetails/${id}`);
 }
+export const callFetchProductDetailByProductId = (id: string) => {
+    return axios.get<IBackendRes<IProductDetail>>(`/api/v1/productDetails/by-product/${id}`);
+}
 export const callFetchProductDetailByColor = (productId: string, colorId: string) => {
     return axios.get<string>(
         `/api/v1/productDetailByColor/${productId}/${colorId}`
@@ -228,10 +231,9 @@ export const callFetchCurrentOrder = (query: string) => {
 export const callFetchTopSellingProducts = (
     startDate: string,
     endDate: string,
-    query: string   
 ) => {
     return axios.get<IBackendRes<ITopProduct[]>>(
-        `/api/v1/orders/top-selling?startDate=${startDate}&endDate=${endDate}&${query}`
+        `/api/v1/orders/top-selling?startDate=${startDate}&endDate=${endDate}`
     );
 };
 

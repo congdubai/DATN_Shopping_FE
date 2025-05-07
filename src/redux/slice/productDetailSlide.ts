@@ -1,4 +1,4 @@
-import { callFetchProductDetail, callFetchProductDetailById } from "@/config/api";
+import { callFetchProductDetail, callFetchProductDetailById, callFetchProductDetailByProductId } from "@/config/api";
 import { IProductDetail } from "@/types/backend";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -21,14 +21,20 @@ export const fetchProductDetail = createAsyncThunk(
         return res;
     }
 )
-export const fetchProductDetailById = createAsyncThunk(
-    'productDetail/fetchProductDetailById',
+export const fetchProductDetailByProductId = createAsyncThunk(
+    'productDetail/fetchProductDetailByProductId',
     async ({ productId }: { productId: string }) => {
-        const res = await callFetchProductDetailById(productId);
+        const res = await callFetchProductDetailByProductId(productId);
         return res;
     }
 );
-
+export const fetchProductDetailById = createAsyncThunk(
+    'productDetail/fetchProductDetailById',
+    async (Id: string) => {
+        const res = await callFetchProductDetailById(Id);
+        return res;
+    }
+);
 
 const initialState: IState = {
     isFetching: true,
@@ -70,6 +76,24 @@ export const productDetailSlide = createSlice({
 
             // state.courseOrder = action.payload;
         })
+        builder.addCase(fetchProductDetailByProductId.pending, (state) => {
+            state.isFetching = true;
+        });
+
+        builder.addCase(fetchProductDetailByProductId.fulfilled, (state, action) => {
+            state.isFetching = false;
+            if (action.payload && Array.isArray(action.payload.data)) {
+                state.result = action.payload.data;
+            } else if (action.payload && action.payload.data) {
+                state.result = [action.payload.data];
+            }
+        });
+
+
+        builder.addCase(fetchProductDetailById.rejected, (state) => {
+            state.isFetching = false;
+        });
+
         builder.addCase(fetchProductDetailById.pending, (state) => {
             state.isFetching = true;
         });
@@ -84,7 +108,7 @@ export const productDetailSlide = createSlice({
         });
 
 
-        builder.addCase(fetchProductDetailById.rejected, (state) => {
+        builder.addCase(fetchProductDetailByProductId.rejected, (state) => {
             state.isFetching = false;
         });
     },
