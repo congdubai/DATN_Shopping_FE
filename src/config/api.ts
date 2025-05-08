@@ -237,6 +237,14 @@ export const callFetchTopSellingProducts = (
     );
 };
 
+export const callFetchSlowSellingProducts = (
+    startDate: string,
+    endDate: string,
+) => {
+    return axios.get<IBackendRes<ITopProduct[]>>(
+        `/api/v1/orders/slow-selling?startDate=${startDate}&endDate=${endDate}`
+    );
+};
 /**
  * 
 Module History

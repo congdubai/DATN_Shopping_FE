@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react';
 import CountUp from 'react-countup';
-import { Alert, Button, ButtonProps, Col, ConfigProvider, Flex, Image, Popover, Progress, Row, Space, Table, Tag, TagProps, Typography } from 'antd';
+import { Alert, Button, ButtonProps, Col, ConfigProvider, DatePicker, Flex, Image, Popover, Progress, Row, Space, Table, Tag, TagProps, Typography } from 'antd';
 import { ArrowDownOutlined, ArrowUpOutlined, CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, QuestionOutlined, StarFilled, SyncOutlined } from '@ant-design/icons';
 import useFetchData from '@/redux/useFetchData';
 import { useStylesContext } from '@/context';
@@ -8,7 +8,7 @@ import { Card } from '@/components/admin/dashboard/Card/Card';
 import { CustomerReviewsCard } from '@/components/admin/dashboard/CustomerReviewsCard/CustomerReviewsCard';
 import { RevenueCard } from '@/components/admin/dashboard/RevenueCard/RevenueCard';
 import "@/styles/dashboard.css"
-import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
+import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
 import SalesChart from '@/components/admin/dashboard/chart/SalesChart';
 import CategoriesChart from '@/components/admin/dashboard/chart/CategoriesChart';
 import OrdersStatusChart from '@/components/admin/dashboard/chart/OrdersStatusChart';
@@ -18,7 +18,9 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { IOrder, IProductDetail, ITopProduct } from '@/types/backend';
 import { ColumnsType } from 'antd/lib/table/interface';
 import ViewTopProductDetail from '@/components/admin/dashboard/product/view.topProduct';
+import dayjs from 'dayjs';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
+const { RangePicker } = DatePicker;
 
 export const COLOR = {
     50: '#e0f1ff',
@@ -59,6 +61,17 @@ export const DashboardPage = () => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [productID, setProductId] = useState<string | null>(null);
 
+    const [slowProducts, setSlowProducts] = useState<ITopProduct[]>([]);
+    const [slowProductsLoading, setSlowProductsLoading] = useState(false);
+    const [slowProductsError, setSlowProductsError] = useState<any>(null);
+    const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
+    const [dateRange1, setDateRange1] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,10 +108,11 @@ export const DashboardPage = () => {
         const fetchTopProducts = async () => {
             setTopProductsLoading(true);
             try {
-                const startDate = "2025-01-01T00:00:00";
-                const endDate = "2025-05-20T23:59:59";
-
-                const res = await callFetchTopSellingProducts(startDate, endDate);
+                const [start, end] = dateRange;
+                const res = await callFetchTopSellingProducts(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
                 setTopProducts(res.data!);
             } catch (error: any) {
                 setTopProductsError(error);
@@ -108,7 +122,27 @@ export const DashboardPage = () => {
         };
 
         fetchTopProducts();
-    }, []);
+    }, [dateRange1]);
+
+    useEffect(() => {
+        const fetchSlowProducts = async () => {
+            setSlowProductsLoading(true);
+            try {
+                const [start, end] = dateRange1;
+                const res = await callFetchSlowSellingProducts(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
+                setSlowProducts(res.data!);
+            } catch (error: any) {
+                setSlowProductsError(error);
+            } finally {
+                setSlowProductsLoading(false);
+            }
+        };
+
+        fetchSlowProducts();
+    }, [dateRange]);
 
 
     const {
@@ -384,7 +418,19 @@ export const DashboardPage = () => {
                                     </Flex>
                                 </Col>
                                 <Col xs={24} lg={12}>
-                                    <Card title="Top sản phẩm bán chạy" style={cardStyles}>
+                                    <Card title={
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span>Top sản phẩm bán chạy</span>
+                                            <RangePicker
+                                                value={dateRange}
+                                                onChange={(dates) => {
+                                                    if (dates) setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                }}
+                                                format="DD/MM/YYYY"
+                                                allowClear={false}
+                                            />
+                                        </div>
+                                    } style={cardStyles}>
                                         {topProductsError ? (
                                             <Alert
                                                 message="Error"
@@ -404,19 +450,32 @@ export const DashboardPage = () => {
                                     </Card>
                                 </Col>
                                 <Col xs={24} lg={12}>
-                                    <Card title="Top sản phẩm bán chậm" style={cardStyles}>
-                                        {topProductsError ? (
+                                    <Card title={
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span>Top sản phẩm bán chậm</span>
+                                            <RangePicker
+                                                value={dateRange1}
+                                                onChange={(dates) => {
+                                                    if (dates) setDateRange1(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                }}
+                                                format="DD/MM/YYYY"
+                                                allowClear={false}
+                                            />
+                                        </div>
+                                    } style={cardStyles}>
+                                        {slowProductsError ? (
                                             <Alert
                                                 message="Error"
-                                                description={topProductsError.toString()}
+                                                description={slowProductsError.toString()}
                                                 type="error"
                                                 showIcon
                                             />
                                         ) : (
                                             <Table
-                                                columns={SNOW_PRODUCTS_COLUMNS}
-                                                dataSource={topProducts}
-                                                loading={topProductsLoading}
+                                                columns={PRODUCTS_COLUMNS}
+                                                dataSource={slowProducts}
+                                                loading={slowProductsLoading}
+                                                rowKey="id"
                                                 className="overflow-scroll"
                                             />
                                         )}
