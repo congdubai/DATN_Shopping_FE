@@ -13,6 +13,7 @@ import sizeReducer from './slice/sizeSlide'
 import productDetailReducer from './slice/productDetailSlide'
 import historyReducer from './slice/historySlide'
 import reviewReducer from './slice/reviewSlide'
+import orderReducer from './slice/orderSlide'
 
 export const store = configureStore({
     reducer: {
@@ -25,7 +26,8 @@ export const store = configureStore({
         size: sizeReducer,
         productDetail: productDetailReducer,
         history: historyReducer,
-        review: reviewReducer
+        review: reviewReducer,
+        order: orderReducer
     }
 });
 

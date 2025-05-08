@@ -37,6 +37,7 @@ const LayoutAdmin = () => {
                 { label: <Link to='/admin/user'>User</Link>, key: '/admin/user', icon: <UserOutlined /> },
                 { label: <Link to='/admin/product'>Product</Link>, key: '/admin/product', icon: <BankOutlined /> },
                 { label: <Link to='/admin/productDetail'>Product Detail</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
+                { label: <Link to='/admin/order'>Order</Link>, key: '/admin/order', icon: <ApiOutlined /> },
                 { label: <Link to='/admin/color'>Color</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
                 { label: <Link to='/admin/category'>Category</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
                 { label: <Link to='/admin/size'>Size</Link>, key: '/admin/size', icon: <ApiOutlined /> },

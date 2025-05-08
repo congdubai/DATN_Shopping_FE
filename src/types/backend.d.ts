@@ -151,12 +151,27 @@ export interface ICartItem {
 
 export interface IOrder {
     id?: string;
+    user?: { id: string };
+    reviews?: { id: string };
     status: string;
     receiverName: string;
     receiverPhone: string;
     receiverAddress: string;
     totalPrice: number;
     orderDate?: string;
+    paymentMethod: string;
+    orderDetails?: { id: string };
+    discount?: { id: string };
+}
+
+export interface IOrderDetail {
+    id?: string;
+    order?: { id: string, orderDate?: string };
+    productDetail?: { id: string, product?: { id: string, name: string } };
+    quantity: number;
+    color: string;
+    size: string;
+    price: number;
 }
 
 export interface IHistory {

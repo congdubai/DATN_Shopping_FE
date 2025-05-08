@@ -29,6 +29,7 @@ import HistoryPage from "./pages/client/history";
 import ProductDetailClientPage from "./pages/client/productDetail";
 import CategoryHomePage from "./pages/client/CategoryHome";
 import CategoryGenderPage from "./pages/client/categoryGender";
+import OrderPage from "./pages/admin/order";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -165,6 +166,13 @@ export default function App() {
               <ProductDetailPage />
             </ProtectedRoute>
         }, {
+          path: "order",
+          element:
+            <ProtectedRoute>
+              <OrderPage />
+            </ProtectedRoute>
+        },
+        {
           path: "createOrder",
           element:
             <ProtectedRoute>

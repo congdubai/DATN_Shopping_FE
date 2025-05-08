@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IProduct, IProductDetail, IReview, IRole, ISize, ITopProduct, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISize, ITopProduct, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -210,7 +210,18 @@ export const callPlaceOrder = (name: string, phone: string, address: string, met
         `/api/v1/place-order?receiverName=${name}&receiverPhone=${phone}&receiverAddress=${address}&paymentMethod=${method}&totalPrice=${totalPrice}`
     );
 };
-
+export const callFetchOrders = () => {
+    return axios.get<IBackendRes<IModelPaginate<IOrder>>>(`/api/v1/orders`);
+}
+export const callUpdateOrders = (id: string, order: IOrder) => {
+    return axios.put<IBackendRes<IOrder>>(`/api/v1/orders`, { id, ...order });
+}
+export const callDeleteOrders = (id: string) => {
+    return axios.delete<IBackendRes<IOrder>>(`/api/v1/orders/${id}`);
+}
+export const callFetchOrdersById = (id: string) => {
+    return axios.get<IBackendRes<IOrderDetail[]>>(`/api/v1/orders/${id}`);
+}
 /**
  * 
 Module DashBoard
