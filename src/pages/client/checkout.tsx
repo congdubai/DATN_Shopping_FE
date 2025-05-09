@@ -30,7 +30,7 @@ const CheckOutPage = () => {
                 paymentMethod,
                 totalPrice.toString()
             );
-            if (res.statusCode === 200) {
+            if (res.statusCode === '200') {
                 localStorage.removeItem("cart");
                 localStorage.setItem("cart_quantity", "0");
                 window.dispatchEvent(new Event("cartQuantityChanged"));

@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { fetchProduct } from "../../redux/slice/productSlide";
-import { Button, Card, Carousel, Col, Pagination, Rate, Row, Tag, Typography } from "antd";
+import { Button, Card, Carousel, Col, notification, Pagination, Rate, Row, Tag, Typography } from "antd";
 import "styles/main.css"
 import { CarouselRef } from "antd/es/carousel";
 import { CarOutlined, CopyOutlined, EyeOutlined, LeftOutlined, RightOutlined, SearchOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
 import HomeModal from "@/components/client/home/modal.home";
 import { IProduct } from "@/types/backend";
+import { callVNPayReturn } from "@/config/api";
 
 const HomePage = () => {
     const products = useAppSelector(state => state.product.result);
@@ -23,6 +24,8 @@ const HomePage = () => {
     const [dataInit, setDataInit] = useState<IProduct | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
+    const alreadyCalled = useRef(false);
+
 
     const coupons = [
         {
@@ -44,6 +47,47 @@ const HomePage = () => {
             expiry: "31/03/2025",
         },
     ];
+
+    useEffect(() => {
+        const handleVNPayReturn = async () => {
+            const params = new URLSearchParams(location.search);
+            const responseCode = params.get("vnp_ResponseCode");
+            const txnRef = params.get("vnp_TxnRef");
+
+            const key = `payment-handled-${txnRef}`;
+            const isHandled = sessionStorage.getItem(key);
+
+            if (!responseCode || !txnRef || isHandled) return;
+
+            try {
+                sessionStorage.setItem(key, "true");
+
+                const res = await callVNPayReturn(responseCode, txnRef);
+
+                if (res.statusCode === 200) {
+                    localStorage.removeItem("cart");
+                    localStorage.setItem("cart_quantity", "0");
+                    window.dispatchEvent(new Event("cartQuantityChanged"));
+
+                    notification.success({
+                        message: 'Đặt hàng thành công',
+                        description: 'Cảm ơn bạn đã mua hàng!',
+                        placement: 'topRight',
+                    });
+                } else {
+                    notification.error({ message: 'Có lỗi xảy ra' });
+                }
+            } catch (err) {
+                notification.error({ message: "Lỗi khi xác nhận thanh toán" });
+            } finally {
+                // 👇 Dọn URL để không bị gọi lại lần sau
+                navigate("/", { replace: true });
+            }
+        };
+
+        handleVNPayReturn();
+    }, [location.search]);
+
 
     useEffect(() => {
         dispatch(fetchProduct({ query: `page=${currentPage}&size=${pageSize}` }));

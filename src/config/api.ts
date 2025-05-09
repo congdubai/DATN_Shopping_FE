@@ -222,6 +222,13 @@ export const callDeleteOrders = (id: string) => {
 export const callFetchOrdersById = (id: string) => {
     return axios.get<IBackendRes<IOrderDetail[]>>(`/api/v1/orders/${id}`);
 }
+
+export const callVNPayReturn = (responseCode: string, txnRef: string) => {
+    return axios.get<IBackendRes<any>>(
+        `/api/v1/thank?vnp_ResponseCode=${responseCode}&vnp_TxnRef=${txnRef}`
+    );
+};
+
 /**
  * 
 Module DashBoard
