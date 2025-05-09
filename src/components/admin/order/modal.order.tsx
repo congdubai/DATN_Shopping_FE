@@ -84,11 +84,19 @@ const ModalOrder = (props: IProps) => {
                     };
                     const res = await callUpdateOrders(record.id!, updatedOrder);
                     if (res.data) {
-                        message.success("Cập nhật trạng thái thành công");
+                        notification.success({
+                            message: 'Thành công',
+                            description: 'Cập nhật trạng thái thành công!',
+                            placement: 'topRight',
+                        });
                         handleReset();
                         reloadTable();
                     } else {
-                        message.error("Cập nhật thất bại");
+                        notification.error({
+                            message: 'Thất bại',
+                            description: 'Cập nhật thất bại!',
+                            placement: 'topRight',
+                        });
                     }
                 };
 
@@ -98,7 +106,7 @@ const ModalOrder = (props: IProps) => {
                         onChange={handleChange}
                         style={{ width: 160 }}
                     >
-                        <Select.Option value="Đã đặt hàng">Đã đặt hàng</Select.Option>
+                        <Select.Option value="Đã đặt hàng">Đang xử lý</Select.Option>
                         <Select.Option value="Đã hủy">Đã hủy</Select.Option>
                         <Select.Option value="Đã hoàn thành">Đã hoàn thành</Select.Option>
                     </Select>

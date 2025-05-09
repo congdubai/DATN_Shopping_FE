@@ -18,35 +18,64 @@ const CheckOutPage = () => {
     const [form] = Form.useForm();
 
     const handleSubmit = async (values: any) => {
-
         const { name, phone, address } = values;
         const fullAddress = Array.isArray(address) ? address.join(", ") : address;
 
-        const res = await callPlaceOrder(
-            name,
-            phone,
-            fullAddress,
-            paymentMethod,
-            totalPrice.toString()
-        );
-
-        if (res.statusCode === 200) {
-            localStorage.removeItem("cart");
-            localStorage.setItem("cart_quantity", "0");
-            window.dispatchEvent(new Event("cartQuantityChanged"));
-            notification.success({
-                message: 'Đặt hàng hành công',
-                description: 'Cảm ơn bạn đã mua hàng!',
-                placement: 'topRight',
-            });
-            navigate("/");
-        } else {
-            notification.error({
-                message: 'Có lỗi xảy ra',
-                description: res.message
-            });
+        if (paymentMethod === "cod") {
+            // Xử lý đơn hàng với COD
+            const res = await callPlaceOrder(
+                name,
+                phone,
+                fullAddress,
+                paymentMethod,
+                totalPrice.toString()
+            );
+            if (res.statusCode === 200) {
+                localStorage.removeItem("cart");
+                localStorage.setItem("cart_quantity", "0");
+                window.dispatchEvent(new Event("cartQuantityChanged"));
+                notification.success({
+                    message: 'Đặt hàng thành công',
+                    description: 'Cảm ơn bạn đã mua hàng!',
+                    placement: 'topRight',
+                });
+                navigate("/");
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
+        } else if (paymentMethod === "vnpay") {
+            // Xử lý đơn hàng với VNPay
+            const res = await callPlaceOrder(
+                name,
+                phone,
+                fullAddress,
+                paymentMethod,
+                totalPrice.toString()
+            );
+            console.log("checkValue: ", res)
+            if (res.statusCode === '00') {
+                // Giả sử res.data trả về URL VNPay để chuyển hướng
+                const vnpayUrl = res.data;
+                if (vnpayUrl) {
+                    window.location.href = vnpayUrl;
+                } else {
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: 'Không thể lấy URL thanh toán VNPay.'
+                    });
+                }
+            } else {
+                notification.error({
+                    message: 'Có lỗi xảy ra',
+                    description: res.message
+                });
+            }
         }
     };
+
 
     return (
         <>
