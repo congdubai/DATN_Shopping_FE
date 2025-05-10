@@ -25,6 +25,7 @@ export interface IAccount {
             id: string;
             name: string;
         }
+        avatar?: string;
     }
 }
 export interface IGetAccount extends Omit<IAccount, "access_token"> { }
@@ -208,4 +209,11 @@ export interface ITopProduct {
     totalQuantitySold: number;
     productPrice: number;
     averageRating: number;
+}
+export interface IMessage {
+    sender: string;
+    receiver: string;
+    content: string;
+    timestamp: string;
+    isRead: boolean;
 }

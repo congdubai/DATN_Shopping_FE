@@ -9,7 +9,7 @@ export const fetchAccount = createAsyncThunk(
         return response.data;
     }
 )
-    
+
 interface IState {
     isAuthenticated: boolean;
     isLoading: boolean;
@@ -20,6 +20,7 @@ interface IState {
         id: string;
         email: string;
         name: string;
+        avatar?: string;
         role: {
             id?: string;
             name?: string;

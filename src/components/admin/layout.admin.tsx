@@ -41,6 +41,8 @@ const LayoutAdmin = () => {
                 { label: <Link to='/admin/color'>Color</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
                 { label: <Link to='/admin/category'>Category</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
                 { label: <Link to='/admin/size'>Size</Link>, key: '/admin/size', icon: <ApiOutlined /> },
+                { label: <Link to='/admin/chat'>Chat</Link>, key: '/admin/chat', icon: <AliwangwangOutlined /> },
+
             ] : []),
             ...(roleName === 'STAFF' ? [
                 { label: <Link to='/admin'>DashBoard</Link>, key: '/admin', icon: <ScheduleOutlined /> },

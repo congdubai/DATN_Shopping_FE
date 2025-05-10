@@ -30,6 +30,8 @@ import ProductDetailClientPage from "./pages/client/productDetail";
 import CategoryHomePage from "./pages/client/CategoryHome";
 import CategoryGenderPage from "./pages/client/categoryGender";
 import OrderPage from "./pages/admin/order";
+import ChatBoxPage from "./pages/client/chatBox";
+import ChatWidget from "./components/client/chat/ChatIcon";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -48,6 +50,7 @@ const LayoutClient = () => {
       <Header />
       <div className={styles['content-app']}>
         <Outlet />
+        <ChatWidget />
       </div>
       <Footer />
     </div>
@@ -122,6 +125,13 @@ export default function App() {
           element:
             <ProtectedRoute>
               <UserPage />
+            </ProtectedRoute>
+        },
+        {
+          path: "chat",
+          element:
+            <ProtectedRoute>
+              <ChatBoxPage />
             </ProtectedRoute>
         },
         {

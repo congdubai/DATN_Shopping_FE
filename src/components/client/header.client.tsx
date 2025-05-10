@@ -215,7 +215,6 @@ const Navbar: React.FC = () => {
                             </Menu.Item>
                             <Menu.Item key="contact" icon={<MailOutlined />}>
                                 <Link to="/user/contact">Liên hệ</Link>
-                                <Badge count={user.adminMessageCount} offset={[10, 0]} />
                             </Menu.Item>
                         </Menu>
                     </Col>
