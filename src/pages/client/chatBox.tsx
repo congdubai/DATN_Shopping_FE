@@ -5,7 +5,6 @@ import { format } from "date-fns";
 import dayjs from "dayjs";
 import { useAppSelector } from "@/redux/hooks";
 import { IMessage } from "@/types/backend";
-import { callFetchUpdateIsRead } from "@/config/api";
 
 const { Header, Content, Sider } = Layout;
 const { Text } = Typography;
@@ -34,6 +33,8 @@ const ChatBoxPage = () => {
 
         ws.onmessage = (event) => {
             const receivedMessage: IMessage = JSON.parse(event.data);
+            console.log("Received message:", receivedMessage);
+
             setMessages((prevMessages) => {
                 const isViewing = currentUser === receivedMessage.sender;
                 const updatedMessage = {
@@ -84,37 +85,16 @@ const ChatBoxPage = () => {
         }
     };
 
-    const handleSelectUser = async (username: string) => {
+    const handleSelectUser = (username: string) => {
         setCurrentUser(username);
 
-        const userMessages = messages.filter(
-            (msg) => (msg.sender === username && msg.receiver === "admin") || (msg.sender === "admin" && msg.receiver === username)
+        setMessages(prevMessages =>
+            prevMessages.map(msg =>
+                msg.sender === username && msg.receiver === "admin"
+                    ? { ...msg, isRead: true, isNew: false }
+                    : msg
+            )
         );
-
-        if (userMessages.length > 0) {
-            const sortedMessages = userMessages
-                .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-            if (sortedMessages.length > 0) {
-                const latestMessageId = sortedMessages[0].id!;
-
-                try {
-                    const response = await callFetchUpdateIsRead(latestMessageId.toString());
-                    if (response.statusCode === 200) {
-                        // Cập nhật trạng thái isRead cho tất cả tin nhắn trong cuộc trò chuyện này
-                        setMessages(prevMessages =>
-                            prevMessages.map(msg =>
-                                msg.sender === username && msg.receiver === "admin"
-                                    ? { ...msg, isRead: true, isNew: false }
-                                    : msg
-                            )
-                        );
-                    }
-                } catch (error) {
-                    console.error("Error marking messages as read:", error);
-                }
-            }
-        }
     };
 
     return (
@@ -205,4 +185,4 @@ const ChatBoxPage = () => {
     );
 };
 
-export default ChatBoxPage;
+export default ChatBoxPage;  
