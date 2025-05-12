@@ -5,7 +5,6 @@ import { ArrowDownOutlined, ArrowUpOutlined, CheckCircleOutlined, ClockCircleOut
 import useFetchData from '@/redux/useFetchData';
 import { useStylesContext } from '@/context';
 import { Card } from '@/components/admin/dashboard/Card/Card';
-import { CustomerReviewsCard } from '@/components/admin/dashboard/CustomerReviewsCard/CustomerReviewsCard';
 import { RevenueCard } from '@/components/admin/dashboard/RevenueCard/RevenueCard';
 import "@/styles/dashboard.css"
 import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
@@ -255,7 +254,7 @@ export const DashboardPage = () => {
                             </Col>
                         ) : (
                             <>
-                                <Col sm={24} lg={16}>
+                                <Col sm={24} lg={24}>
                                     <Row gutter={[
                                         { xs: 8, sm: 16, md: 24, lg: 32 },
                                         { xs: 8, sm: 16, md: 24, lg: 32 }
@@ -302,9 +301,6 @@ export const DashboardPage = () => {
                                         </Col>
                                     </Row>
                                 </Col>
-                                <Col sm={24} lg={8}>
-                                    <CustomerReviewsCard />
-                                </Col>
                                 <Col xs={24} lg={12}>
                                     <Card
                                         title="Overall sales"
@@ -341,82 +337,7 @@ export const DashboardPage = () => {
                                         <CategoriesChart />
                                     </Card>
                                 </Col>
-                                <Col xs={24} lg={12}>
-                                    <Card
-                                        title="Orders by status"
-                                        extra={
-                                            <Popover content="Orders by status" title="Orders">
-                                                <Button icon={<QuestionOutlined />} {...POPOVER_BUTTON_PROPS} />
-                                            </Popover>
-                                        }
-                                        style={cardStyles}
-                                    >
-                                        <OrdersStatusChart />
-                                    </Card>
-                                </Col>
-                                <Col xs={24} lg={12}>
-                                    <Flex vertical gap="middle">
-                                        <Card
-                                            title="Conversion rate"
-                                            extra={
-                                                <Popover
-                                                    content="Customer conversion rate"
-                                                    title="Conversion rate"
-                                                >
-                                                    <Button
-                                                        icon={<QuestionOutlined />}
-                                                        {...POPOVER_BUTTON_PROPS}
-                                                    />
-                                                </Popover>
-                                            }
-                                        >
-                                            <Flex vertical gap="middle" justify="center">
-                                                <Typography.Title style={{ margin: 0 }}>8.48%</Typography.Title>
-                                                <Row>
-                                                    <Col sm={24} lg={8}>
-                                                        <Space direction="vertical">
-                                                            <Text>Added to cart</Text>
-                                                            <Text type="secondary">5 visits</Text>
-                                                        </Space>
-                                                    </Col>
-                                                    <Col sm={24} lg={8}>
-                                                        <Text className="text-end" strong>
-                                                            $ <CountUp end={27483.7} decimals={2} />
-                                                        </Text>
-                                                    </Col>
-                                                    <Col sm={24} lg={8}>
-                                                        <Tag color="green-inverse" icon={<ArrowUpOutlined />}>
-                                                            16.8%
-                                                        </Tag>
-                                                    </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col sm={24} lg={8}>
-                                                        <Space direction="vertical">
-                                                            <Text>Reached to Checkout</Text>
-                                                            <Text type="secondary">23 visits</Text>
-                                                        </Space>
-                                                    </Col>
-                                                    <Col sm={24} lg={8}>
-                                                        <Text className="text-end" strong>
-                                                            $ <CountUp end={145483.7} decimals={2} />
-                                                        </Text>
-                                                    </Col>
-                                                    <Col sm={24} lg={8}>
-                                                        <Tag color="red-inverse" icon={<ArrowDownOutlined />}>
-                                                            -46.8%
-                                                        </Tag>
-                                                    </Col>
-                                                </Row>
-                                            </Flex>
-                                        </Card>
-                                        <Card title="Customer rate">
-                                            <div style={{ height: 80, textAlign: 'center' }}>
-                                                <CustomerRateChart />
-                                            </div>
-                                        </Card>
-                                    </Flex>
-                                </Col>
+
                                 <Col xs={24} lg={12}>
                                     <Card title={
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
