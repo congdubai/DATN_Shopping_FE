@@ -211,6 +211,7 @@ export interface ITopProduct {
     averageRating: number;
 }
 export interface IMessage {
+    id?: string;
     sender: string;
     receiver: string;
     content: string;

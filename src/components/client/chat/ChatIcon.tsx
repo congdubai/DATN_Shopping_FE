@@ -52,9 +52,10 @@ const ChatWidget = () => {
         <>
             {/* Biểu tượng chat với badge đỏ nếu có tin nhắn mới */}
             <div className="chat-icon" onClick={handleOpenChat}>
-                <Badge count={isNewMessage ? 1 : 0} showZero>
+                <Badge dot={isNewMessage} showZero={false}>
                     <MessageOutlined style={{ fontSize: 22, color: "white" }} />
                 </Badge>
+
             </div>
 
             {visible && (

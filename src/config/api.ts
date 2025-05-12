@@ -281,3 +281,10 @@ export const callCreateRate = (review: IReview) => {
 export const callFetchReview = (id: string, query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IReview>>>(`/api/v1/review?id=${id}&${query}`);
 }
+/**
+ * 
+Module Message
+ */
+export const callFetchUpdateIsRead = (id: string) => {
+    return axios.put<IBackendRes<any>>(`/api/v1/messages/mark-as-read/${id}`);
+}
