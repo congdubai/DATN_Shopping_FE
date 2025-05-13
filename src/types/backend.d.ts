@@ -218,3 +218,8 @@ export interface IMessage {
     timestamp: string;
     isRead: boolean;
 }
+
+export interface ICategorySeller {
+    category: string;
+    value: number;
+}

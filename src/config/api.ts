@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISize, ITopProduct, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, ICategorySeller, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISize, ITopProduct, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -233,19 +233,24 @@ export const callVNPayReturn = (responseCode: string, txnRef: string) => {
  * 
 Module DashBoard
  */
-export const callFetchCountUsersByDay = () => {
-    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-user-by-day`);
+export const callFetchCountUsersByDay = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-user-by-day?startDate=${startDate}&endDate=${endDate}`);
 }
-export const callFetchCountOrdersByDay = () => {
-    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-order-by-day`);
+export const callFetchCountOrdersByDay = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-order-by-day?startDate=${startDate}&endDate=${endDate}`);
 }
-export const callFetchTotalPriceByDay = () => {
-    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/total-price-by-day`);
+export const callFetchCountCancelOrdersByDay = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/count-cancel-order-by-day?startDate=${startDate}&endDate=${endDate}`);
+}
+export const callFetchTotalPriceByDay = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/total-price-by-day?startDate=${startDate}&endDate=${endDate}`);
 }
 export const callFetchCurrentOrder = (query: string) => {
     return axios.get<IBackendRes<IOrder[]>>(`/api/v1/dashboard/currentOrder`);
 }
-
+export const callFetchCategorySaleByDay = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<ICategorySeller[]>>(`/api/v1/dashboard/category-sale?startDate=${startDate}&endDate=${endDate}`);
+}
 export const callFetchTopSellingProducts = (
     startDate: string,
     endDate: string,

@@ -1,32 +1,53 @@
-import {Pie} from '@ant-design/charts';
+import { callFetchCategorySaleByDay } from '@/config/api';
+import { ICategorySeller } from '@/types/backend';
+import { Pie } from '@ant-design/charts';
+import dayjs, { Dayjs } from 'dayjs';
+import { useEffect, useState } from 'react';
 
-const CategoriesChart = () => {
-    const data = [
-        {
-            type: 'Appliances',
-            value: 27,
-        },
-        {
-            type: 'Electronics',
-            value: 25,
-        },
-        {
-            type: 'Clothing',
-            value: 18,
-        },
-        {
-            type: 'Shoes',
-            value: 15,
-        },
-        {
-            type: 'Food',
-            value: 10,
-        },
-        {
-            type: 'Cosmetice',
-            value: 5,
-        },
-    ];
+interface CategoriesChartProps {
+    dateRange6?: [Dayjs, Dayjs];
+}
+
+const CategoriesChart: React.FC<CategoriesChartProps> = ({ dateRange6 }) => {
+    const [data, setData] = useState<ICategorySeller[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            if (!dateRange6) return;
+
+            setLoading(true);
+            const [start, end] = dateRange6;
+
+            try {
+                const res = await callFetchCategorySaleByDay(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
+
+                if (res.data && res.data.length > 0) {
+                    const total = res.data.reduce((acc: number, cur: ICategorySeller) => acc + cur.value, 0);
+                    const processed = res.data.map((item: ICategorySeller) => ({
+                        ...item,
+                        percent: item.value / total,
+                    }));
+                    setData(processed);
+                }
+                else {
+                    setData([]);
+                }
+            } catch (error) {
+                console.error("Fetch category sales failed:", error);
+                setData([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [dateRange6]);
+
+    const totalSales = data.reduce((acc, cur) => acc + cur.value, 0);
 
     const config = {
         appendPadding: 10,
@@ -38,7 +59,7 @@ const CategoriesChart = () => {
         label: {
             type: 'inner',
             offset: '-50%',
-            content: '{value}%',
+            content: (datum: any) => `${(datum.percent * 100)}%`,
             style: {
                 textAlign: 'center',
                 fontSize: 16,
@@ -61,12 +82,13 @@ const CategoriesChart = () => {
                     textOverflow: 'ellipsis',
                     fontSize: 18,
                 },
-                content: '18,935\nsales',
+                content: `${totalSales}\nsales`,
             },
         },
     };
 
     // @ts-ignore
-    return <Pie {...config} />;
+    return <Pie {...config} loading={loading} />;
 };
+
 export default CategoriesChart;

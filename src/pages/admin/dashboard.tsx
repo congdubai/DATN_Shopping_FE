@@ -1,20 +1,18 @@
 import { CSSProperties, useEffect, useState } from 'react';
 import CountUp from 'react-countup';
-import { Alert, Button, ButtonProps, Col, ConfigProvider, DatePicker, Flex, Image, Popover, Progress, Row, Space, Table, Tag, TagProps, Typography } from 'antd';
-import { ArrowDownOutlined, ArrowUpOutlined, CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, QuestionOutlined, StarFilled, SyncOutlined } from '@ant-design/icons';
+import { Alert, Button, ButtonProps, Col, ConfigProvider, DatePicker, Flex, Image, Popover, Row, Space, Table, Tag, TagProps, Typography } from 'antd';
+import { ArrowUpOutlined, QuestionOutlined, StarFilled } from '@ant-design/icons';
 import useFetchData from '@/redux/useFetchData';
 import { useStylesContext } from '@/context';
 import { Card } from '@/components/admin/dashboard/Card/Card';
 import { RevenueCard } from '@/components/admin/dashboard/RevenueCard/RevenueCard';
 import "@/styles/dashboard.css"
-import { callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
+import { callFetchCountCancelOrdersByDay, callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
 import SalesChart from '@/components/admin/dashboard/chart/SalesChart';
 import CategoriesChart from '@/components/admin/dashboard/chart/CategoriesChart';
-import OrdersStatusChart from '@/components/admin/dashboard/chart/OrdersStatusChart';
-import CustomerRateChart from '@/components/admin/dashboard/chart/CustomerRateChart';
-import { SNOW_PRODUCTS_COLUMNS, ORDERS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
-import { useAppDispatch, useAppSelector } from '@/redux/hooks';
-import { IOrder, IProductDetail, ITopProduct } from '@/types/backend';
+import { ORDERS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
+import { useAppSelector } from '@/redux/hooks';
+import { IOrder, ITopProduct } from '@/types/backend';
 import { ColumnsType } from 'antd/lib/table/interface';
 import ViewTopProductDetail from '@/components/admin/dashboard/product/view.topProduct';
 import dayjs from 'dayjs';
@@ -49,6 +47,7 @@ export const DashboardPage = () => {
     const stylesContext = useStylesContext();
     const [countUser, setCountUser] = useState<number>(0);
     const [countOrder, setCountOrder] = useState<number>(0);
+    const [countCancelOrder, setCountCancelOrder] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
     const roleName = useAppSelector(state => state.account.user.role.name);
     const [recentOrders, setRecentOrders] = useState<IOrder[]>([]);
@@ -71,20 +70,95 @@ export const DashboardPage = () => {
         dayjs().startOf('month'),
         dayjs(),
     ]);
-
+    const [dateRange2, setDateRange2] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
+    const [dateRange3, setDateRange3] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
+    const [dateRange4, setDateRange4] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
+    const [dateRange5, setDateRange5] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
+    const [dateRange6, setDateRange6] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchUserCount = async () => {
             try {
-                const res = await callFetchCountUsersByDay();
+                const [start, end] = dateRange2;
+                const res = await callFetchCountUsersByDay(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
                 setCountUser(res.data!);
-                const res1 = await callFetchCountOrdersByDay();
-                setCountOrder(res1.data!);
-                const res2 = await callFetchTotalPriceByDay();
-                setTotalPrice(res2.data!);
             } catch (error) {
-                console.error('Lỗi khi lấy dữ liệu dashboard:', error);
+                console.error('Lỗi khi lấy số người dùng:', error);
             }
         };
+
+        fetchUserCount();
+    }, [dateRange2]);
+
+    useEffect(() => {
+        const fetchOrderCount = async () => {
+            try {
+                const [start, end] = dateRange3;
+                const res = await callFetchCountOrdersByDay(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
+                setCountOrder(res.data!);
+            } catch (error) {
+                console.error('Lỗi khi lấy số đơn hàng:', error);
+            }
+        };
+
+        fetchOrderCount();
+    }, [dateRange3]);
+
+    useEffect(() => {
+        const fetchCancelOrderCount = async () => {
+            try {
+                const [start, end] = dateRange4;
+                const res = await callFetchCountCancelOrdersByDay(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
+                setCountCancelOrder(res.data!);
+            } catch (error) {
+                console.error('Lỗi khi lấy số đơn hủy:', error);
+            }
+        };
+
+        fetchCancelOrderCount();
+    }, [dateRange4]);
+
+    useEffect(() => {
+        const fetchTotalRevenue = async () => {
+            try {
+                const [start, end] = dateRange5;
+                const res = await callFetchTotalPriceByDay(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
+                setTotalPrice(res.data!);
+            } catch (error) {
+                console.error('Lỗi khi lấy doanh thu:', error);
+            }
+        };
+
+        fetchTotalRevenue();
+    }, [dateRange5]);
+
+    useEffect(() => {
         const fetchRecentOrders = async () => {
             try {
                 setRecentOrdersLoading(true);
@@ -99,8 +173,8 @@ export const DashboardPage = () => {
                 setRecentOrdersLoading(false);
             }
         };
+
         fetchRecentOrders();
-        fetchData();
     }, []);
 
     useEffect(() => {
@@ -261,16 +335,41 @@ export const DashboardPage = () => {
                                     ]}>
                                         <Col xs={24} sm={12}>
                                             <RevenueCard
-                                                title="Khách hàng"
+                                                title={
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <span style={{ margin: 0 }}>Khách hàng</span>
+                                                        <RangePicker
+                                                            value={dateRange2}
+                                                            onChange={(dates) => {
+                                                                if (dates) setDateRange2(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                            }}
+                                                            format="DD/MM/YYYY"
+                                                            allowClear={false}
+                                                        />
+                                                    </div>
+                                                }
                                                 value={countUser}
                                                 diff={5.54}
                                                 height={180}
                                                 justify="space-between"
                                             />
                                         </Col>
+
                                         <Col xs={24} sm={12}>
                                             <RevenueCard
-                                                title="Số lượng bán"
+                                                title={
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <span style={{ margin: 0 }}>Số lượng bán</span>
+                                                        <RangePicker
+                                                            value={dateRange3}
+                                                            onChange={(dates) => {
+                                                                if (dates) setDateRange3(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                            }}
+                                                            format="DD/MM/YYYY"
+                                                            allowClear={false}
+                                                        />
+                                                    </div>
+                                                }
                                                 value={countOrder}
                                                 diff={-12.3}
                                                 height={180}
@@ -279,7 +378,19 @@ export const DashboardPage = () => {
                                         </Col>
                                         <Col xs={24} sm={12}>
                                             <RevenueCard
-                                                title="Doanh thu"
+                                                title={
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <span style={{ margin: 0 }}>Doanh thu</span>
+                                                        <RangePicker
+                                                            value={dateRange5}
+                                                            onChange={(dates) => {
+                                                                if (dates) setDateRange5(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                            }}
+                                                            format="DD/MM/YYYY"
+                                                            allowClear={false}
+                                                        />
+                                                    </div>
+                                                }
                                                 value={new Intl.NumberFormat('vi-VN', {
                                                     style: 'currency',
                                                     currency: 'VND',
@@ -292,8 +403,20 @@ export const DashboardPage = () => {
                                         </Col>
                                         <Col xs={24} sm={12}>
                                             <RevenueCard
-                                                title="Số lượng đơn hủy"
-                                                value="1"
+                                                title={
+                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                        <span style={{ margin: 0 }}>Số lượng hủy</span>
+                                                        <RangePicker
+                                                            value={dateRange4}
+                                                            onChange={(dates) => {
+                                                                if (dates) setDateRange4(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                            }}
+                                                            format="DD/MM/YYYY"
+                                                            allowClear={false}
+                                                        />
+                                                    </div>
+                                                }
+                                                value={countCancelOrder}
                                                 diff={2.34}
                                                 height={180}
                                                 justify="space-between"
@@ -303,11 +426,16 @@ export const DashboardPage = () => {
                                 </Col>
                                 <Col xs={24} lg={12}>
                                     <Card
-                                        title="Overall sales"
+                                        title="Bán hàng"
                                         extra={
-                                            <Popover content="Total sales over period x" title="Total sales">
-                                                <Button icon={<QuestionOutlined />} {...POPOVER_BUTTON_PROPS} />
-                                            </Popover>
+                                            <RangePicker
+                                                value={dateRange}
+                                                onChange={(dates) => {
+                                                    if (dates) setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                }}
+                                                format="DD/MM/YYYY"
+                                                allowClear={false}
+                                            />
                                         }
                                         style={cardStyles}
                                     >
@@ -326,15 +454,20 @@ export const DashboardPage = () => {
                                 </Col>
                                 <Col xs={24} lg={12}>
                                     <Card
-                                        title="Categories"
+                                        title="Sản phẩm theo danh mục"
                                         extra={
-                                            <Popover content="Sales per categories" title="Categories sales">
-                                                <Button icon={<QuestionOutlined />} {...POPOVER_BUTTON_PROPS} />
-                                            </Popover>
+                                            <RangePicker
+                                                value={dateRange6}
+                                                onChange={(dates) => {
+                                                    if (dates) setDateRange6(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                }}
+                                                format="DD/MM/YYYY"
+                                                allowClear={false}
+                                            />
                                         }
                                         style={cardStyles}
                                     >
-                                        <CategoriesChart />
+                                        <CategoriesChart dateRange6={dateRange6} />
                                     </Card>
                                 </Col>
 
@@ -403,7 +536,19 @@ export const DashboardPage = () => {
                                     </Card>
                                 </Col>
                                 <Col span={24}>
-                                    <Card title="Top sellers">
+                                    <Card title={
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <span style={{ margin: 0 }}>Top nhân viên</span>
+                                            <RangePicker
+                                                value={dateRange}
+                                                onChange={(dates) => {
+                                                    if (dates) setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                }}
+                                                format="DD/MM/YYYY"
+                                                allowClear={false}
+                                            />
+                                        </div>
+                                    }>
                                         {topSellersError ? (
                                             <Alert
                                                 message="Error"

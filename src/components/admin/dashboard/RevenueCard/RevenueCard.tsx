@@ -2,11 +2,11 @@ import { CardProps, Flex, Space, Typography } from 'antd';
 import { ArrowDownOutlined, ArrowUpOutlined } from '@ant-design/icons';
 import { green, red } from '@ant-design/colors';
 import CountUp from 'react-countup';
-import { CSSProperties } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { Card } from '../Card/Card';
 
 type Props = {
-  title: string;
+  title: string | ReactNode;
   value: string | number;
   diff: number;
   justify?: CSSProperties['justifyContent'];
