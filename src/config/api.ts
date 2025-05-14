@@ -278,7 +278,9 @@ export const callFetchISaleChannelSummary = (startDate: string, endDate: string)
         `/api/v1/dashboard/revenue-by-channel?startDate=${startDate}&endDate=${endDate}`
     );
 };
-
+export const callFetchTotalPrice = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<number>>(`/api/v1/dashboard/total-price?startDate=${startDate}&endDate=${endDate}`);
+}
 
 /**
  * 

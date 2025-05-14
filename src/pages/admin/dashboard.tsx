@@ -7,7 +7,7 @@ import { useStylesContext } from '@/context';
 import { Card } from '@/components/admin/dashboard/Card/Card';
 import { RevenueCard } from '@/components/admin/dashboard/RevenueCard/RevenueCard';
 import "@/styles/dashboard.css"
-import { callFetchCountCancelOrdersByDay, callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchITopSellerByDay, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
+import { callFetchCountCancelOrdersByDay, callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchITopSellerByDay, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPrice, callFetchTotalPriceByDay } from '@/config/api';
 import SalesChart from '@/components/admin/dashboard/chart/SalesChart';
 import CategoriesChart from '@/components/admin/dashboard/chart/CategoriesChart';
 import { ORDERS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
@@ -49,6 +49,7 @@ export const DashboardPage = () => {
     const [countOrder, setCountOrder] = useState<number>(0);
     const [countCancelOrder, setCountCancelOrder] = useState<number>(0);
     const [totalPrice, setTotalPrice] = useState<number>(0);
+    const [totalPrice1, setTotalPrice1] = useState<number>(0);
     const roleName = useAppSelector(state => state.account.user.role.name);
     const [recentOrders, setRecentOrders] = useState<IOrder[]>([]);
     const [recentOrdersLoading, setRecentOrdersLoading] = useState<boolean>(false);
@@ -245,6 +246,24 @@ export const DashboardPage = () => {
 
         fetchTopSellers();
     }, [dateRange7]);
+
+    useEffect(() => {
+        const fetchTotalRevenue = async () => {
+            const [start, end] = dateRange8;
+            try {
+                const res = await callFetchTotalPrice(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
+                if (res.statusCode === 200) {
+                    setTotalPrice1(res.data || 0);
+                }
+            } catch (error) {
+                console.error("Failed to fetch total price", error);
+            }
+        };
+        fetchTotalRevenue();
+    }, [dateRange8]);
 
     const PRODUCTS_COLUMNS: ColumnsType<ITopProduct> = [
         {
@@ -476,7 +495,7 @@ export const DashboardPage = () => {
                                         <Flex vertical gap="middle">
                                             <Space>
                                                 <Title level={3} style={{ margin: 0 }}>
-                                                    $ <CountUp end={24485.67} />
+                                                    <CountUp end={totalPrice1} /> VND
                                                 </Title>
                                                 <Tag color="green-inverse" icon={<ArrowUpOutlined />}>
                                                     8.7%
