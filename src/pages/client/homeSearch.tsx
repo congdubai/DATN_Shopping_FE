@@ -40,8 +40,16 @@ const HomeSearchPage = () => {
     const applyFilters = () => {
         const fetchFilteredProducts = async () => {
             try {
+                const queryParam = new URLSearchParams(search).get("query");
+
+                if (!queryParam) {
+                    console.error("Không có giá trị query trong URL.");
+                    return;  // Hoặc có thể gán giá trị mặc định cho queryParam
+                }
+
                 // Xây dựng query string từ các bộ lọc và mã hóa chỉ giá trị của các tham số
-                const query = `category=${encodeURIComponent(filter.category || '')}` +
+                const query = `name=${encodeURIComponent(queryParam)}` +  // Thêm query vào đây
+                    `&category=${encodeURIComponent(filter.category || '')}` +
                     `&priceRange=${encodeURIComponent(filter.priceRange[0] + '-' + filter.priceRange[1])}` +
                     `&colors=${encodeURIComponent(filter.colors.join(','))}` +
                     `&rating=${encodeURIComponent(filter.rating || '')}`;
@@ -56,6 +64,7 @@ const HomeSearchPage = () => {
 
         fetchFilteredProducts();
     };
+
 
 
     async function fetchColorList(name: string): Promise<IProductSelect[]> {
