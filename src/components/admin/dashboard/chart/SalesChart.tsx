@@ -1,134 +1,65 @@
 import { Area } from '@ant-design/charts';
+import { useEffect, useState } from 'react';
+import dayjs, { Dayjs } from 'dayjs';
+import { ISaleSummary } from '@/types/backend';
+import { callFetchISaleChannelSummary } from '@/config/api';
 
-const SalesChart = () => {
-    const data = [
-        {
-            country: 'Online Store',
-            date: 'Jan',
-            value: 1390.5,
-        },
-        {
-            country: 'Online Store',
-            date: 'Feb',
-            value: 1469.5,
-        },
-        {
-            country: 'Online Store',
-            date: 'Mar',
-            value: 1521.7,
-        },
-        {
-            country: 'Online Store',
-            date: 'Apr',
-            value: 1615.9,
-        },
-        {
-            country: 'Online Store',
-            date: 'May',
-            value: 1703.7,
-        },
-        {
-            country: 'Online Store',
-            date: 'Jun',
-            value: 1767.8,
-        },
-        {
-            country: 'Online Store',
-            date: 'Jul',
-            value: 1806.2,
-        },
-        {
-            country: 'Online Store',
-            date: 'Aug',
-            value: 1903.5,
-        },
-        {
-            country: 'Online Store',
-            date: 'Sept',
-            value: 1986.6,
-        },
-        {
-            country: 'Online Store',
-            date: 'Oct',
-            value: 1952,
-        },
-        {
-            country: 'Online Store',
-            date: 'Nov',
-            value: 1910.4,
-        },
-        {
-            country: 'Online Store',
-            date: 'Dec',
-            value: 2015.8,
-        },
-        {
-            country: 'Facebook',
-            date: 'Jan',
-            value: 109.2,
-        },
-        {
-            country: 'Facebook',
-            date: 'Feb',
-            value: 115.7,
-        },
-        {
-            country: 'Facebook',
-            date: 'Mar',
-            value: 120.5,
-        },
-        {
-            country: 'Facebook',
-            date: 'Apr',
-            value: 128,
-        },
-        {
-            country: 'Facebook',
-            date: 'May',
-            value: 134.4,
-        },
-        {
-            country: 'Facebook',
-            date: 'Jun',
-            value: 142.2,
-        },
-        {
-            country: 'Facebook',
-            date: 'Jul',
-            value: 157.5,
-        },
-        {
-            country: 'Facebook',
-            date: 'Aug',
-            value: 169.5,
-        },
-        {
-            country: 'Facebook',
-            date: 'Sept',
-            value: 186.3,
-        },
-        {
-            country: 'Facebook',
-            date: 'Oct',
-            value: 195.5,
-        },
-        {
-            country: 'Facebook',
-            date: 'Nov',
-            value: 198,
-        },
-        {
-            country: 'Facebook',
-            date: 'Dec',
-            value: 211.7,
-        },
-    ];
+interface SaleChartProps {
+    dateRange8?: [Dayjs, Dayjs];
+}
+
+const SalesChart: React.FC<SaleChartProps> = ({ dateRange8 }) => {
+    const [data, setData] = useState<ISaleSummary[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (!dateRange8) return;
+
+                setLoading(true);
+                const [start, end] = dateRange8;
+
+                const res = await callFetchISaleChannelSummary(
+                    start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString()
+                );
+
+                const sortedData = res.data!
+                    .map(item => ({
+                        ...item,
+                        order: item.country === 'Tại cửa hàng' ? 0 : 1,
+                    }))
+                    .sort((a, b) => a.order - b.order);
+
+                setData(sortedData);
+            } catch (error) {
+                console.error('Error fetching chart data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [dateRange8]);
 
     const config = {
         data,
         xField: 'date',
         yField: 'value',
         seriesField: 'country',
+        loading,
+        meta: {
+            value: {
+                formatter: (v: number) => `${v.toLocaleString('vi-VN')} đ`,
+            },
+        },
+        tooltip: {
+            formatter: (datum: any) => ({
+                name: datum?.country ?? '',
+                value: `${(datum?.value ?? 0).toLocaleString('vi-VN')} đ`,
+            }),
+        },
         slider: {
             start: 0.1,
             end: 0.9,
@@ -137,4 +68,5 @@ const SalesChart = () => {
 
     return <Area {...config} />;
 };
+
 export default SalesChart;

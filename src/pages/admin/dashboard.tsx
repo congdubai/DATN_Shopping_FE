@@ -96,6 +96,10 @@ export const DashboardPage = () => {
         dayjs().startOf('month'),
         dayjs(),
     ]);
+    const [dateRange8, setDateRange8] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
     useEffect(() => {
         const fetchUserCount = async () => {
             try {
@@ -459,9 +463,9 @@ export const DashboardPage = () => {
                                         title="Bán hàng"
                                         extra={
                                             <RangePicker
-                                                value={dateRange}
+                                                value={dateRange8}
                                                 onChange={(dates) => {
-                                                    if (dates) setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                    if (dates) setDateRange8(dates as [dayjs.Dayjs, dayjs.Dayjs]);
                                                 }}
                                                 format="DD/MM/YYYY"
                                                 allowClear={false}
@@ -478,7 +482,7 @@ export const DashboardPage = () => {
                                                     8.7%
                                                 </Tag>
                                             </Space>
-                                            <SalesChart />
+                                            <SalesChart dateRange8={dateRange8} />
                                         </Flex>
                                     </Card>
                                 </Col>

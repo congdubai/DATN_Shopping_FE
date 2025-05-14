@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, ICategorySeller, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISize, ITopProduct, ITopSeller, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, ICategorySeller, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISaleSummary, ISize, ITopProduct, ITopSeller, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -272,6 +272,14 @@ export const callFetchSlowSellingProducts = (
 export const callFetchITopSellerByDay = (startDate: string, endDate: string) => {
     return axios.get<IBackendRes<ITopSeller[]>>(`/api/v1/dashboard/top-seller?startDate=${startDate}&endDate=${endDate}`);
 }
+
+export const callFetchISaleChannelSummary = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<ISaleSummary[]>>(
+        `/api/v1/dashboard/revenue-by-channel?startDate=${startDate}&endDate=${endDate}`
+    );
+};
+
+
 /**
  * 
 Module History

@@ -232,3 +232,9 @@ export interface ITopSeller {
     totalQuantity: number;
     totalSpent: number;
 }
+
+export interface ISaleSummary {
+    date: string;
+    country: string;
+    value: number;
+}
