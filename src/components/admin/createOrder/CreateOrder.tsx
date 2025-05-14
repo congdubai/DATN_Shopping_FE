@@ -306,7 +306,6 @@ const CreateOrderPage = () => {
                                                             </div>
                                                         </div>
 
-                                                        {/* Nút thêm giỏ hàng */}
                                                         <div
                                                             style={{
                                                                 position: "absolute",
@@ -315,9 +314,9 @@ const CreateOrderPage = () => {
                                                             }}
                                                         >
                                                             <Button
-                                                                type="primary"
+                                                                style={{ background: "black", color: "white" }}
                                                                 onClick={(e) => {
-                                                                    e.stopPropagation(); // Ngăn click lan ra Card
+                                                                    e.stopPropagation();
                                                                     handleAddToCart();
                                                                 }}
                                                             >

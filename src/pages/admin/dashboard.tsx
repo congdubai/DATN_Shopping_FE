@@ -7,12 +7,12 @@ import { useStylesContext } from '@/context';
 import { Card } from '@/components/admin/dashboard/Card/Card';
 import { RevenueCard } from '@/components/admin/dashboard/RevenueCard/RevenueCard';
 import "@/styles/dashboard.css"
-import { callFetchCountCancelOrdersByDay, callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
+import { callFetchCountCancelOrdersByDay, callFetchCountOrdersByDay, callFetchCountUsersByDay, callFetchCurrentOrder, callFetchITopSellerByDay, callFetchSlowSellingProducts, callFetchTopSellingProducts, callFetchTotalPriceByDay } from '@/config/api';
 import SalesChart from '@/components/admin/dashboard/chart/SalesChart';
 import CategoriesChart from '@/components/admin/dashboard/chart/CategoriesChart';
 import { ORDERS_COLUMNS, SELLER_COLUMNS } from '@/components/admin/dashboard/Columns';
 import { useAppSelector } from '@/redux/hooks';
-import { IOrder, ITopProduct } from '@/types/backend';
+import { IOrder, ITopProduct, ITopSeller } from '@/types/backend';
 import { ColumnsType } from 'antd/lib/table/interface';
 import ViewTopProductDetail from '@/components/admin/dashboard/product/view.topProduct';
 import dayjs from 'dayjs';
@@ -58,7 +58,9 @@ export const DashboardPage = () => {
     const [topProductsError, setTopProductsError] = useState<any>(null);
     const [openDrawer, setOpenDrawer] = useState(false);
     const [productID, setProductId] = useState<string | null>(null);
-
+    const [topSellers, setTopSellers] = useState<ITopSeller[]>([]);
+    const [topSellersLoading, setTopSellersLoading] = useState<boolean>(false);
+    const [topSellersError, setTopSellersError] = useState<string | null>(null);
     const [slowProducts, setSlowProducts] = useState<ITopProduct[]>([]);
     const [slowProductsLoading, setSlowProductsLoading] = useState(false);
     const [slowProductsError, setSlowProductsError] = useState<any>(null);
@@ -87,6 +89,10 @@ export const DashboardPage = () => {
         dayjs(),
     ]);
     const [dateRange6, setDateRange6] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
+        dayjs().startOf('month'),
+        dayjs(),
+    ]);
+    const [dateRange7, setDateRange7] = useState<[dayjs.Dayjs, dayjs.Dayjs]>([
         dayjs().startOf('month'),
         dayjs(),
     ]);
@@ -218,11 +224,23 @@ export const DashboardPage = () => {
     }, [dateRange]);
 
 
-    const {
-        data: topSellers,
-        error: topSellersError,
-        loading: topSellersLoading,
-    } = useFetchData('../mocks/TopSeller.json');
+    useEffect(() => {
+        const fetchTopSellers = async () => {
+            const [start, end] = dateRange7;
+            try {
+                setTopSellersLoading(true);
+                const res = await callFetchITopSellerByDay(start.startOf('day').toISOString(),
+                    end.endOf('day').toISOString());
+                setTopSellers(res.data!);
+            } catch (err: any) {
+                setTopSellersError(err.message || 'Đã có lỗi xảy ra');
+            } finally {
+                setTopSellersLoading(false);
+            }
+        };
+
+        fetchTopSellers();
+    }, [dateRange7]);
 
     const PRODUCTS_COLUMNS: ColumnsType<ITopProduct> = [
         {
@@ -308,7 +326,19 @@ export const DashboardPage = () => {
                     >
                         {roleName === 'STAFF' ? (
                             <Col span={24}>
-                                <Card title="Top sellers">
+                                <Card title={
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ margin: 0 }}>Top nhân viên</span>
+                                        <RangePicker
+                                            value={dateRange7}
+                                            onChange={(dates) => {
+                                                if (dates) setDateRange7(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                            }}
+                                            format="DD/MM/YYYY"
+                                            allowClear={false}
+                                        />
+                                    </div>
+                                }>
                                     {topSellersError ? (
                                         <Alert
                                             message="Error"
@@ -540,9 +570,9 @@ export const DashboardPage = () => {
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <span style={{ margin: 0 }}>Top nhân viên</span>
                                             <RangePicker
-                                                value={dateRange}
+                                                value={dateRange7}
                                                 onChange={(dates) => {
-                                                    if (dates) setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                    if (dates) setDateRange7(dates as [dayjs.Dayjs, dayjs.Dayjs]);
                                                 }}
                                                 format="DD/MM/YYYY"
                                                 allowClear={false}

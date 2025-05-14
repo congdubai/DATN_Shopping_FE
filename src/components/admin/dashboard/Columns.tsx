@@ -5,7 +5,7 @@ import { CheckCircleOutlined, ClockCircleOutlined, ExclamationCircleOutlined, St
 import { Link } from 'react-router-dom';
 import { numberWithCommas } from '@/utils';
 import { UserAvatar } from '@/components/admin/dashboard/UserAvatar/UserAvatar';
-import { ITopProduct } from '@/types/backend';
+import { ITopProduct, ITopSeller } from '@/types/backend';
 import { ColumnsType } from 'antd/es/table';
 import { useAppDispatch } from '@/redux/hooks';
 const { Text, Title } = Typography;
@@ -48,64 +48,52 @@ export const SNOW_PRODUCTS_COLUMNS = [
     },
 ];
 
-export const SELLER_COLUMNS = [
+export const SELLER_COLUMNS: ColumnsType<ITopSeller> = [
     {
-        title: 'Name',
-        dataIndex: 'first_name',
-        key: 'first_name',
-        render: (_: any, { first_name, last_name }: any) => (
-            <UserAvatar fullName={`${first_name} ${last_name}`} />
+        title: 'Tên nhân viên',
+        dataIndex: 'name',
+        key: 'name',
+        width: 150,
+        render: (_: any, record: ITopSeller) => (
+            <UserAvatar fullName={record.name} />
         ),
     },
     {
         title: 'Email',
         dataIndex: 'email',
         key: 'email',
-        render: (_: any) => <Link to={`mailto:${_}`}>{_}</Link>,
+        width: 100,
+        align: 'center',
+        render: (email: string) => <Link to={`mailto:${email}`}>{email}</Link>,
     },
     {
-        title: 'Region',
-        dataIndex: 'sales_region',
-        key: 'sales_region',
+        title: 'Số điện thoại',
+        dataIndex: 'phone',
+        key: 'phone',
+        align: 'center',
     },
     {
-        title: 'Country',
-        dataIndex: 'country',
-        key: 'country',
+        title: 'Địa chỉ',
+        dataIndex: 'address',
+        key: 'address',
+        align: 'center',
     },
     {
-        title: 'Volume',
-        dataIndex: 'sales_volume',
-        key: 'sales_volume',
-        render: (_: any) => <span>{numberWithCommas(Number(_))}</span>,
+        title: 'Số lượng bán',
+        dataIndex: 'totalQuantity',
+        key: 'totalQuantity',
+        align: 'center',
+        render: (value: number) => <span>{numberWithCommas(value)}</span>,
     },
     {
-        title: 'Amount',
-        dataIndex: 'total_sales',
-        key: 'total_sales',
-        render: (_: any) => <span>${numberWithCommas(Number(_))}</span>,
-    },
-    {
-        title: 'Satisfaction rate',
-        dataIndex: 'customer_satisfaction',
-        key: 'customer_satisfaction',
-        render: (_: any) => {
-            let color;
-
-            if (_ < 20) {
-                color = red[5];
-            } else if (_ > 21 && _ < 50) {
-                color = yellow[6];
-            } else if (_ > 51 && _ < 70) {
-                color = blue[5];
-            } else {
-                color = green[6];
-            }
-
-            return <Progress percent={_} strokeColor={color} />;
-        },
+        title: 'Doanh thu',
+        dataIndex: 'totalSpent',
+        key: 'totalSpent',
+        align: 'center',
+        render: (value: number) => <span>{numberWithCommas(value)}₫</span>,
     },
 ];
+
 
 export const ORDERS_COLUMNS = [
     {
@@ -143,11 +131,11 @@ export const ORDERS_COLUMNS = [
             } else if (_ === 'Đang xử lý') {
                 color = 'blue-inverse';
                 icon = SyncOutlined;
-            } else if (_ === 'delivered') {
+            } else if (_ === 'Đã hoàn thành') {
                 color = 'green-inverse';
                 icon = CheckCircleOutlined;
             } else {
-                color = 'volcano-inverse';
+                color = 'Đã hủy';
                 icon = ExclamationCircleOutlined;
             }
 

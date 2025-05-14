@@ -86,13 +86,13 @@ const OrderPage = () => {
         },
         {
             title: 'Ngày tạo',
-            dataIndex: 'createdAt',
+            dataIndex: 'orderDate',
             width: 200,
             sorter: true,
-            render: (text, record, index, action) => {
-                return (
-                    <>{record.orderDate ? dayjs(record.orderDate).format('DD-MM-YYYY HH:mm:ss') : ""}</>
-                )
+            render: (_, record) => {
+                const d = dayjs(record.orderDate, "YYYY-MM-DD hh:mm:ss A");
+                if (!d.isValid()) return "Không hợp lệ";
+                return d.format("DD-MM-YYYY HH:mm:ss");
             },
             hideInSearch: true,
         },

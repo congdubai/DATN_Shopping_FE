@@ -223,3 +223,12 @@ export interface ICategorySeller {
     category: string;
     value: number;
 }
+
+export interface ITopSeller {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    totalQuantity: number;
+    totalSpent: number;
+}
