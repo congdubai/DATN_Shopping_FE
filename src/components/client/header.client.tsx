@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu, Dropdown, Avatar, Badge, Typography, Input, Row, Col, Flex, Affix } from "antd";
 import { HomeOutlined, AppstoreOutlined, ShoppingCartOutlined, UserOutlined, LogoutOutlined, MailOutlined, EnvironmentOutlined, SearchOutlined, UnorderedListOutlined, DownOutlined, CaretDownOutlined } from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
@@ -16,14 +16,20 @@ interface User {
 const Navbar: React.FC = () => {
     const [quantity, setQuantity] = useState<number>(0);
     const [categoryItems, setCategoryItems] = useState<{ label: string, path: string }[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const navigate = useNavigate();
 
     const convertCategoryToMenu = (data: ICategory[]) => {
         return data.map((cat) => ({
             label: cat.name,
-            path: `/category/${cat.id}`, // thay vì slug
+            path: `/category/${cat.id}`, 
         }));
     };
-
+    const handleSearch = () => {
+        if (searchQuery.trim()) {
+            navigate(`/search?query=${searchQuery.trim()}`);
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -124,6 +130,8 @@ const Navbar: React.FC = () => {
                             height: "43px"
                         }}>
                             <Input
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Bạn đang tìm gì..."
                                 style={{
                                     border: "none",
@@ -133,18 +141,21 @@ const Navbar: React.FC = () => {
                                     fontSize: "16px",
                                 }}
                             />
-                            <div style={{
-                                marginRight: "1px",
-                                background: "black",
-                                padding: "5px",
-                                borderRadius: "8px",
-                                display: "flex",
-                                alignItems: "center",
-                                width: "80px",
-                                height: "36px",
-                                justifyContent: "center",
-                                cursor: "pointer"
-                            }}>
+                            <div
+                                style={{
+                                    marginRight: "1px",
+                                    background: "black",
+                                    padding: "5px",
+                                    borderRadius: "8px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    width: "80px",
+                                    height: "36px",
+                                    justifyContent: "center",
+                                    cursor: "pointer"
+                                }}
+                                onClick={handleSearch}
+                            >
                                 <SearchOutlined style={{ fontSize: "24px", color: "white" }} />
                             </div>
                         </div>

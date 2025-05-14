@@ -32,6 +32,7 @@ import CategoryGenderPage from "./pages/client/categoryGender";
 import OrderPage from "./pages/admin/order";
 import ChatBoxPage from "./pages/client/chatBox";
 import ChatWidget from "./components/client/chat/ChatIcon";
+import HomeSearchPage from "./pages/client/homeSearch";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,6 +84,11 @@ export default function App() {
           path: "cart",
           element:
             <CartPage />
+        },
+        {
+          path: "search",
+          element:
+            <HomeSearchPage />
         },
         {
           path: "checkout",

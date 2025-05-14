@@ -95,6 +95,17 @@ export const callFetchProductsByCategory = (categoryId: string, query: string) =
 export const callFetchProductsByGender = (gender: string, query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IProduct>>>(`/api/v1/products/${gender}?${query}`);
 }
+export const callFetchProductsBySearch = (query: string) => {
+    return axios.get<IBackendRes<IProduct[]>>(`/api/v1/products/search`, {
+        params: { name: query }
+    });
+}
+export const callFetchProductsBySearchQuery = (query: string) => {
+    return axios.get<IBackendRes<IProduct[]>>('/api/v1/products/search-query', {
+        params: { query }
+    });
+}
+
 
 
 
