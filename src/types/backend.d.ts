@@ -238,3 +238,14 @@ export interface ISaleSummary {
     country: string;
     value: number;
 }
+
+export interface IDiscount {
+    id?: string;
+    code: string;
+    discountPercent: number;
+    maxDiscount: number;
+    startDate: string;
+    endDate: string;
+    description: string;
+    quantity: number;
+}

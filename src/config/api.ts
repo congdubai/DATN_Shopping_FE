@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, ICategorySeller, IColor, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISaleSummary, ISize, ITopProduct, ITopSeller, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, ICategorySeller, IColor, IDiscount, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISaleSummary, ISize, ITopProduct, ITopSeller, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -317,4 +317,21 @@ Module Message
  */
 export const callFetchUpdateIsRead = (id: string) => {
     return axios.put<IBackendRes<any>>(`/api/v1/messages/mark-as-read/${id}`);
+}
+
+/**
+ * 
+Module Color
+ */
+export const callFetchDiscount = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IDiscount>>>(`/api/v1/discounts?${query}`);
+}
+export const callCreateDiscount = (discount: IDiscount) => {
+    return axios.post<IBackendRes<IDiscount>>('/api/v1/discounts', { ...discount });
+}
+export const callUpdateDiscount = (discount: IDiscount, id: string) => {
+    return axios.put<IBackendRes<IDiscount>>(`/api/v1/discounts`, { id, ...discount });
+}
+export const callDeleteDiscount = (id: string) => {
+    return axios.delete<IBackendRes<IDiscount>>(`/api/v1/discounts/${id}`);
 }

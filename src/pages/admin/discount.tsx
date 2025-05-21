@@ -1,38 +1,45 @@
-import ModalProduct from "@/components/admin/product/modal.product";
-import ViewDetailProduct from "@/components/admin/product/view.product";
+import ModalColor from "@/components/admin/color/modal.color";
+import ViewDetailColor from "@/components/admin/color/view.color";
+import ModalDiscount from "@/components/admin/discount/modal.discount";
+import ViewDetailDiscount from "@/components/admin/discount/view.discount";
 import DataTable from "@/components/client/data-table";
 import Access from "@/components/share/access";
-import { callDeleteProduct } from "@/config/api";
+import { callDeleteColor, callDeleteDiscount } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchProduct } from "@/redux/slice/productSlide";
-import { IProduct } from "@/types/backend";
+import { fetchColor } from "@/redux/slice/colorSlide";
+import { fetchDiscount } from "@/redux/slice/discountSlide";
+import { IColor, IDiscount } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from "@ant-design/pro-components";
-import { Button, message, notification, Popconfirm, Space } from "antd";
+import { Button, message, notification, Popconfirm, Space, Tag } from "antd";
 import dayjs from "dayjs";
 import queryString from "query-string";
 import { useRef, useState } from "react";
 import { sfLike } from "spring-filter-query-builder";
 
-const ProductPage = () => {
-    const products = useAppSelector(state => state.product.result);
-    const meta = useAppSelector(state => state.product.meta);
-    const isFetching = useAppSelector(state => state.product.isFetching);
-    const dispatch = useAppDispatch();
-    const tableRef = useRef<ActionType>();
-    const [dataInit, setDataInit] = useState<IProduct | null>(null);
+const DiscountPage = () => {
     const [openModal, setOpenModal] = useState<boolean>(false);
     const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
+    const [dataInit, setDataInit] = useState<IDiscount | null>(null);
+    const tableRef = useRef<ActionType>();
+    const isFetching = useAppSelector(state => state.discount.isFetching);
+    const meta = useAppSelector(state => state.discount.meta);
+    const discounts = useAppSelector(state => state.discount.result);
+
+    const dispatch = useAppDispatch();
 
     const reloadTable = () => {
         tableRef?.current?.reload();
     }
-
-    const handleDeleteProduct = async (id: string | undefined) => {
+    const handleDeleteDiscount = async (id: string | undefined) => {
         if (id) {
-            const res = await callDeleteProduct(id);
+            const res = await callDeleteDiscount(id);
             if (+res.statusCode === 200) {
-                message.success('Xóa User thành công');
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Xóa mã giảm giá thành công!',
+                    placement: 'topRight',
+                });
                 reloadTable();
             } else {
                 notification.error({
@@ -42,12 +49,11 @@ const ProductPage = () => {
             }
         }
     }
-
-    const columns: ProColumns<IProduct>[] = [
+    const columns: ProColumns<IDiscount>[] = [
         {
             title: 'Id',
             dataIndex: 'id',
-            width: 50,
+            width: 100,
             render: (text, record, index, action) => {
                 return (
                     <Access requiredRole="admin" hideChildren>
@@ -63,71 +69,52 @@ const ProductPage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Image',
-            dataIndex: 'image',
-            align: 'center',
+            title: 'Mã giảm',
+            dataIndex: 'code',
             width: 150,
-            render: (_, entity: IProduct) => {
-                return entity.image ? (
-                    <img
-                        alt="Product Image"
-                        src={`${import.meta.env.VITE_BACKEND_URL}/storage/product/${entity.image}`}
-                        style={{ width: 50, height: 50, objectFit: 'cover' }}
-
-                    />
-                ) : (
-                    <span>No Image</span>
-                );
-
-            }
-        },
-        {
-
-            title: 'Name',
-            dataIndex: 'name',
             sorter: true,
         },
         {
-            title: 'Price',
-            dataIndex: 'price',
+            title: 'Phần trăm giảm',
+            dataIndex: 'discountPercent',
             sorter: true,
         },
         {
-            title: 'Category',
-            dataIndex: ["category", "name"],
-            width: 200,
+            title: 'Giảm tối đa',
+            dataIndex: 'maxDiscount',
             sorter: true,
-            hideInSearch: true
         },
         {
-            title: 'CreatedAt',
-            dataIndex: 'createdAt',
-            width: 200,
+            title: 'Số lượng',
+            dataIndex: 'quantity',
+            width: 150,
             sorter: true,
-            render: (text, record, index, action) => {
-                return (
-                    <>{record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
-                )
-            },
+        },
+        {
+            title: 'Ngày bắt đầu',
+            dataIndex: 'startDate',
+            width: 150,
+            sorter: true,
+            render: (text, record) => (
+                <>{record.startDate ? dayjs(record.startDate, 'DD/MM/YYYY HH:mm').format('DD-MM-YYYY HH:mm') : ''}</>
+            ),
             hideInSearch: true,
         },
         {
-            title: 'Ngày cập nhật',
-            dataIndex: 'updatedAt',
-            width: 200,
+            title: 'Ngày kết thúc',
+            dataIndex: 'endDate',
+            width: 150,
             sorter: true,
-            render: (text, record, index, action) => {
-                return (
-                    <>{record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
-                )
-            },
+            render: (text, record) => (
+                <>  {record.endDate ? dayjs(record.endDate, 'DD/MM/YYYY HH:mm').format('DD-MM-YYYY HH:mm') : ''}</>
+            ),
             hideInSearch: true,
         },
         {
 
-            title: 'Actions',
+            title: 'Chức năng',
             hideInSearch: true,
-            width: 50,
+            width: 120,
             render: (_value, entity, _index, _action) => (
                 <Space>
                     <Access requiredRole="admin" hideChildren>
@@ -146,9 +133,9 @@ const ProductPage = () => {
                     <Access requiredRole="admin" hideChildren>
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa Sản phẩm"}
-                            onConfirm={() => handleDeleteProduct(entity.id)}
-                            description={"Bạn có chắc chắn muốn xóa Sản phẩm này ?"}
+                            title={"Xác nhận xóa mã giảm giá"}
+                            description={"Bạn có chắc chắn muốn xóa mã giảm giá này ?"}
+                            onConfirm={() => handleDeleteDiscount(entity.id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
@@ -162,36 +149,28 @@ const ProductPage = () => {
                             </span>
                         </Popconfirm>
                     </Access>
-
-                </Space >
+                </Space>
             ),
 
         },
     ];
     const buildQuery = (params: any, sort: any, filter: any) => {
+        const clone = { ...params };
         const q: any = {
             page: params.current,
             size: params.pageSize,
             filter: ""
         }
 
-        const clone = { ...params };
         if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
-        if (clone.email) {
-            q.filter = clone.name ?
-                q.filter + " and " + `${sfLike("email", clone.email)}`
-                : `${sfLike("email", clone.email)}`;
-        }
 
         if (!q.filter) delete q.filter;
+
         let temp = queryString.stringify(q);
 
         let sortBy = "";
         if (sort && sort.name) {
             sortBy = sort.name === 'ascend' ? "sort=name,asc" : "sort=name,desc";
-        }
-        if (sort && sort.email) {
-            sortBy = sort.email === 'ascend' ? "sort=email,asc" : "sort=email,desc";
         }
         if (sort && sort.createdAt) {
             sortBy = sort.createdAt === 'ascend' ? "sort=createdAt,asc" : "sort=createdAt,desc";
@@ -212,16 +191,16 @@ const ProductPage = () => {
     return (
         <div>
             <Access requiredRole="admin" hideChildren>
-                <DataTable<IProduct>
+                <DataTable<IDiscount>
                     actionRef={tableRef}
-                    headerTitle="Danh sách sản phẩm"
+                    headerTitle="Danh sách mã giảm giá"
                     rowKey="id"
-                    columns={columns}
-                    dataSource={products}
                     loading={isFetching}
+                    columns={columns}
+                    dataSource={discounts}
                     request={async (params, sort, filter): Promise<any> => {
                         const query = buildQuery(params, sort, filter);
-                        dispatch(fetchProduct({ query }))
+                        dispatch(fetchDiscount({ query }))
                     }}
                     scroll={{ x: true }}
                     pagination={
@@ -247,20 +226,20 @@ const ProductPage = () => {
                     }}
                 />
             </Access>
-
-            <ModalProduct
+            <ModalDiscount
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
                 dataInit={dataInit}
-                setDataInit={setDataInit}
-            />
-            <ViewDetailProduct
+                setDataInit={setDataInit} />
+            <ViewDetailDiscount
                 onClose={setOpenViewDetail}
                 open={openViewDetail}
                 dataInit={dataInit}
-                setDataInit={setDataInit} />
-        </div >
+                setDataInit={setDataInit}
+            />
+        </div>
     )
+
 }
-export default ProductPage;
+export default DiscountPage;

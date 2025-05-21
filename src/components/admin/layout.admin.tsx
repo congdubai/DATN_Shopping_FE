@@ -33,15 +33,16 @@ const LayoutAdmin = () => {
 
         const fixedMenu = [
             ...(roleName === 'ADMIN' ? [
-                { label: <Link to='/admin'>DashBoard</Link>, key: '/admin', icon: <ScheduleOutlined /> },
-                { label: <Link to='/admin/user'>User</Link>, key: '/admin/user', icon: <UserOutlined /> },
-                { label: <Link to='/admin/product'>Product</Link>, key: '/admin/product', icon: <BankOutlined /> },
-                { label: <Link to='/admin/productDetail'>Product Detail</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
-                { label: <Link to='/admin/order'>Order</Link>, key: '/admin/order', icon: <ApiOutlined /> },
-                { label: <Link to='/admin/color'>Color</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
-                { label: <Link to='/admin/category'>Category</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
-                { label: <Link to='/admin/size'>Size</Link>, key: '/admin/size', icon: <ApiOutlined /> },
-                { label: <Link to='/admin/chat'>Chat</Link>, key: '/admin/chat', icon: <AliwangwangOutlined /> },
+                { label: <Link to='/admin'>Thống kê</Link>, key: '/admin', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin/user'>Quản lý người dùng</Link>, key: '/admin/user', icon: <UserOutlined /> },
+                { label: <Link to='/admin/product'>Quản lý sản phẩm</Link>, key: '/admin/product', icon: <BankOutlined /> },
+                { label: <Link to='/admin/productDetail'>Quản lý chi tiết sản phẩm</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
+                { label: <Link to='/admin/order'>Quản lý đơn hàng</Link>, key: '/admin/order', icon: <ApiOutlined /> },
+                { label: <Link to='/admin/color'>Quản lý màu sắc</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin/category'>Quản lý danh mục</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
+                { label: <Link to='/admin/size'>Quản lý kích thước</Link>, key: '/admin/size', icon: <ApiOutlined /> },
+                { label: <Link to='/admin/discount'>Quản lý giảm giá</Link>, key: '/admin/discount', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin/chat'>Nhắn tin</Link>, key: '/admin/chat', icon: <AliwangwangOutlined /> },
 
             ] : []),
             ...(roleName === 'STAFF' ? [

@@ -33,6 +33,9 @@ import OrderPage from "./pages/admin/order";
 import ChatBoxPage from "./pages/client/chatBox";
 import ChatWidget from "./components/client/chat/ChatIcon";
 import HomeSearchPage from "./pages/client/homeSearch";
+import DiscountPage from "./pages/admin/discount";
+import { ConfigProvider } from 'antd';
+import viVN from 'antd/es/locale/vi_VN';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -189,6 +192,13 @@ export default function App() {
             </ProtectedRoute>
         },
         {
+          path: "discount",
+          element:
+            <ProtectedRoute>
+              <DiscountPage />
+            </ProtectedRoute>
+        },
+        {
           path: "createOrder",
           element:
             <ProtectedRoute>
@@ -208,7 +218,10 @@ export default function App() {
 
   return (
     <>
-      <RouterProvider router={router} />
+      <ConfigProvider locale={viVN}>
+        <RouterProvider router={router} />
+      </ConfigProvider>
+
     </>
 
   )
