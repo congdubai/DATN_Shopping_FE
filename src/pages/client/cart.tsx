@@ -5,14 +5,15 @@ import { callDeleteCartDetail, callFetchCartDetail, callUpdateQuantity } from "@
 import { useLocalCart } from "@/components/client/cart/useLocalCart";
 import { useNavigate } from "react-router-dom";
 import { setRedirectPath } from "@/redux/slice/accountSlide";
-import { useDispatch } from "react-redux";
+import { setDiscountCode } from "@/redux/slice/discountSlide";
+import { useAppDispatch } from "@/redux/hooks";
 
 
 const CartPage = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { cartItems, updateQuantity, removeItem, setCartItems } = useLocalCart();
     const [loading, setLoading] = useState(false);
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         updateCartData();
@@ -276,6 +277,7 @@ const CartPage = () => {
                                 <h3>Mã khuyến mãi</h3>
                                 <Input
                                     placeholder="Nhập mã khuyến mãi"
+                                    onChange={(e) => dispatch(setDiscountCode(e.target.value))}
                                     style={{ marginBottom: "10px" }}
                                     prefix={
                                         <div style={{ display: "flex", alignItems: "center" }}>

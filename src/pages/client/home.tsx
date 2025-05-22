@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { fetchProduct } from "../../redux/slice/productSlide";
-import { Button, Card, Carousel, Col, notification, Pagination, Rate, Row, Tag, Typography } from "antd";
+import { Button, Card, Carousel, Col, message, notification, Pagination, Rate, Row, Tag, Typography } from "antd";
 import "styles/main.css"
 import { CarouselRef } from "antd/es/carousel";
 import { CarOutlined, CopyOutlined, EyeOutlined, LeftOutlined, RightOutlined, SearchOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
 import HomeModal from "@/components/client/home/modal.home";
-import { IProduct } from "@/types/backend";
-import { callVNPayReturn } from "@/config/api";
+import { IDiscount, IProduct } from "@/types/backend";
+import { callFetchTop3Discount, callVNPayReturn } from "@/config/api";
+import dayjs from "dayjs";
 
 const HomePage = () => {
     const products = useAppSelector(state => state.product.result);
@@ -24,29 +25,24 @@ const HomePage = () => {
     const [dataInit, setDataInit] = useState<IProduct | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
-    const alreadyCalled = useRef(false);
 
 
-    const coupons = [
-        {
-            code: "HE10",
-            discount: "GIẢM 10%",
-            description: "giảm 10% (tối đa 10K)",
-            expiry: "31/03/2025",
-        },
-        {
-            code: "HE50",
-            discount: "GIẢM 50K",
-            description: "đơn từ 699K (số lượng có hạn)",
-            expiry: "31/03/2025",
-        },
-        {
-            code: "HE80",
-            discount: "GIẢM 80K",
-            description: "đơn từ 999K (số lượng có hạn)",
-            expiry: "31/03/2025",
-        },
-    ];
+    const [coupons, setCoupons] = useState<IDiscount[]>([]);
+
+    useEffect(() => {
+        const fetchDiscounts = async () => {
+            try {
+                const res = await callFetchTop3Discount();
+                if (res?.statusCode === 200) {
+                    setCoupons(res.data!);
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải mã giảm giá:", error);
+            }
+        };
+
+        fetchDiscounts();
+    }, []);
 
     useEffect(() => {
         const handleVNPayReturn = async () => {
@@ -128,14 +124,36 @@ const HomePage = () => {
                                     <Card className="discount-card" bodyStyle={{ display: "flex", padding: "0" }}>
                                         <div className="discount-code">{coupon.code}</div>
                                         <div className="discount-content">
-                                            <h4 className="discount-text">{coupon.discount}</h4>
+                                            <h4 className="discount-text">Giảm: {coupon.discountPercent}%</h4>
                                             <p className="discount-desc">{coupon.description}</p>
                                             <div className="discount-footer">
                                                 <div>
                                                     <p className="discount-meta"><strong>Mã:</strong> <strong>{coupon.code}</strong></p>
-                                                    <p className="discount-meta"><strong>HSD:</strong> {coupon.expiry}</p>
+                                                    <p className="discount-meta"><strong>HSD:</strong> {dayjs(coupon.endDate, 'DD/MM/YYYY HH:mm').format('DD-MM-YYYY')}</p>
                                                 </div>
-                                                <Button icon={<CopyOutlined />} type="default" size="small" className="copy-button">Sao chép mã</Button>
+                                                <Button
+                                                    icon={<CopyOutlined />}
+                                                    type="default"
+                                                    size="small"
+                                                    className="copy-button"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(coupon.code)
+                                                            .then(() => {
+                                                                notification.success({
+                                                                    message: 'Thành công',
+                                                                    description: 'Đã sao chép mã giảm giá!',
+                                                                    placement: 'topRight',
+                                                                });
+                                                            })
+                                                            .catch(() => {
+                                                                notification.error({
+                                                                    message: 'Có lỗi xảy ra'
+                                                                });
+                                                            });
+                                                    }}
+                                                >
+                                                    Sao chép mã
+                                                </Button>
                                             </div>
                                         </div>
                                     </Card>

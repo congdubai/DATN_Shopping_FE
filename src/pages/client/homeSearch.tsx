@@ -47,8 +47,7 @@ const HomeSearchPage = () => {
                     return;  // Hoặc có thể gán giá trị mặc định cho queryParam
                 }
 
-                // Xây dựng query string từ các bộ lọc và mã hóa chỉ giá trị của các tham số
-                const query = `name=${encodeURIComponent(queryParam)}` +  // Thêm query vào đây
+                const query = `name=${encodeURIComponent(queryParam)}` +
                     `&category=${encodeURIComponent(filter.category || '')}` +
                     `&priceRange=${encodeURIComponent(filter.priceRange[0] + '-' + filter.priceRange[1])}` +
                     `&colors=${encodeURIComponent(filter.colors.join(','))}` +
@@ -195,10 +194,11 @@ const HomeSearchPage = () => {
                                 4: "4 sao",
                                 5: "5 sao",
                             }}
-                            onAfterChange={(value) => {
+                            onChange={(value) => {
                                 setFilter({ ...filter, rating: value });
                             }}
                         />
+
                     </div>
 
                     <Button onClick={applyFilters} style={{ width: "100%", background: "black", color: "white", marginTop: 20 }}>

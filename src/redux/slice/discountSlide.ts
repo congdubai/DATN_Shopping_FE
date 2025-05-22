@@ -1,5 +1,5 @@
-import { callFetchColor, callFetchDiscount } from "@/config/api";
-import { IColor, IDiscount } from "@/types/backend";
+import { callFetchDiscount } from "@/config/api";
+import { IDiscount } from "@/types/backend";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 interface IState {
@@ -11,6 +11,7 @@ interface IState {
         total: number;
     },
     result: IDiscount[];
+    discountCode: string;
 }
 
 export const fetchDiscount = createAsyncThunk(
@@ -30,26 +31,25 @@ const initialState: IState = {
         total: 0
     },
     result: [],
+    discountCode: '',
 };
+
 export const discountSlide = createSlice({
     name: 'discount',
     initialState,
     reducers: {
-
+        setDiscountCode: (state, action) => {
+            state.discountCode = action.payload;
+        }
     },
     extraReducers: (builder) => {
-        // Add reducers for additional action types here, and handle loading state as needed
-        builder.addCase(fetchDiscount.pending, (state, action) => {
+        builder.addCase(fetchDiscount.pending, (state) => {
             state.isFetching = true;
-            // Add user to the state array
-            // state.courseOrder = action.payload;
-        })
+        });
 
-        builder.addCase(fetchDiscount.rejected, (state, action) => {
+        builder.addCase(fetchDiscount.rejected, (state) => {
             state.isFetching = false;
-            // Add user to the state array
-            // state.courseOrder = action.payload;
-        })
+        });
 
         builder.addCase(fetchDiscount.fulfilled, (state, action) => {
             if (action.payload && action.payload.data) {
@@ -57,11 +57,9 @@ export const discountSlide = createSlice({
                 state.meta = action.payload.data.meta;
                 state.result = action.payload.data.result;
             }
-            // Add user to the state array
-
-            // state.courseOrder = action.payload;
-        })
+        });
     },
 });
 
+export const { setDiscountCode } = discountSlide.actions;
 export default discountSlide.reducer;

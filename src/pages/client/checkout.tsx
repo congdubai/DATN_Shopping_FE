@@ -1,9 +1,10 @@
 import AddressSelector from "@/components/admin/user/location.user";
 import { useLocalCart } from "@/components/client/cart/useLocalCart";
-import { callPlaceOrder } from "@/config/api";
+import { callApplyDiscount, callPlaceOrder } from "@/config/api";
+import { useAppSelector } from "@/redux/hooks";
 import { ProForm, ProFormText } from "@ant-design/pro-components";
 import { Breadcrumb, Button, Card, Col, Divider, Input, Row, Form, Radio, message, notification } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CheckOutPage = () => {
@@ -11,15 +12,41 @@ const CheckOutPage = () => {
     const { cartItems } = useLocalCart();
     const [paymentMethod, setPaymentMethod] = useState('cod');
     const navigate = useNavigate();
+    const [finalPrice, setFinalPrice] = useState<number | undefined>();
     const totalPrice = cartItems.reduce(
         (sum, item) => sum + item.price * item.quantity,
         0
     );
     const [form] = Form.useForm();
+    const discountCode = useAppSelector((state: any) => state.discount.discountCode);
+
+    useEffect(() => {
+        const applyDiscount = async () => {
+            try {
+                const res = await callApplyDiscount(totalPrice.toString(), discountCode);
+                if (res?.statusCode === 200) {
+                    setFinalPrice(res?.data);
+                } else {
+                    setFinalPrice(undefined);
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: res.message
+                    });
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải mã giảm giá:", error);
+            }
+        };
+
+        if (discountCode) {
+            applyDiscount();
+        }
+    }, [totalPrice, discountCode]);
 
     const handleSubmit = async (values: any) => {
         const { name, phone, address } = values;
         const fullAddress = Array.isArray(address) ? address.join(", ") : address;
+        const priceToUse = finalPrice ?? totalPrice;
 
         if (paymentMethod === "cod") {
             // Xử lý đơn hàng với COD
@@ -28,7 +55,7 @@ const CheckOutPage = () => {
                 phone,
                 fullAddress,
                 paymentMethod,
-                totalPrice.toString()
+                priceToUse.toString()
             );
             if (res.statusCode === '200') {
                 localStorage.removeItem("cart");
@@ -53,9 +80,8 @@ const CheckOutPage = () => {
                 phone,
                 fullAddress,
                 paymentMethod,
-                totalPrice.toString()
+                priceToUse.toString()
             );
-            console.log("checkValue: ", res)
             if (res.statusCode === '00') {
                 // Giả sử res.data trả về URL VNPay để chuyển hướng
                 const vnpayUrl = res.data;
@@ -144,7 +170,9 @@ const CheckOutPage = () => {
                                                 }}
                                             >
                                                 <p style={{ fontSize: 18, margin: "5 0" }}>Giá giảm:</p>
-                                                <p style={{ fontSize: 18, margin: "5 0" }}>0đ</p>
+                                                <p style={{ fontSize: 18, margin: "5 0" }}>
+                                                    {finalPrice ? `-${(totalPrice - finalPrice).toLocaleString()}đ` : '0đ'}
+                                                </p>
                                             </div>
                                             <Divider style={{ margin: "5px 0" }} />
                                             <div
@@ -155,24 +183,13 @@ const CheckOutPage = () => {
                                                 }}
                                             >
                                                 <p style={{ fontSize: 18, margin: 0 }}>Tổng tiền:</p>
-                                                <h3 style={{ margin: 0 }}>{totalPrice.toLocaleString()}đ</h3>
+                                                <h3 style={{ margin: 0 }}>
+                                                    {(finalPrice !== undefined ? finalPrice : totalPrice).toLocaleString()}đ
+                                                </h3>
                                             </div>
                                         </div>
 
-                                        <h3 style={{ marginTop: 10 }}>Mã khuyến mãi</h3>
-                                        <Input
-                                            placeholder="Nhập mã khuyến mãi"
-                                            style={{ marginBottom: "10px", marginTop: 3 }}
-                                            prefix={
-                                                <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <img
-                                                        src={`${backendUrl}/storage/slide/discount.png`}
-                                                        alt="Voucher"
-                                                        style={{ width: 18, height: 18, marginRight: 5 }}
-                                                    />
-                                                </div>}
-                                        />
-                                        <h3 style={{ marginTop: 10 }}>Phương thức thanh toán</h3>
+                                        <h3 style={{ marginTop: 20 }}>Phương thức thanh toán</h3>
                                         <Radio.Group
                                             onChange={(e) => setPaymentMethod(e.target.value)}
                                             value={paymentMethod}

@@ -321,7 +321,7 @@ export const callFetchUpdateIsRead = (id: string) => {
 
 /**
  * 
-Module Color
+Module Discount
  */
 export const callFetchDiscount = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IDiscount>>>(`/api/v1/discounts?${query}`);
@@ -334,4 +334,10 @@ export const callUpdateDiscount = (discount: IDiscount, id: string) => {
 }
 export const callDeleteDiscount = (id: string) => {
     return axios.delete<IBackendRes<IDiscount>>(`/api/v1/discounts/${id}`);
+}
+export const callFetchTop3Discount = () => {
+    return axios.get<IBackendRes<IDiscount[]>>(`/api/v1/discounts-top3`);
+}
+export const callApplyDiscount = (totalPrice: string, code: string) => {
+    return axios.get<IBackendRes<number>>(`/api/v1/apply-discount?code=${code}&totalPrice=${totalPrice}`);
 }

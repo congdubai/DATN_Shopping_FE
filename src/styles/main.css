@@ -487,3 +487,12 @@
     background: #eee;
     font-weight: bold;
 }
+
+.ant-slider-track {
+    background-color: black !important;
+}
+
+.ant-slider-rail {
+    background-color: #ccc;
+    /* Bạn có thể đổi thành màu khác nếu muốn */
+}
