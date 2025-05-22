@@ -36,6 +36,7 @@ import HomeSearchPage from "./pages/client/homeSearch";
 import DiscountPage from "./pages/admin/discount";
 import { ConfigProvider } from 'antd';
 import viVN from 'antd/es/locale/vi_VN';
+import ExportPage from "./pages/admin/export";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -204,7 +205,14 @@ export default function App() {
             <ProtectedRoute>
               <CreateOrderPage />
             </ProtectedRoute>
-        }
+        },
+        {
+          path: "export",
+          element:
+            <ProtectedRoute>
+              <ExportPage />
+            </ProtectedRoute>
+        },
       ],
     },
 

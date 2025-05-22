@@ -30,8 +30,9 @@ const ViewDetailProduct = (props: IProps) => {
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Tên sản phẩm">{dataInit?.name}</Descriptions.Item>
+                    <Descriptions.Item label="Giá nhập">{dataInit?.minPrice}</Descriptions.Item>
 
-                    <Descriptions.Item label="Giá">{dataInit?.price}</Descriptions.Item>
+                    <Descriptions.Item label="Giá bán">{dataInit?.price}</Descriptions.Item>
                     <Descriptions.Item label="Danh mục">
                         <Badge status="processing" text={<>{dataInit?.category?.name}</>} />
                     </Descriptions.Item>

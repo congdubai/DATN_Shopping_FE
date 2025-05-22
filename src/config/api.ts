@@ -1,4 +1,4 @@
-import { IAccount, IBackendRes, ICartItem, ICategory, ICategorySeller, IColor, IDiscount, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IProduct, IProductDetail, IReview, IRole, ISaleSummary, ISize, ITopProduct, ITopSeller, IUser } from "@/types/backend";
+import { IAccount, IBackendRes, ICartItem, ICategory, ICategorySeller, IColor, IDiscount, IGetAccount, IHistory, IModelPaginate, IOrder, IOrderDetail, IOrderProfitDTO, IProduct, IProductDetail, IReview, IRole, ISaleSummary, ISize, ITopProduct, ITopSeller, IUser } from "@/types/backend";
 import axios from 'config/axios-customize';
 
 /**
@@ -80,11 +80,11 @@ export const callFetchRoleById = (id: string) => {
 export const callFetchProduct = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IProduct>>>(`/api/v1/products?${query}`);
 }
-export const callCreateProduct = (name: string, price: number, image: string, detailDesc: string, shortDesc: string, category: ICategory) => {
-    return axios.post<IBackendRes<IProduct>>('/api/v1/products', { name, price, image, detailDesc, shortDesc, category });
+export const callCreateProduct = (name: string, price: number, minPrice: number, image: string, detailDesc: string, shortDesc: string, category: ICategory) => {
+    return axios.post<IBackendRes<IProduct>>('/api/v1/products', { name, price, minPrice, image, detailDesc, shortDesc, category });
 }
-export const callUpdateProduct = (id: string, name: string, price: number, image: string, detailDesc: string, shortDesc: string, category: ICategory) => {
-    return axios.put<IBackendRes<IProduct>>(`/api/v1/products`, { id, name, price, image, detailDesc, shortDesc, category });
+export const callUpdateProduct = (id: string, name: string, price: number, minPrice: number, image: string, detailDesc: string, shortDesc: string, category: ICategory) => {
+    return axios.put<IBackendRes<IProduct>>(`/api/v1/products`, { id, name, price, minPrice, image, detailDesc, shortDesc, category });
 }
 export const callDeleteProduct = (id: string) => {
     return axios.delete<IBackendRes<IProduct>>(`/api/v1/products/${id}`);
@@ -291,6 +291,10 @@ export const callFetchISaleChannelSummary = (startDate: string, endDate: string)
 };
 export const callFetchTotalPrice = (startDate: string, endDate: string) => {
     return axios.get<IBackendRes<number>>(`/api/v1/dashboard/total-price?startDate=${startDate}&endDate=${endDate}`);
+}
+
+export const callFetchOrderProfit = (startDate: string, endDate: string) => {
+    return axios.get<IBackendRes<IOrderProfitDTO[]>>(`/api/v1/dashboard/order-profit?startDate=${startDate}&endDate=${endDate}`);
 }
 
 /**

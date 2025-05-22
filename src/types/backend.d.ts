@@ -64,6 +64,7 @@ export interface IProduct {
     id?: string;
     name: string;
     price?: number;
+    minPrice?: number;
     image: string;
     detailDesc?: string;
     shortDesc?: string;
@@ -248,4 +249,14 @@ export interface IDiscount {
     endDate: string;
     description: string;
     quantity: number;
+}
+
+export interface IOrderProfitDTO {
+    customerName: string;
+    quantity: number;
+    totalPrice: number;
+    minPrice: number;
+    profit: number;
+    orderDate: string;
+    phone: string;
 }

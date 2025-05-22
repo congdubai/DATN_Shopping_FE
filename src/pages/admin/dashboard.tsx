@@ -206,7 +206,7 @@ export const DashboardPage = () => {
         };
 
         fetchTopProducts();
-    }, [dateRange1]);
+    }, [dateRange]);
 
     useEffect(() => {
         const fetchSlowProducts = async () => {
@@ -226,7 +226,7 @@ export const DashboardPage = () => {
         };
 
         fetchSlowProducts();
-    }, [dateRange]);
+    }, [dateRange1]);
 
 
     useEffect(() => {

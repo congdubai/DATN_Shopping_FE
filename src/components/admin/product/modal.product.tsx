@@ -154,7 +154,7 @@ const ModalProduct = (props: IProps) => {
     };
 
     const submitProduct = async (valuesForm: any) => {
-        const { name, price, image, detailDesc, shortDesc, category } = valuesForm;
+        const { name, price, image, detailDesc, shortDesc, category, minPrice } = valuesForm;
         if (dataInit?.id) {
             //update
             const product = {
@@ -162,10 +162,11 @@ const ModalProduct = (props: IProps) => {
                 name,
                 image,
                 price,
+                minPrice,
                 shortDesc,
                 category: { id: category.value, name: "", description: "", image: "" }
             }
-            const res = await callUpdateProduct(product.id, product.name, product.price, dataImage[0].name, value, product.shortDesc, product.category);
+            const res = await callUpdateProduct(product.id, product.name, product.price, product.minPrice, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {
                 message.success("Cập nhật sản phẩm thành công");
                 handleReset();
@@ -182,10 +183,11 @@ const ModalProduct = (props: IProps) => {
                 name,
                 image,
                 price,
+                minPrice,
                 shortDesc,
                 category: { id: category.value, name: "", description: "", image: "" }
             }
-            const res = await callCreateProduct(product.name, product.price, dataImage[0].name, value, product.shortDesc, product.category);
+            const res = await callCreateProduct(product.name, product.price, product.minPrice, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {
                 message.success("Thêm mới sản phẩm thành công");
                 handleReset();
@@ -235,10 +237,26 @@ const ModalProduct = (props: IProps) => {
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
                         <ProFormDigit
-                            label="Giá"
+                            label="Giá bán"
                             name="price"
                             rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
-                            placeholder="Nhập nhập giá"
+                            placeholder="Nhập nhập giá nhập"
+                        />
+                    </Col>
+                    <Col lg={6} md={6} sm={24} xs={24}>
+                        <ProFormDigit
+                            label="Giá nhập"
+                            name="minPrice"
+                            rules={[{ required: true, message: 'Vui lòng không bỏ trống' }]}
+                            placeholder="Nhập nhập giá nhập"
+                        />
+                    </Col>
+
+                    <Col lg={12} md={12} sm={24} xs={24}>
+                        <ProFormTextArea
+                            label="Mô tả ngắn"
+                            name="shortDesc"
+                            placeholder="Nhập mô tả ngắn"
                         />
                     </Col>
                     <Col lg={6} md={6} sm={24} xs={24}>
@@ -262,16 +280,7 @@ const ModalProduct = (props: IProps) => {
                                 style={{ width: '100%' }}
                             />
                         </ProForm.Item>
-
                     </Col>
-                    <Col lg={12} md={12} sm={24} xs={24}>
-                        <ProFormTextArea
-                            label="Mô tả ngắn"
-                            name="shortDesc"
-                            placeholder="Nhập mô tả ngắn"
-                        />
-                    </Col>
-
                     <Col span={8}>
                         <Form.Item
                             labelCol={{ span: 24 }}
