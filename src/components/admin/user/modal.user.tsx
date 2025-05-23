@@ -60,7 +60,6 @@ const ModalUser = (props: IProps) => {
                 name: dataInit.avatar,
                 uid: uuidv4(),
             }])
-
         }
     }, [dataInit]);
 

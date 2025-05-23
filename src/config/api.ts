@@ -51,7 +51,15 @@ export const callUpdateUser = (id: string, name: string, avatar: string, age: nu
 export const callDeleteUser = (id: string) => {
     return axios.delete<IBackendRes<IUser>>(`/api/v1/users/${id}`);
 }
-
+export const callFetchUserByEmail = (email: string) => {
+    return axios.get<IBackendRes<IUser>>(`/api/v1/users/by-email?email=${email}`);
+}
+export const callChangePassword = (oldPassword: string, newPassword: string) => {
+    return axios.put<IBackendRes<IUser>>(`/api/v1/users/change-password`, {
+        oldPassword,
+        newPassword
+    });
+};
 
 /**
  * 

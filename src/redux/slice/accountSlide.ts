@@ -25,6 +25,10 @@ interface IState {
             id?: string;
             name?: string;
         }
+        phone?: number;
+        age?: number;
+        address?: string;
+        gender?: string;
     };
     activeMenu: string;
 }

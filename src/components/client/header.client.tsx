@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
     const convertCategoryToMenu = (data: ICategory[]) => {
         return data.map((cat) => ({
             label: cat.name,
-            path: `/category/${cat.id}`, 
+            path: `/category/${cat.id}`,
         }));
     };
     const handleSearch = () => {
@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
     const userMenu = (
         <Menu>
             <Menu.Item key="profile">
-                <Link to="/user/account-management">
+                <Link to="/profile">
                     <UserOutlined /> Quản lý tài khoản
                 </Link>
             </Menu.Item>

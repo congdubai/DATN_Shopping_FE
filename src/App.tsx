@@ -37,6 +37,7 @@ import DiscountPage from "./pages/admin/discount";
 import { ConfigProvider } from 'antd';
 import viVN from 'antd/es/locale/vi_VN';
 import ExportPage from "./pages/admin/export";
+import ProfilePage from "./pages/client/profile";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -98,6 +99,11 @@ export default function App() {
           path: "checkout",
           element:
             <CheckOutPage />
+        },
+        {
+          path: "profile",
+          element:
+            <ProfilePage />
         },
         {
           path: "order-history",
