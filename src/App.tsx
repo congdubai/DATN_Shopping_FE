@@ -38,6 +38,7 @@ import { ConfigProvider } from 'antd';
 import viVN from 'antd/es/locale/vi_VN';
 import ExportPage from "./pages/admin/export";
 import ProfilePage from "./pages/client/profile";
+import RegisterPage from "./pages/auth/register";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -227,7 +228,10 @@ export default function App() {
       path: "/login",
       element: <LoginPage />,
     },
-
+    {
+      path: "/register",
+      element: <RegisterPage />,
+    },
   ]);
 
   return (

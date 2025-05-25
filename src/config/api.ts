@@ -6,6 +6,10 @@ import axios from 'config/axios-customize';
 Module Auth
  */
 
+export const callRegister = (name: string, email: string, password: string, age: number, gender: string, address: string) => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/auth/register', { name, email, password, age, gender, address })
+}
+
 export const callLogin = (username: string, password: string) => {
     return axios.post<IBackendRes<IAccount>>('/api/v1/auth/login', { username, password })
 }
@@ -16,6 +20,10 @@ export const callFetchAccount = () => {
 
 export const callRefreshToken = () => {
     return axios.get<IBackendRes<IAccount>>('/api/v1/auth/refresh')
+}
+
+export const callLogout = () => {
+    return axios.post<IBackendRes<string>>('/api/v1/auth/logout')
 }
 
 /**
@@ -348,7 +356,7 @@ export const callDeleteDiscount = (id: string) => {
     return axios.delete<IBackendRes<IDiscount>>(`/api/v1/discounts/${id}`);
 }
 export const callFetchTop3Discount = () => {
-    return axios.get<IBackendRes<IDiscount[]>>(`/api/v1/discounts-top3`);
+    return axios.get<IBackendRes<IDiscount[]>>(`/api/v1/discounts/discounts-top3`);
 }
 export const callApplyDiscount = (totalPrice: string, code: string) => {
     return axios.get<IBackendRes<number>>(`/api/v1/apply-discount?code=${code}&totalPrice=${totalPrice}`);

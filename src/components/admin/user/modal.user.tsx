@@ -131,8 +131,6 @@ const ModalUser = (props: IProps) => {
 
     const submitUser = async (valuesForm: any) => {
         const { name, email, password, address, age, gender, role } = valuesForm;
-        console.log("Giá trị address trước khi submit:", address);
-        // Format address if it's in an array or object
         const formattedAddress = Array.isArray(address)
             ? address.join(", ")
             : (typeof address === "object" && address !== null

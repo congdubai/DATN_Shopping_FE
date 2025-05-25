@@ -496,3 +496,12 @@
     background-color: #ccc;
     /* Bạn có thể đổi thành màu khác nếu muốn */
 }
+
+.custom-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #000 !important;
+    border-color: #000 !important;
+}
+
+.custom-checkbox .ant-checkbox-input:focus+.ant-checkbox-inner {
+    border-color: #000 !important;
+}

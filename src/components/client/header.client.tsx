@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Layout, Menu, Dropdown, Avatar, Badge, Typography, Input, Row, Col, Flex, Affix } from "antd";
+import { Layout, Menu, Dropdown, Avatar, Badge, Typography, Input, Row, Col, Flex, Affix, message, notification } from "antd";
 import { HomeOutlined, AppstoreOutlined, ShoppingCartOutlined, UserOutlined, LogoutOutlined, MailOutlined, EnvironmentOutlined, SearchOutlined, UnorderedListOutlined, DownOutlined, CaretDownOutlined } from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
-import { callFetchMenuCategory } from "@/config/api";
+import { callFetchMenuCategory, callLogout } from "@/config/api";
 import { ICategory } from "@/types/backend";
-
-interface User {
-    name: string;
-    avatar: string;
-    isAuthenticated: boolean;
-    adminMessageCount: number;
-}
+import { setLogoutAction } from "@/redux/slice/accountSlide";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 const Navbar: React.FC = () => {
     const [quantity, setQuantity] = useState<number>(0);
     const [categoryItems, setCategoryItems] = useState<{ label: string, path: string }[]>([]);
     const [searchQuery, setSearchQuery] = useState<string>("");
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const isAuthenticated = useAppSelector(state => state.account.isAuthenticated);
+    const user = useAppSelector(state => state.account.user);
 
     const convertCategoryToMenu = (data: ICategory[]) => {
         return data.map((cat) => ({
@@ -61,19 +59,17 @@ const Navbar: React.FC = () => {
         };
     }, []);
 
-
-    const [user, setUser] = useState<User>({
-        name: "Admin",
-        avatar: "/images/avatar/default.png",
-        isAuthenticated: true,
-        adminMessageCount: 5,
-    });
-
-
-    const handleLogout = () => {
-        setUser({ ...user, isAuthenticated: false });
-    };
-
+    const handleLogout = async () => {
+        const res = await callLogout();
+        if (res && res && +res.statusCode === 200) {
+            dispatch(setLogoutAction({}));
+            notification.success({
+                message: 'Thành công',
+                description: 'Đăng xuất thành công!',
+                placement: 'topRight',
+            }); navigate('/login')
+        }
+    }
     const userMenu = (
         <Menu>
             <Menu.Item key="profile">
@@ -185,15 +181,24 @@ const Navbar: React.FC = () => {
 
                             {/* Tài khoản */}
                             <Col>
-                                {user.isAuthenticated ? (
+                                {isAuthenticated ? (
                                     <Dropdown overlay={userMenu} trigger={["click"]}>
                                         <Flex vertical align="center">
-                                            <Avatar src={`${import.meta.env.VITE_BACKEND_URL}/storage/slide/slide-1.webp`} />
+                                            {user.avatar ? (
+                                                <Avatar src={`${import.meta.env.VITE_BACKEND_URL}/storage/slide/${user.avatar}`} />
+                                            ) : (
+                                                <Avatar style={{ background: "white", color: "black", cursor: "pointer" }}> {user?.name?.substring(0, 2)?.toUpperCase()} </Avatar>
+                                            )}
                                             <p style={{ marginTop: "4px" }}>{user.name}</p>
                                         </Flex>
                                     </Dropdown>
                                 ) : (
-                                    <Link to="/login" style={{ color: "white" }}>Đăng nhập</Link>
+                                    <Flex vertical align="center">
+                                        <Link to="/login" style={{ color: "white" }}>
+                                            <UserOutlined style={{ fontSize: "24px", color: "white" }} />
+                                        </Link>
+                                        <Link to="/login" style={{ marginTop: "12px", color: "white" }}>Đăng nhập </Link>
+                                    </Flex>
                                 )}
                             </Col>
                         </Row>

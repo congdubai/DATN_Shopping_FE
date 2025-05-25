@@ -11,12 +11,14 @@ import {
     BugOutlined,
     ScheduleOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Dropdown, Space, message, Avatar, Button } from 'antd';
+import { Layout, Menu, Dropdown, Space, message, Avatar, Button, notification } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { useAppSelector } from '@/redux/hooks';
+import { useAppDispatch, useAppSelector } from '@/redux/hooks';
 import { isMobile } from 'react-device-detect';
 import type { MenuProps } from 'antd';
+import { callLogout } from '@/config/api';
+import { setLogoutAction } from '@/redux/slice/accountSlide';
 
 const { Content, Sider } = Layout;
 
@@ -27,7 +29,21 @@ const LayoutAdmin = () => {
     const user = useAppSelector(state => state.account.user);
     const [menuItems, setMenuItems] = useState<MenuProps['items']>([]);
     const roleName = useAppSelector(state => state.account.user.role.name);
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
 
+    const handleLogout = async () => {
+        const res = await callLogout();
+        if (res && +res.statusCode === 200) {
+            dispatch(setLogoutAction({}));
+            notification.success({
+                message: 'Thành công',
+                description: 'Đăng xuất thành công!',
+                placement: 'topRight',
+            });
+            navigate('/login')
+        }
+    }
     useEffect(() => {
         if (!roleName) return;
 
@@ -66,6 +82,7 @@ const LayoutAdmin = () => {
         {
             label: <label
                 style={{ cursor: 'pointer' }}
+                onClick={() => handleLogout()}
             >Đăng xuất</label>,
             key: 'logout',
         },
