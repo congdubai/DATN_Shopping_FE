@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Layout, Menu, Dropdown, Avatar, Badge, Typography, Input, Row, Col, Flex, Affix, message, notification } from "antd";
-import { HomeOutlined, AppstoreOutlined, ShoppingCartOutlined, UserOutlined, LogoutOutlined, MailOutlined, EnvironmentOutlined, SearchOutlined, UnorderedListOutlined, DownOutlined, CaretDownOutlined } from "@ant-design/icons";
+import { HomeOutlined, AppstoreOutlined, ShoppingCartOutlined, UserOutlined, LogoutOutlined, MailOutlined, EnvironmentOutlined, SearchOutlined, UnorderedListOutlined, DownOutlined, CaretDownOutlined, PhoneOutlined } from "@ant-design/icons";
 import SubMenu from "antd/es/menu/SubMenu";
 import { callFetchMenuCategory, callLogout } from "@/config/api";
 import { ICategory } from "@/types/backend";
@@ -158,15 +158,6 @@ const Navbar: React.FC = () => {
                     </Col>
                     <Col xs={8} sm={6} md={4} lg={4} style={{ marginRight: "40px" }}>
                         <Row align="middle" justify="end" gutter={20} style={{ color: "white" }}>
-                            {/* Liên hệ */}
-                            <Col>
-                                <Link to="/contact" style={{ color: "white" }}>
-                                    <Flex vertical align="center">
-                                        <img style={{ height: 24, width: 24, imageRendering: "crisp-edges" }} src={`${import.meta.env.VITE_BACKEND_URL}/storage/slide/location.png`} alt="Logo" />
-                                        <p style={{ marginTop: "11px" }}>Cửa hàng</p>
-                                    </Flex>
-                                </Link>
-                            </Col>
                             {/* Giỏ hàng */}
                             <Col>
                                 <Link to="/cart" style={{ color: "white" }}>
@@ -178,7 +169,17 @@ const Navbar: React.FC = () => {
                                     </Flex>
                                 </Link>
                             </Col>
-
+                            {/* Liên hệ */}
+                            <Col>
+                                <Link to="/contact" style={{ color: "white" }}>
+                                    <Flex vertical align="center">
+                                        <Badge offset={[0, 5]}>
+                                            <PhoneOutlined style={{ fontSize: "24px", color: "white" }} />
+                                        </Badge>
+                                        <p style={{ marginTop: "12px" }}>Liên hệ</p>
+                                    </Flex>
+                                </Link>
+                            </Col>
                             {/* Tài khoản */}
                             <Col>
                                 {isAuthenticated ? (
@@ -228,9 +229,6 @@ const Navbar: React.FC = () => {
                             <Menu.Item key="cart" icon={<ShoppingCartOutlined />}>
                                 <Link to="/cart">Giỏ hàng</Link>
                                 <Badge count={quantity} offset={[10, 0]} />
-                            </Menu.Item>
-                            <Menu.Item key="contact" icon={<MailOutlined />}>
-                                <Link to="/user/contact">Liên hệ</Link>
                             </Menu.Item>
                         </Menu>
                     </Col>

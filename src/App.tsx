@@ -19,11 +19,8 @@ import ProductDetailPage from "./pages/admin/productDetail";
 import NotFound from "./components/share/not.found";
 import HomePage from "./pages/client/home";
 import CartPage from "./pages/client/cart";
-import CheckOut from "./pages/client/checkout";
 import CheckOutPage from "./pages/client/checkout";
 import DashboardPage from "./pages/admin/dashboard";
-import { HelmetProvider } from "react-helmet-async";
-import CreateOrder from "./components/admin/createOrder/CreateOrder";
 import CreateOrderPage from "./components/admin/createOrder/CreateOrder";
 import HistoryPage from "./pages/client/history";
 import ProductDetailClientPage from "./pages/client/productDetail";
@@ -39,6 +36,7 @@ import viVN from 'antd/es/locale/vi_VN';
 import ExportPage from "./pages/admin/export";
 import ProfilePage from "./pages/client/profile";
 import RegisterPage from "./pages/auth/register";
+import { CorporateContactPage } from "./pages/client/contact";
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -105,6 +103,11 @@ export default function App() {
           path: "profile",
           element:
             <ProfilePage />
+        },
+        {
+          path: "contact",
+          element:
+            <CorporateContactPage />
         },
         {
           path: "order-history",
