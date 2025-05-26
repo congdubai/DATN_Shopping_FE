@@ -203,7 +203,7 @@ export interface IReview {
     order?: { id: string };
     rating: number;
     comment: string;
-    name?: string,
+    userName?: string,
     avatar?: string;
     createdAt?: string;
 }

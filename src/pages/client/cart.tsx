@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Breadcrumb, Button, Card, Col, Divider, Input, notification, Row } from "antd";
+import { Breadcrumb, Button, Card, Col, Divider, Input, InputNumber, notification, Row } from "antd";
 import { callDeleteCartDetail, callFetchCartDetail, callUpdateQuantity } from "@/config/api";
 import { useLocalCart } from "@/components/client/cart/useLocalCart";
 import { useNavigate } from "react-router-dom";
@@ -178,7 +178,7 @@ const CartPage = () => {
                                                             marginTop: 8
                                                         }}
                                                     >
-                                                        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                                                        <div style={{ display: "flex", alignItems: "center" }}>
                                                             <Button
                                                                 danger
                                                                 onClick={() => {
@@ -192,9 +192,25 @@ const CartPage = () => {
                                                                 }}
                                                             >-</Button>
 
-                                                            <span style={{ fontSize: "16px", color: "black", fontWeight: "700" }}>
-                                                                {item.quantity}
-                                                            </span>
+                                                            <InputNumber
+                                                                min={1}
+                                                                value={item.quantity}
+                                                                onChange={(value) => {
+                                                                    if (typeof value === "number" && value > 0) {
+                                                                        updateQuantity(item.productId, item.colorId, item.sizeId, value); // local
+                                                                        callUpdateQuantity(String(item.id), String(value))
+                                                                            .then(() => updateCartData())
+                                                                            .catch((err) => console.error("Update quantity failed:", err));
+                                                                    }
+                                                                }}
+                                                                className="custom-input-number"
+                                                                style={{
+                                                                    width: 46,
+                                                                    border: "none",
+                                                                    boxShadow: "none"
+                                                                }}
+                                                                controls={false}
+                                                            />
 
                                                             <Button
                                                                 danger

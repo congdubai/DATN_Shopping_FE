@@ -505,3 +505,10 @@
 .custom-checkbox .ant-checkbox-input:focus+.ant-checkbox-inner {
     border-color: #000 !important;
 }
+
+.custom-input-number input {
+    font-weight: 700;
+    font-size: 16px;
+    color: black;
+    text-align: center;
+}

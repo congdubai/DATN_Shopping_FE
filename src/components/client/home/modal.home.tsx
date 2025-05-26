@@ -1,4 +1,4 @@
-import { Modal, Button, Flex, message, notification } from "antd";
+import { Modal, Button, Flex, message, notification, InputNumber } from "antd";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IProductDetail } from "@/types/backend";
@@ -190,7 +190,15 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
         }
     };
 
-
+    const handleInputChange = (value: number | null) => {
+        if (!value || value < 1) {
+            setQuantity(1);
+        } else if (value > selectedProductQuantity) {
+            setQuantity(selectedProductQuantity);
+        } else {
+            setQuantity(value);
+        }
+    };
 
     return (
         <Modal open={isOpenModal} onCancel={() => setIsOpenModal(false)} footer={null} width={800}>
@@ -326,7 +334,21 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                                 icon={<MinusOutlined style={{ fontSize: 16 }} />}
                                 onClick={decrease}
                             />
-                            <span style={{ fontSize: "16px", fontWeight: "bold" }}>{quantity}</span>
+                            <InputNumber
+                                min={1}
+                                max={selectedProductQuantity}
+                                value={quantity}
+                                onChange={handleInputChange}
+                                style={{
+                                    width: 70,
+                                    textAlign: "center",
+                                    border: "none",
+                                    boxShadow: "none",
+                                    outline: "none",
+                                    marginLeft: 12
+                                }}
+                                controls={false}
+                            />
                             <Button
                                 type="text"
                                 icon={<PlusOutlined style={{ fontSize: 16 }} />}

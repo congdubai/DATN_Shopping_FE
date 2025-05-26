@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Row, Col, Image, Carousel, Typography, Tag, Button, InputNumber, Radio, Tabs, Flex, notification, message, Rate, Avatar, Dropdown, Menu, Pagination } from "antd";
 import { DownOutlined, MinusOutlined, PlusOutlined, ShoppingCartOutlined, StarFilled, UserOutlined } from "@ant-design/icons";
-import { callAddToCart } from "@/config/api";
+import { callAddToCart, callFetchProductDetailById, callFetchProductsById } from "@/config/api";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { IProductDetail } from "@/types/backend";
+import { IProduct, IProductDetail, IReview } from "@/types/backend";
 import { useParams } from "react-router-dom";
 import { fetchReviewByProductId } from "@/redux/slice/reviewSlide";
 import dayjs from "dayjs";
 import { fetchProductDetailByProductId } from "@/redux/slice/productDetailSlide";
-
-
 const { Title, Text } = Typography;
 
 const ProductDetailClientPage = () => {
@@ -20,23 +18,10 @@ const ProductDetailClientPage = () => {
     const meta = useAppSelector(state => state.review.meta);
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
-
-    const { result: productDetails = [], isFetching } = useAppSelector(
-        (state: any) => state.productDetail
-    ) as { result: IProductDetail[]; isFetching: boolean };
-
-    const productImages = [
-        `${backendUrl}/storage/slide/slide-1.webp`,
-        `${backendUrl}/storage/slide/slide-2.jpg`,
-        `${backendUrl}/storage/slide/slide-3.webp`,
-        `${backendUrl}/storage/slide/slide-4.webp`,
-    ];
-
-
-    useEffect(() => {
-        if (!productId) return;
-        dispatch(fetchReviewByProductId({ id: productId, query: `page=${currentPage}&size=10` }));
-    }, [dispatch, productId, currentPage, reviews]);
+    const productDetails = useAppSelector(state => state.productDetail.result);
+    const [selectedImage1, setSelectedImage1] = useState<string>();
+    const productImages = Array.from(new Set(productDetails.map(p => p.imageDetail)));
+    const [filteredStar, setFilteredStar] = useState<number | null>();
 
     useEffect(() => {
         if (productId) {
@@ -47,6 +32,12 @@ const ProductDetailClientPage = () => {
             }));
         }
     }, [productId, dispatch, currentPage, pageSize]);
+
+    useEffect(() => {
+        setSelectedImage1(productImages[0])
+    }, [productDetails])
+
+
 
     const [quantity, setQuantity] = useState(1);
 
@@ -71,6 +62,10 @@ const ProductDetailClientPage = () => {
     const selectedProduct = productDetails.find(
         (p) => p.color?.name === selectedColor && p.size?.name === selectedSize
     );
+
+    useEffect(() => {
+        setSelectedImage1(selectedProduct?.imageDetail);
+    }, [selectedProduct])
 
     const selectedProductQuantity = selectedProduct?.quantity || 0;
     const isInStock = selectedProductQuantity > 0;
@@ -202,52 +197,34 @@ const ProductDetailClientPage = () => {
             });
         }
     };
-
-    const [selectedImage1, setSelectedImage1] = useState(productImages[0]);
+    const handleInputChange = (value: number | null) => {
+        if (!value || value < 1) {
+            setQuantity(1);
+        } else if (value > selectedProductQuantity) {
+            setQuantity(selectedProductQuantity);
+        } else {
+            setQuantity(value);
+        }
+    };
 
     const starMenuItems = [
         {
-            key: '1',
-            label: (
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <Rate disabled defaultValue={1} /> 1 sao
-                </div>
-            ),
+            key: 'all',
+            label: 'Tất cả',
+            onClick: () => setFilteredStar(null),
         },
-        {
-            key: '2',
-            label: (
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <Rate disabled defaultValue={2} /> 2 sao
-                </div>
-            ),
-        },
-        {
-            key: '3',
-            label: (
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <Rate disabled defaultValue={3} /> 3 sao
-                </div>
-            ),
-        },
-        {
-            key: '4',
-            label: (
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <Rate disabled defaultValue={4} /> 4 sao
-                </div>
-            ),
-        },
-        {
-            key: '5',
-            label: (
-                <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                    <Rate disabled defaultValue={5} /> 5 sao
-                </div>
-            ),
-        },
+        ...[5, 4, 3, 2, 1].map((star) => ({
+            key: star.toString(),
+            label: `${star} sao`,
+            onClick: () => setFilteredStar(star),
+        }))
     ];
+    const filteredReviews = filteredStar
+        ? reviews.filter((review) => review.rating === filteredStar)
+        : reviews;
 
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = reviews.length > 0 ? (totalRating / reviews.length) : 0;
 
     return (
         <>
@@ -256,10 +233,10 @@ const ProductDetailClientPage = () => {
                     <Row gutter={[32, 32]} style={{ marginLeft: 120 }}>
                         <Col md={10} style={{ backgroundColor: "white", padding: "10px" }}>
                             <Carousel>
-                                {productImages.map((img, index) => (
+                                {productDetails.map((img, index) => (
                                     <Image
                                         key={index}
-                                        src={selectedImage1}
+                                        src={`${backendUrl}/storage/product/${selectedImage1}`}
                                         width={500}
                                         height={450}
                                         style={{ objectFit: "cover" }}
@@ -270,7 +247,7 @@ const ProductDetailClientPage = () => {
                                 {productImages.map((img, index) => (
                                     <Col key={index}>
                                         <img
-                                            src={img}
+                                            src={`${backendUrl}/storage/product/${img}`}
                                             alt={`Thumbnail ${index}`}
                                             width={80}
                                             height={80}
@@ -320,7 +297,7 @@ const ProductDetailClientPage = () => {
                                 </span>
                             </p>
 
-                            <Title level={3} style={{ color: "#ff0000", display: "inline-block", marginRight: 10, marginTop: 10 }}>{productDetails[0]?.product?.price}</Title>
+                            <Title level={3} style={{ color: "#ff0000", display: "inline-block", marginRight: 10, marginTop: 10 }}>{productDetails[0]?.product?.price}đ</Title>
                             <Text delete style={{ fontSize: 16, color: "gray", marginTop: 8 }}>499.000đ</Text>
                             <p>
                                 <strong>Màu sắc:</strong>
@@ -391,8 +368,24 @@ const ProductDetailClientPage = () => {
                                         type="text"
                                         icon={<MinusOutlined style={{ fontSize: 16 }} />}
                                         onClick={decrease}
+                                        disabled={quantity <= 1}
                                     />
-                                    <span style={{ fontSize: "16px", fontWeight: "bold" }}>{quantity}</span>
+                                    <InputNumber
+                                        min={1}
+                                        max={selectedProductQuantity}
+                                        value={quantity}
+                                        onChange={handleInputChange}
+                                        style={{
+                                            width: 70,
+                                            textAlign: "center",
+                                            border: "none",
+                                            boxShadow: "none",
+                                            outline: "none",
+                                            marginLeft: 12
+                                        }}
+                                        controls={false}
+                                    />
+
                                     <Button
                                         type="text"
                                         icon={<PlusOutlined style={{ fontSize: 16 }} />}
@@ -411,6 +404,12 @@ const ProductDetailClientPage = () => {
                                 </Button>
 
                             </div>
+                            <div>
+                                <p style={{ marginTop: 100 }}>
+                                    <strong>Mô tả:</strong>
+                                    <p style={{ marginTop: 8 }}>{productDetails[0]?.product?.shortDesc}</p>
+                                </p>
+                            </div>
                         </Col>
                     </Row>
                     <Tabs defaultActiveKey="1" style={{ backgroundColor: "white", marginTop: 20, width: 1070, marginLeft: 120 }}
@@ -423,11 +422,10 @@ const ProductDetailClientPage = () => {
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
                                     {/* Bên trái: 4.6 + Rate + 45 lượt đánh giá */}
                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                        <span style={{ fontSize: 24, fontWeight: "bold" }}>4.6</span>
-                                        <Rate allowHalf disabled defaultValue={4.6} style={{ fontSize: 20 }} />
+                                        <span style={{ fontSize: 24, fontWeight: "bold" }}>{averageRating.toFixed(1)}</span>
+                                        <Rate allowHalf disabled defaultValue={averageRating} style={{ fontSize: 20 }} />
                                         <span style={{ color: "#888" }}>{reviews.length} lượt đánh giá</span>
                                     </div>
-
                                     {/* Bên phải: Nút Sao ★ */}
                                     <Dropdown menu={{ items: starMenuItems }} placement="bottomLeft">
                                         <Button type="text" style={{ border: "1px solid #d9d9d9", color: "#000", marginRight: 20, width: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -440,20 +438,28 @@ const ProductDetailClientPage = () => {
                                     </Dropdown>
                                 </div>
                                 {/* Một đánh giá */}
-                                {reviews.map((review) => (
+                                {filteredReviews.map((review) => (
                                     <div key={review.id} style={{ paddingTop: 20, borderTop: "1px solid #f0f0f0" }}>
                                         <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                                            <Avatar size="large" icon={<UserOutlined />} />
+                                            <Avatar
+                                                size="large"
+                                                src={`${backendUrl}/storage/avatar/${review?.avatar ? review.avatar : undefined}`}
+                                                icon={!review?.avatar && <UserOutlined />}
+                                            />
                                             <div>
-                                                <div style={{ fontWeight: "bold" }}>{review.name || "Ẩn danh"}</div>
+                                                <div style={{ fontWeight: "bold" }}>{review.userName || "Ẩn danh"}</div>
                                                 <Rate disabled defaultValue={review.rating} style={{ fontSize: 16, margin: "4px 0" }} />
                                                 <div style={{ marginTop: 8, color: "#888" }}>Đánh giá vào: <>{review.createdAt ? dayjs(review.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</></div>
                                                 <div style={{ marginTop: 8, lineHeight: 1.6 }}>
-                                                    <div>
-                                                        <span style={{ color: "#888" }}>Bình luận: </span>
-                                                        <span style={{ fontWeight: "bold" }} dangerouslySetInnerHTML={{ __html: review.comment || "Không có bình luận" }} />
-                                                    </div>
+                                                    <span style={{ color: "#888" }}>Bình luận: </span>
+                                                    <span
+                                                        style={{ fontWeight: "bold", display: "inline" }}
+                                                        dangerouslySetInnerHTML={{
+                                                            __html: (review.comment || "Không có bình luận").replace(/<br\s*\/?>/gi, " ").replace(/<\/?p[^>]*>/gi, "")
+                                                        }}
+                                                    />
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>

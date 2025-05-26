@@ -1,4 +1,4 @@
-import { Col, Row, RowProps, Space, Typography } from 'antd';
+import { Col, Row, RowProps, Space, Typography, message } from 'antd';
 import { MailFilled, PhoneFilled } from '@ant-design/icons';
 import { Card } from '@/components/admin/dashboard/Card/Card';
 import { ContactForm } from '@/components/client/contax/contactForm';
@@ -22,6 +22,16 @@ const cardStyles: React.CSSProperties = {
 };
 
 export const CorporateContactPage = () => {
+    const handleCopyEmail = (email: string) => {
+        navigator.clipboard.writeText(email)
+            .then(() => {
+                message.success(`Đã sao chép: ${email}`);
+            })
+            .catch(() => {
+                message.error('Không thể sao chép địa chỉ email');
+            });
+    };
+
     return (
         <div style={{ padding: "20px", paddingTop: 170, backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
             <Row {...ROW_PROPS} justify="center">
@@ -50,10 +60,12 @@ export const CorporateContactPage = () => {
                             <Card title="Email" extra={<MailFilled />} style={cardStyles}>
                                 <Space direction="vertical" style={{ width: '100%' }}>
                                     <Text style={textStyles}>
-                                        Bán hàng: <Link strong>qnc2755@gmail.com</Link>
+                                        Bán hàng:
+                                        <Link strong onClick={() => handleCopyEmail('qnc2755@gmail.com')}>qnc2755@gmail.com</Link>
                                     </Text>
                                     <Text style={textStyles}>
-                                        Hỗ trợ: <Link strong>help@gmail.com</Link>
+                                        Hỗ trợ:
+                                        <Link strong onClick={() => handleCopyEmail('help@gmail.com')}>help@gmail.com</Link>
                                     </Text>
                                 </Space>
                                 <Paragraph style={{ textAlign: 'center', marginTop: '1rem' }}>

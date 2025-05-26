@@ -1,4 +1,4 @@
-import { callFetchProduct, callFetchProductsByCategory, callFetchProductsByGender } from "@/config/api";
+import { callFetchProduct, callFetchProductsByCategory, callFetchProductsByGender, callFetchProductsById } from "@/config/api";
 import { IProduct } from "@/types/backend";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
@@ -11,6 +11,7 @@ interface IState {
         total: number;
     }
     result: IProduct[];
+    data: IProduct | null;
 }
 
 export const fetchProduct = createAsyncThunk(
@@ -45,6 +46,7 @@ const initialState: IState = {
         total: 0
     },
     result: [],
+    data: null,
 };
 
 export const productSlide = createSlice({
@@ -98,7 +100,6 @@ export const productSlide = createSlice({
                 state.result = action.payload.data.result;
             }
         });
-
     },
 });
 

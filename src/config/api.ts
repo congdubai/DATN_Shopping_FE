@@ -121,8 +121,9 @@ export const callFetchProductsBySearchQuery = (query: string) => {
         params: { query }
     });
 }
-
-
+export const callFetchProductsById = (id: string) => {
+    return axios.get<IBackendRes<IProduct>>(`/api/v1/products/by-id/${id}`);
+}
 
 
 /**
