@@ -89,10 +89,9 @@ const LoginPage = () => {
                 localStorage.removeItem("remembered_email");
                 localStorage.removeItem("remembered_password");
             }
-
+            localStorage.setItem('access_token', res.data.access_token);
             dispatch(setUserLoginInfo(res.data.user));
             await syncCartWithServer();
-
             const roleName = res.data.user?.role?.name;
             const isAdmin = roleName === "ADMIN";
             const isStaff = roleName === "STAFF";

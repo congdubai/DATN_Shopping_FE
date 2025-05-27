@@ -98,33 +98,35 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
     const updateCartQuantityInLocalStorage = (cartItem: { productId: string, sizeId: string, colorId: string, quantity: number }) => {
         const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-        const foundIndex = existingCart.findIndex(
-            (item: any) =>
-                String(item.productId) === String(cartItem.productId) &&
-                String(item.colorId) === String(cartItem.colorId) &&
-                String(item.sizeId) === String(cartItem.sizeId)
-        );
+        const foundIndex = existingCart.findIndex((item: any, index: number) => {
+            const isProductMatch = String(item.productId) === String(cartItem.productId);
+            const isColorMatch = String(item.colorId) === String(cartItem.colorId);
+            const isSizeMatch = String(item.sizeId) === String(cartItem.sizeId);
+            return isProductMatch && isColorMatch && isSizeMatch;
+        });
 
         if (foundIndex !== -1) {
             return;
+        } else {
+            // Nếu chưa có sản phẩm trong giỏ, thêm sản phẩm vào giỏ hàng
+            existingCart.push({
+                productId: cartItem.productId,
+                colorId: cartItem.colorId,
+                sizeId: cartItem.sizeId,
+                quantity: 1,
+                productName: selectedProduct?.product?.name || "",
+                productImage: selectedProduct?.imageDetail || "",
+                price: selectedProduct?.product?.price || 0,
+                colorName: selectedProduct?.color?.name || "",
+                sizeName: selectedProduct?.size?.name || "",
+            });
+
         }
-
-        // Nếu chưa có sản phẩm trong giỏ, thêm sản phẩm vào giỏ hàng
-        existingCart.push({
-            ...cartItem,
-            productName: selectedProduct?.product?.name || "",
-            productImage: selectedProduct?.imageDetail || "",
-            price: selectedProduct?.product?.price || 0,
-            colorName: selectedProduct?.color?.name || "",
-            sizeName: selectedProduct?.size?.name || "",
-            quantity: 1,
-        });
-
         // Lưu giỏ hàng vào localStorage
         localStorage.setItem("cart", JSON.stringify(existingCart));
 
         // Cập nhật tổng số lượng sản phẩm trong giỏ hàng
-        const totalQuantity = existingCart.reduce((sum: number, item: any) => sum + item.quantity, 0);
+        const totalQuantity = existingCart.reduce((sum: number, item: any) => sum + 1, 0);
         localStorage.setItem("cart_quantity", totalQuantity.toString());
 
         // Gửi sự kiện cập nhật giỏ hàng
@@ -166,8 +168,8 @@ const HomeModal = ({ isOpenModal, setIsOpenModal, productId }: IProps) => {
                         placement: 'topRight',
                     });
 
-                    // Cập nhật lại số lượng giỏ hàng trong localStorage sau khi đăng nhập
                     updateCartQuantityInLocalStorage(cartItem);
+                    console.log("check cart: ", cartItem)
                 } else {
                     notification.error({
                         message: 'Thất bại',

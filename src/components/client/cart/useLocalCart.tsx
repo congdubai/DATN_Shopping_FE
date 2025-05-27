@@ -42,16 +42,14 @@ export const useLocalCart = () => {
     };
 
     const updateQuantity = (
-        productId: string,
-        colorId: string,
-        sizeId: string,
+        productId: string, colorName: string, sizeName: string,
         newQuantity: number
     ) => {
         const updatedCart = cartItems.map((item) => {
             if (
                 item.productId === productId &&
-                item.colorId === colorId &&
-                item.sizeId === sizeId
+                item.colorName === colorName &&
+                item.sizeName === sizeName
             ) {
                 return { ...item, quantity: Math.max(newQuantity, 1) };
             }

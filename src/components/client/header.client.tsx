@@ -68,6 +68,10 @@ const Navbar: React.FC = () => {
                 description: 'Đăng xuất thành công!',
                 placement: 'topRight',
             }); navigate('/login')
+            // Xoá localStorage giỏ hàng khi logout
+            localStorage.removeItem("cart");
+            localStorage.removeItem("cart_quantity");
+            window.dispatchEvent(new Event("cartQuantityChanged"));
         }
     }
     const userMenu = (

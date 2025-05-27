@@ -76,7 +76,6 @@ const CartPage = () => {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const cartItems = res.data.data;
-                console.log("check value, ", cartItems);
                 const itemToDelete = cartItems.find(
                     (item: any) =>
                         item.productId === productId &&
@@ -152,7 +151,7 @@ const CartPage = () => {
                                     ) : (
 
                                         cartItems.map((item, index) => (
-                                            <Row key={index} style={{ marginTop: 25, alignItems: "start" }}>
+                                            <Row key={index} style={{ marginTop: 25, alignItems: "start", width: 610 }}>
                                                 {/* Ảnh sản phẩm */}
                                                 <Col span={6}>
                                                     <img
@@ -184,7 +183,7 @@ const CartPage = () => {
                                                                 onClick={() => {
                                                                     const newQuantity = item.quantity - 1;
                                                                     if (newQuantity > 0) {
-                                                                        updateQuantity(item.productId, item.colorId, item.sizeId, newQuantity); // Cập nhật local
+                                                                        updateQuantity(item.productId, item.colorName, item.sizeName, newQuantity); // Cập nhật local
                                                                         callUpdateQuantity(String(item.id), String(newQuantity)) // Cập nhật server
                                                                             .then(() => updateCartData()) // reload lại giỏ hàng từ server
                                                                             .catch(err => console.error("Update quantity failed:", err));
@@ -197,7 +196,7 @@ const CartPage = () => {
                                                                 value={item.quantity}
                                                                 onChange={(value) => {
                                                                     if (typeof value === "number" && value > 0) {
-                                                                        updateQuantity(item.productId, item.colorId, item.sizeId, value); // local
+                                                                        updateQuantity(item.productId, item.colorName, item.sizeName, value); // local
                                                                         callUpdateQuantity(String(item.id), String(value))
                                                                             .then(() => updateCartData())
                                                                             .catch((err) => console.error("Update quantity failed:", err));
@@ -216,7 +215,7 @@ const CartPage = () => {
                                                                 danger
                                                                 onClick={() => {
                                                                     const newQuantity = item.quantity + 1;
-                                                                    updateQuantity(item.productId, item.colorId, item.sizeId, newQuantity); // Cập nhật local
+                                                                    updateQuantity(item.productId, item.colorName, item.sizeName, newQuantity); // Cập nhật local
                                                                     callUpdateQuantity(String(item.id), String(newQuantity))
                                                                         .then(() => updateCartData())
                                                                         .catch(err => console.error("Update quantity failed:", err));
