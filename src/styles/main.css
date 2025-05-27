@@ -188,7 +188,17 @@
     color: #000;
     font-weight: bold;
     border-radius: 5px;
+    height: 22px !important;
+    display: inline-flex;
+    /* Thay đổi */
+    align-items: center;
+    /* Căn giữa theo chiều dọc */
+    gap: 4px;
+    /* Khoảng cách giữa sao và số */
+    padding: 6px 6px;
+    /* Thêm padding cho Tag đẹp hơn */
 }
+
 
 .cart-icon {
     background: rgba(0, 0, 0, 1);
@@ -290,7 +300,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     border: none;
     transition: transform 0.3s ease;
-    width: 280px !important;
+    width: 310px !important;
     margin-right: 40px;
 }
 
@@ -304,9 +314,9 @@
     padding: 10px;
     font-weight: bold;
     text-align: center;
-    min-width: 50px;
+    width: 50px !important;
     display: flex;
-    min-height: 110px;
+    min-height: 110px !important;
     align-items: center;
     justify-content: center;
 }
@@ -315,6 +325,7 @@
     padding: 10px;
     flex: 1;
     border-left: 2px dashed #ddd;
+    width: 225px !important;
 }
 
 .discount-text {
@@ -385,7 +396,9 @@
     background: #FFB41D;
     text-align: center;
     height: 110px;
+    width: 320px !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+
 }
 
 .copy-button:hover {

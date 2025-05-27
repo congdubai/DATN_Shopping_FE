@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { fetchProduct } from "../../redux/slice/productSlide";
-import { Button, Card, Carousel, Col, message, notification, Pagination, Rate, Row, Tag, Typography } from "antd";
+import { Button, Card, Carousel, Col, message, notification, Pagination, Rate, Row, Spin, Tag, Typography } from "antd";
 import "styles/main.css"
 import { CarouselRef } from "antd/es/carousel";
 import { CarOutlined, CopyOutlined, EyeOutlined, LeftOutlined, RightOutlined, SearchOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
@@ -10,6 +10,7 @@ import HomeModal from "@/components/client/home/modal.home";
 import { IDiscount, IProduct } from "@/types/backend";
 import { callFetchTop3Discount, callVNPayReturn } from "@/config/api";
 import dayjs from "dayjs";
+import StarRating from "@/components/client/home/StarRating";
 
 const HomePage = () => {
     const products = useAppSelector(state => state.product.result);
@@ -28,6 +29,7 @@ const HomePage = () => {
 
 
     const [coupons, setCoupons] = useState<IDiscount[]>([]);
+    const [loadingCoupons, setLoadingCoupons] = useState(true);
 
     useEffect(() => {
         const fetchDiscounts = async () => {
@@ -38,6 +40,8 @@ const HomePage = () => {
                 }
             } catch (error) {
                 console.error("Lỗi khi tải mã giảm giá:", error);
+            } finally {
+                setLoadingCoupons(false);
             }
         };
 
@@ -76,7 +80,6 @@ const HomePage = () => {
             } catch (err) {
                 notification.error({ message: "Lỗi khi xác nhận thanh toán" });
             } finally {
-                // 👇 Dọn URL để không bị gọi lại lần sau
                 navigate("/", { replace: true });
             }
         };
@@ -88,6 +91,27 @@ const HomePage = () => {
     useEffect(() => {
         dispatch(fetchProduct({ query: `page=${currentPage}&size=${pageSize}` }));
     }, [dispatch, currentPage]);
+
+    useEffect(() => {
+        if (loadingCoupons) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+            window.scrollTo({ top: 0 });
+        }
+
+        return () => {
+            document.body.style.overflow = "auto";
+        };
+    }, [loadingCoupons]);
+
+    if (loadingCoupons) {
+        return (
+            <div style={{ textAlign: "center", marginTop: "350px", height: "100vh" }}>
+                <Spin size="large" tip="Đang tải ưu đãi..." />
+            </div>
+        );
+    }
     return (
         <>
             <Row justify="center" style={{ backgroundColor: "#f5f5f5", minHeight: "100vh" }}>
@@ -200,7 +224,13 @@ const HomePage = () => {
                                             alt={product.name}
                                             className="product-image"
                                         />
-                                        <Tag className="new-tag">Hàng Mới</Tag>
+                                        <Tag
+                                            className="new-tag"
+                                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 6px' }}
+                                        >
+                                            <StarRating rating={product.avgRating!} />
+                                            <span style={{ fontSize: 10, lineHeight: 1 }}>{product.avgRating!.toFixed(1)}</span>
+                                        </Tag>
 
                                         <div className="cart-icon" onClick={() => {
                                             setDataInit(product);
@@ -242,7 +272,7 @@ const HomePage = () => {
                         />
                     </Row>
                 </Col>
-            </Row>
+            </Row >
             <HomeModal
                 isOpenModal={isOpenModal}
                 setIsOpenModal={setIsOpenModal}

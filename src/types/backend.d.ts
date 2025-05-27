@@ -78,7 +78,8 @@ export interface IProduct {
     category?: {
         id: string;
         name: string;
-    }
+    };
+    avgRating?: number;
 }
 export interface ICategory {
     id?: string;
