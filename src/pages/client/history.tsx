@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchHistory } from "@/redux/slice/historySlide";
 import ModalRate from "@/components/client/history/history.modal";
 import { IHistory } from "@/types/backend";
+import ViewHistoryDetail from "@/components/client/history/historyDetail";
 
 const HistoryPage = () => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
@@ -14,12 +15,17 @@ const HistoryPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [dataInit, setDataInit] = useState<IHistory | null>(null);
     const [openModal, setOpenModal] = useState<boolean>(false);
+    const [openViewDetail, setOpenViewDetail] = useState<boolean>(false);
 
     const pageSize = 10;
 
     useEffect(() => {
         dispatch(fetchHistory({ query: `page=${currentPage}&size=${pageSize}` }));
     }, [dispatch, currentPage, pageSize, openModal]);
+
+    const reloadHistory = () => {
+        dispatch(fetchHistory({ query: `page=${currentPage}&size=${pageSize}` }));
+    };
 
     return (
         <>
@@ -120,6 +126,10 @@ const HistoryPage = () => {
                                                             <div style={{ margin: "20px 0" }}>
                                                                 <Button
                                                                     style={{ margin: "0 5px", fontFamily: "'Geologica', sans-serif" }}
+                                                                    onClick={() => {
+                                                                        setOpenViewDetail(true);
+                                                                        setDataInit(item);
+                                                                    }}
                                                                 >
                                                                     Xem chi tiết đơn hàng
                                                                 </Button>
@@ -171,6 +181,14 @@ const HistoryPage = () => {
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
+            <ViewHistoryDetail
+                onClose={setOpenViewDetail}
+                open={openViewDetail}
+                dataInit={dataInit}
+                setDataInit={setDataInit}
+                reloadHistory={reloadHistory}
+            />
+
         </>
     );
 };

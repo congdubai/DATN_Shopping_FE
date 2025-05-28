@@ -3,6 +3,9 @@ import { IOrder, IOrderDetail } from "@/types/backend";
 import { Badge, Descriptions, Drawer, message } from "antd";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 interface IProps {
     onClose: (v: boolean) => void;
@@ -70,8 +73,9 @@ const ViewOrderDetail = (props: IProps) => {
                             {detail.price.toLocaleString()} VND
                         </Descriptions.Item>
                         <Descriptions.Item label="Ngày tạo">
-                            {detail.order?.orderDate
-                                ? dayjs(detail.order.orderDate).format("DD-MM-YYYY HH:mm:ss")
+                            {detail.order?.orderDate &&
+                                dayjs(detail.order.orderDate, "YYYY-MM-DD HH:mm:ss A").isValid()
+                                ? dayjs(detail.order.orderDate, "YYYY-MM-DD HH:mm:ss A").format("DD-MM-YYYY HH:mm:ss")
                                 : "Không có ngày tạo"}
                         </Descriptions.Item>
                     </Descriptions>

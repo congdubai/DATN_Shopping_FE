@@ -70,12 +70,11 @@ const ColorPage = () => {
         {
             title: 'Mã màu',
             dataIndex: 'hexCode',
-            sorter: true,
         },
         {
             title: 'Mô tả',
             dataIndex: 'description',
-            sorter: true,
+            hideInSearch: true,
         },
         {
             title: 'Ngày tạo',
@@ -124,8 +123,8 @@ const ColorPage = () => {
                     <Access requiredRole="admin" hideChildren>
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa color"}
-                            description={"Bạn có chắc chắn muốn xóa color này ?"}
+                            title={"Xác nhận xóa màu sắc"}
+                            description={"Bạn có chắc chắn muốn xóa màu sắc này ?"}
                             onConfirm={() => handleDeleteUser(entity.id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
@@ -154,7 +153,11 @@ const ColorPage = () => {
         }
 
         if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
-
+        if (clone.hexCode) {
+            q.filter = q.filter ?
+                q.filter + " and " + `${sfLike("hexCode", clone.hexCode)}` :
+                `${sfLike("hexCode", clone.hexCode)}`;
+        }
         if (!q.filter) delete q.filter;
 
         let temp = queryString.stringify(q);
@@ -172,7 +175,7 @@ const ColorPage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}&sort=updatedAt,desc`;
+            temp = `${temp}&sort=createdAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }
@@ -184,7 +187,7 @@ const ColorPage = () => {
             <Access requiredRole="admin" hideChildren>
                 <DataTable<IColor>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Colors (Vai Trò)"
+                    headerTitle="Danh sách màu sắc"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}

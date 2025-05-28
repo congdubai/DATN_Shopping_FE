@@ -32,7 +32,7 @@ const SizePage = () => {
         if (id) {
             const res = await callDeleteSize(id);
             if (+res.statusCode === 200) {
-                message.success('Xóa vai trò thành công');
+                message.success('Xóa kích thước thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -70,7 +70,7 @@ const SizePage = () => {
         {
             title: 'Mô tả',
             dataIndex: 'description',
-            sorter: true,
+            hideInSearch: true,
         },
         {
             title: 'Ngày tạo',
@@ -167,7 +167,7 @@ const SizePage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}&sort=updatedAt,desc`;
+            temp = `${temp}&sort=createdAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }
@@ -179,7 +179,7 @@ const SizePage = () => {
             <Access requiredRole="admin" hideChildren>
                 <DataTable<ISize>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Size"
+                    headerTitle="Danh sách kích thước"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}

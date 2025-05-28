@@ -5,7 +5,7 @@ import { fetchProduct } from "../../redux/slice/productSlide";
 import { Button, Card, Carousel, Col, message, notification, Pagination, Rate, Row, Spin, Tag, Typography } from "antd";
 import "styles/main.css"
 import { CarouselRef } from "antd/es/carousel";
-import { CarOutlined, CopyOutlined, EyeOutlined, LeftOutlined, RightOutlined, SearchOutlined, ShoppingCartOutlined, ShoppingOutlined } from "@ant-design/icons";
+import { CarOutlined, CopyOutlined, EyeOutlined, LeftOutlined, RightOutlined, SearchOutlined, ShoppingCartOutlined, ShoppingOutlined, StarFilled } from "@ant-design/icons";
 import HomeModal from "@/components/client/home/modal.home";
 import { IDiscount, IProduct } from "@/types/backend";
 import { callFetchTop3Discount, callVNPayReturn } from "@/config/api";
@@ -228,8 +228,7 @@ const HomePage = () => {
                                             className="new-tag"
                                             style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 6px' }}
                                         >
-                                            <StarRating rating={product.avgRating!} />
-                                            <span style={{ fontSize: 10, lineHeight: 1 }}>{product.avgRating!.toFixed(1)}</span>
+                                            <span style={{ fontSize: 12, lineHeight: 1 }}>{product.avgRating!.toFixed(1)}<StarFilled style={{ marginLeft: 4 }} /></span>
                                         </Tag>
 
                                         <div className="cart-icon" onClick={() => {

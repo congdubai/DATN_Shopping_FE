@@ -238,8 +238,8 @@ export const callPlaceOrder = (name: string, phone: string, address: string, met
         `/api/v1/place-order?receiverName=${name}&receiverPhone=${phone}&receiverAddress=${address}&paymentMethod=${method}&totalPrice=${totalPrice}`
     );
 };
-export const callFetchOrders = () => {
-    return axios.get<IBackendRes<IModelPaginate<IOrder>>>(`/api/v1/orders`);
+export const callFetchOrders = (query: string) => {
+    return axios.get<IBackendRes<IModelPaginate<IOrder>>>(`/api/v1/orders?${query}`);
 }
 export const callUpdateOrders = (id: string, order: IOrder) => {
     return axios.put<IBackendRes<IOrder>>(`/api/v1/orders`, { id, ...order });
@@ -256,6 +256,10 @@ export const callVNPayReturn = (responseCode: string, txnRef: string) => {
         `/api/v1/thank?vnp_ResponseCode=${responseCode}&vnp_TxnRef=${txnRef}`
     );
 };
+
+export const callFetchOrderById = (id: string) => {
+    return axios.get<IBackendRes<IOrder>>(`/api/v1/orders/by-id/${id}`);
+}
 
 /**
  * 

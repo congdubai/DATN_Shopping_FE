@@ -14,9 +14,9 @@ interface IState {
 }
 
 export const fetchOrder = createAsyncThunk(
-    'order/fetchColor',
-    async () => {
-        const res = await callFetchOrders();
+    'order/fetchOrder',
+    async ({ query }: { query: string }) => {
+        const res = await callFetchOrders(query);
         return res;
     }
 )

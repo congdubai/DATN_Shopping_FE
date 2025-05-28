@@ -75,7 +75,7 @@ const DiscountPage = () => {
             sorter: true,
         },
         {
-            title: 'Phần trăm giảm',
+            title: '%  giảm',
             dataIndex: 'discountPercent',
             sorter: true,
         },
@@ -83,12 +83,26 @@ const DiscountPage = () => {
             title: 'Giảm tối đa',
             dataIndex: 'maxDiscount',
             sorter: true,
+            hideInSearch: true,
+            render: (text, record) => {
+                return (
+                    <>
+                        {new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(record.maxDiscount!)}
+                    </>
+                );
+            }
+
         },
         {
             title: 'Số lượng',
             dataIndex: 'quantity',
             width: 150,
             sorter: true,
+            hideInSearch: true,
+
         },
         {
             title: 'Ngày bắt đầu',
@@ -162,26 +176,40 @@ const DiscountPage = () => {
             filter: ""
         }
 
-        if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
+        if (clone.code) q.filter = `${sfLike("code", clone.code)}`;
+        if (clone.discountPercent) {
+            q.filter = q.filter ?
+                q.filter + " and " + `${sfLike("discountPercent", clone.discountPercent)}` :
+                `${sfLike("discountPercent", clone.discountPercent)}`;
+        }
 
         if (!q.filter) delete q.filter;
 
         let temp = queryString.stringify(q);
 
         let sortBy = "";
-        if (sort && sort.name) {
-            sortBy = sort.name === 'ascend' ? "sort=name,asc" : "sort=name,desc";
+        if (sort && sort.code) {
+            sortBy = sort.code === 'ascend' ? "sort=code,asc" : "sort=code,desc";
         }
-        if (sort && sort.createdAt) {
-            sortBy = sort.createdAt === 'ascend' ? "sort=createdAt,asc" : "sort=createdAt,desc";
+        if (sort && sort.discountPercent) {
+            sortBy = sort.discountPercent === 'ascend' ? "sort=discountPercent,asc" : "sort=discountPercent,desc";
         }
-        if (sort && sort.updatedAt) {
-            sortBy = sort.updatedAt === 'ascend' ? "sort=updatedAt,asc" : "sort=updatedAt,desc";
+        if (sort && sort.maxDiscount) {
+            sortBy = sort.maxDiscount === 'ascend' ? "sort=maxDiscount,asc" : "sort=maxDiscount,desc";
+        }
+        if (sort && sort.quantity) {
+            sortBy = sort.quantity === 'ascend' ? "sort=quantity,asc" : "sort=quantity,desc";
+        }
+        if (sort && sort.startDate) {
+            sortBy = sort.startDate === 'ascend' ? "sort=startDate,asc" : "sort=startDate,desc";
+        }
+        if (sort && sort.endDate) {
+            sortBy = sort.endDate === 'ascend' ? "sort=endDate,asc" : "sort=endDate,desc";
         }
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}`;
+            temp = `${temp}&sort=startDate,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }

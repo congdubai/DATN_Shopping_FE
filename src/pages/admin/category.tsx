@@ -63,10 +63,11 @@ const CategoryPage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Image',
+            title: 'Ảnh',
             dataIndex: 'image',
             align: 'center',
             width: 150,
+            hideInSearch: true,
             render: (_, entity: ICategory) => {
                 return entity.image ? (
                     <img
@@ -90,7 +91,7 @@ const CategoryPage = () => {
         {
             title: 'Mô tả',
             dataIndex: 'description',
-            sorter: true,
+            hideInSearch: true,
         },
         {
             title: 'Ngày tạo',
@@ -139,8 +140,8 @@ const CategoryPage = () => {
                     <Access requiredRole="admin" hideChildren>
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa role"}
-                            description={"Bạn có chắc chắn muốn xóa role này ?"}
+                            title={"Xác nhận xóa danh mục"}
+                            description={"Bạn có chắc chắn muốn xóa danh mục này ?"}
                             onConfirm={() => handleDeleteCategory(entity.id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
@@ -187,7 +188,7 @@ const CategoryPage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}&sort=updatedAt,desc`;
+            temp = `${temp}&sort=createdAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }

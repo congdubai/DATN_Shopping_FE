@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { fetchProductByGender } from "../../redux/slice/productSlide";
 import { Card, Col, Pagination, Row, Typography, Tag } from "antd";
-import { ShoppingOutlined, SearchOutlined } from "@ant-design/icons";
+import { ShoppingOutlined, SearchOutlined, StarFilled } from "@ant-design/icons";
 import HomeModal from "@/components/client/home/modal.home";
 import { IProduct } from "@/types/backend";
 
@@ -58,8 +58,12 @@ const CategoryGenderPage = () => {
                                             alt={product.name}
                                             className="product-image"
                                         />
-                                        <Tag className="new-tag">Hàng Mới</Tag>
-
+                                        <Tag
+                                            className="new-tag"
+                                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 6px' }}
+                                        >
+                                            <span style={{ fontSize: 12, lineHeight: 1 }}>{product.avgRating!.toFixed(1)}<StarFilled style={{ marginLeft: 4 }} /></span>
+                                        </Tag>
                                         <div className="cart-icon" onClick={() => {
                                             setDataInit(product);
                                             setIsOpenModal(true);

@@ -107,6 +107,7 @@ const ModalOrder = (props: IProps) => {
                         style={{ width: 160 }}
                     >
                         <Select.Option value="Đã đặt hàng">Đang xử lý</Select.Option>
+                        <Select.Option value="Đã đặt hàng">Đang giao hàng</Select.Option>
                         <Select.Option value="Đã hủy">Đã hủy</Select.Option>
                         <Select.Option value="Đã hoàn thành">Đã hoàn thành</Select.Option>
                     </Select>

@@ -29,7 +29,7 @@ const UserPage = () => {
         if (id) {
             const res = await callDeleteUser(id);
             if (+res.statusCode === 200) {
-                message.success('Xóa User thành công');
+                message.success('Xóa người dùng thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -68,7 +68,7 @@ const UserPage = () => {
             sorter: true,
         },
         {
-            title: 'Name',
+            title: 'Họ tên',
             dataIndex: 'name',
             sorter: true,
         },
@@ -77,6 +77,7 @@ const UserPage = () => {
             dataIndex: 'image',
             align: 'center',
             width: 150,
+            hideInSearch: true,
             render: (_, entity: IUser) => {
                 return entity.avatar ? (
                     <img
@@ -92,13 +93,12 @@ const UserPage = () => {
             }
         },
         {
-            title: 'Role',
+            title: 'Vai trò',
             dataIndex: ["role", "name"],
-            sorter: true,
             hideInSearch: true
         },
         {
-            title: 'CreatedAt',
+            title: 'Ngày tạo',
             dataIndex: 'createdAt',
             width: 200,
             sorter: true,
@@ -123,7 +123,7 @@ const UserPage = () => {
         },
         {
 
-            title: 'Actions',
+            title: 'Chức năng',
             hideInSearch: true,
             width: 50,
             render: (_value, entity, _index, _action) => (
@@ -200,7 +200,7 @@ const UserPage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}&sort=updatedAt,desc`;
+            temp = `${temp}&sort=createdAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }
@@ -212,7 +212,7 @@ const UserPage = () => {
             <Access requiredRole="admin" hideChildren>
                 <DataTable<IUser>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Users"
+                    headerTitle="Danh sách người dùng"
                     rowKey="id"
                     columns={columns}
                     dataSource={users}

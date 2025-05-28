@@ -32,7 +32,7 @@ const ProductPage = () => {
         if (id) {
             const res = await callDeleteProduct(id);
             if (+res.statusCode === 200) {
-                message.success('Xóa User thành công');
+                message.success('Xóa sản phẩm thành công');
                 reloadTable();
             } else {
                 notification.error({
@@ -63,10 +63,11 @@ const ProductPage = () => {
             hideInSearch: true,
         },
         {
-            title: 'Image',
+            title: 'Ảnh',
             dataIndex: 'image',
             align: 'center',
             width: 150,
+            hideInSearch: true,
             render: (_, entity: IProduct) => {
                 return entity.image ? (
                     <img
@@ -83,24 +84,33 @@ const ProductPage = () => {
         },
         {
 
-            title: 'Name',
+            title: 'Tên',
             dataIndex: 'name',
             sorter: true,
         },
         {
-            title: 'Price',
+            title: 'Giá',
             dataIndex: 'price',
+            hideInSearch: true,
             sorter: true,
+            render: (text, record) => {
+                return (
+                    <>
+                        {new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(record.price!)}
+                    </>
+                );
+            }
         },
         {
-            title: 'Category',
+            title: 'Danh mục',
             dataIndex: ["category", "name"],
             width: 200,
-            sorter: true,
-            hideInSearch: true
         },
         {
-            title: 'CreatedAt',
+            title: 'Ngày tạo',
             dataIndex: 'createdAt',
             width: 200,
             sorter: true,
@@ -177,10 +187,11 @@ const ProductPage = () => {
 
         const clone = { ...params };
         if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
-        if (clone.email) {
-            q.filter = clone.name ?
-                q.filter + " and " + `${sfLike("email", clone.email)}`
-                : `${sfLike("email", clone.email)}`;
+
+        if (clone.category?.name) {
+            q.filter = q.filter ?
+                q.filter + " and " + `${sfLike("category.name", clone.category.name)}` :
+                `${sfLike("category.name", clone.category.name)}`;
         }
 
         if (!q.filter) delete q.filter;
@@ -190,8 +201,8 @@ const ProductPage = () => {
         if (sort && sort.name) {
             sortBy = sort.name === 'ascend' ? "sort=name,asc" : "sort=name,desc";
         }
-        if (sort && sort.email) {
-            sortBy = sort.email === 'ascend' ? "sort=email,asc" : "sort=email,desc";
+        if (sort && sort.price) {
+            sortBy = sort.price === 'ascend' ? "sort=price,asc" : "sort=price,desc";
         }
         if (sort && sort.createdAt) {
             sortBy = sort.createdAt === 'ascend' ? "sort=createdAt,asc" : "sort=createdAt,desc";
@@ -202,7 +213,7 @@ const ProductPage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}`;
+            temp = `${temp}&sort=createdAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }

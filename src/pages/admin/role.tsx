@@ -71,7 +71,8 @@ const RolePage = () => {
         {
             title: 'Mô tả',
             dataIndex: 'description',
-            sorter: true,
+            hideInSearch: true,
+
         },
         {
             title: 'Ngày tạo',
@@ -120,8 +121,8 @@ const RolePage = () => {
                     <Access requiredRole="admin" hideChildren>
                         <Popconfirm
                             placement="leftTop"
-                            title={"Xác nhận xóa role"}
-                            description={"Bạn có chắc chắn muốn xóa role này ?"}
+                            title={"Xác nhận xóa vai trò"}
+                            description={"Bạn có chắc chắn muốn xóa vai trò này ?"}
                             onConfirm={() => handleDeleteUser(entity.id)}
                             okText="Xác nhận"
                             cancelText="Hủy"
@@ -168,7 +169,7 @@ const RolePage = () => {
 
         //mặc định sort theo updatedAt
         if (Object.keys(sortBy).length === 0) {
-            temp = `${temp}&sort=updatedAt,desc`;
+            temp = `${temp}&sort=createdAt,desc`;
         } else {
             temp = `${temp}&${sortBy}`;
         }
@@ -180,7 +181,7 @@ const RolePage = () => {
             <Access requiredRole="admin" hideChildren>
                 <DataTable<IRole>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Roles (Vai Trò)"
+                    headerTitle="Danh sách vai trò"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}

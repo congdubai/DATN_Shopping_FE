@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import { fetchReviewByProductId } from "@/redux/slice/reviewSlide";
 import dayjs from "dayjs";
 import { fetchProductDetailByProductId } from "@/redux/slice/productDetailSlide";
+import StarRating from "@/components/client/home/StarRating";
 const { Title, Text } = Typography;
 
 const ProductDetailClientPage = () => {
@@ -427,9 +428,14 @@ const ProductDetailClientPage = () => {
                                     {/* Bên trái: 4.6 + Rate + 45 lượt đánh giá */}
                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                                         <span style={{ fontSize: 24, fontWeight: "bold" }}>{averageRating.toFixed(1)}</span>
-                                        <Rate allowHalf disabled defaultValue={averageRating} style={{ fontSize: 20 }} />
+
+                                        <div style={{ display: 'inline-block', verticalAlign: 'middle', fontSize: 16, marginTop: 3 }}>
+                                            <StarRating rating={averageRating!} />
+                                        </div>
+
                                         <span style={{ color: "#888" }}>{reviews.length} lượt đánh giá</span>
                                     </div>
+
                                     {/* Bên phải: Nút Sao ★ */}
                                     <Dropdown menu={{ items: starMenuItems }} placement="bottomLeft">
                                         <Button type="text" style={{ border: "1px solid #d9d9d9", color: "#000", marginRight: 20, width: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

@@ -10,6 +10,14 @@ import {
     AliwangwangOutlined,
     BugOutlined,
     ScheduleOutlined,
+    SkinOutlined,
+    ShoppingOutlined,
+    FormatPainterOutlined,
+    TagsOutlined,
+    HomeOutlined,
+    ClusterOutlined,
+    BarsOutlined,
+    ReconciliationOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Dropdown, Space, message, Avatar, Button, notification } from 'antd';
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -49,21 +57,22 @@ const LayoutAdmin = () => {
 
         const fixedMenu = [
             ...(roleName === 'ADMIN' ? [
-                { label: <Link to='/admin'>Trang chủ</Link>, key: '/admin', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin'>Trang chủ</Link>, key: '/admin', icon: <HomeOutlined /> },
                 { label: <Link to='/admin/user'>Quản lý người dùng</Link>, key: '/admin/user', icon: <UserOutlined /> },
-                { label: <Link to='/admin/product'>Quản lý sản phẩm</Link>, key: '/admin/product', icon: <BankOutlined /> },
-                { label: <Link to='/admin/productDetail'>Quản lý chi tiết sản phẩm</Link>, key: '/admin/productDetail', icon: <BankOutlined /> },
-                { label: <Link to='/admin/order'>Quản lý đơn hàng</Link>, key: '/admin/order', icon: <ApiOutlined /> },
-                { label: <Link to='/admin/color'>Quản lý màu sắc</Link>, key: '/admin/color', icon: <ScheduleOutlined /> },
-                { label: <Link to='/admin/category'>Quản lý danh mục</Link>, key: '/admin/category', icon: <AliwangwangOutlined /> },
+                { label: <Link to='/admin/role'>Quản lý vai trò</Link>, key: '/admin/role', icon: <ClusterOutlined /> },
+                { label: <Link to='/admin/category'>Quản lý danh mục</Link>, key: '/admin/category', icon: <BarsOutlined /> },
+                { label: <Link to='/admin/product'>Quản lý sản phẩm</Link>, key: '/admin/product', icon: <SkinOutlined /> },
+                { label: <Link to='/admin/productDetail'>Quản lý chi tiết sản phẩm</Link>, key: '/admin/productDetail', icon: <ReconciliationOutlined /> },
+                { label: <Link to='/admin/color'>Quản lý màu sắc</Link>, key: '/admin/color', icon: <FormatPainterOutlined /> },
                 { label: <Link to='/admin/size'>Quản lý kích thước</Link>, key: '/admin/size', icon: <ApiOutlined /> },
-                { label: <Link to='/admin/discount'>Quản lý giảm giá</Link>, key: '/admin/discount', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin/discount'>Quản lý giảm giá</Link>, key: '/admin/discount', icon: <TagsOutlined /> },
+                { label: <Link to='/admin/order'>Quản lý đơn hàng</Link>, key: '/admin/order', icon: <ShoppingOutlined /> },
                 { label: <Link to='/admin/chat'>Nhắn tin</Link>, key: '/admin/chat', icon: <AliwangwangOutlined /> },
                 { label: <Link to='/admin/export'>Thống kê</Link>, key: '/admin/export', icon: <ScheduleOutlined /> },
 
             ] : []),
             ...(roleName === 'STAFF' ? [
-                { label: <Link to='/admin'>Trang chủ</Link>, key: '/admin', icon: <ScheduleOutlined /> },
+                { label: <Link to='/admin'>Trang chủ</Link>, key: '/admin', icon: <HomeOutlined /> },
                 { label: <Link to='/admin/createOrder'>Tạo đơn hàng</Link>, key: '/admin/createOrder', icon: <ExceptionOutlined /> }
             ] : [])
         ];
@@ -122,7 +131,7 @@ const LayoutAdmin = () => {
                                 borderBottom: '1px solid #f0f0f0',
                             }}
                         >
-                            <BugOutlined style={{ marginRight: 8 }} />
+                            <BankOutlined style={{ marginRight: 8 }} />
                             {!collapsed && 'ADMIN'}
                         </div>
 
