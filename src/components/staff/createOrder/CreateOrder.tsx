@@ -5,7 +5,8 @@ import {
     callFetchProductDetailById,
     callAddToCart,
     callDeleteCartDetail,
-    callUpdateQuantity
+    callUpdateQuantity,
+    callApplyDiscount
 } from "@/config/api";
 import { ProForm, ProFormText } from "@ant-design/pro-components";
 import {
@@ -32,7 +33,8 @@ const CreateOrderPage = () => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
-
+    const [inputValue, setInputValue] = useState('');
+    const [discountCode, setDiscountCode] = useState('');
 
     const [searchId, setSearchId] = useState("");
     const [productDetail, setProductDetail] = useState<any>(null);
@@ -43,6 +45,42 @@ const CreateOrderPage = () => {
         (sum, item) => sum + item.price * item.quantity,
         0
     );
+    const [finalPrice, setFinalPrice] = useState<number | undefined>();
+
+    const handleApplyDiscount = () => {
+        if (inputValue.trim()) {
+            setDiscountCode(inputValue.trim());
+        } else {
+            notification.warning({
+                message: 'Vui lòng nhập mã khuyến mãi hợp lệ',
+            });
+        }
+    };
+
+    useEffect(() => {
+        const applyDiscount = async () => {
+            try {
+                const res = await callApplyDiscount(totalPrice.toString(), discountCode);
+                if (res?.statusCode === 200) {
+                    setFinalPrice(res?.data);
+                } else {
+                    setFinalPrice(undefined);
+                    notification.error({
+                        message: 'Có lỗi xảy ra',
+                        description: res.message
+                    });
+                }
+            } catch (error) {
+                console.error("Lỗi khi tải mã giảm giá:", error);
+            }
+        };
+
+        if (discountCode) {
+            applyDiscount();
+        }
+    }, [totalPrice, discountCode]);
+
+
     useEffect(() => {
         updateCartData();
     }, []);
@@ -92,12 +130,13 @@ const CreateOrderPage = () => {
 
     const handleSubmit = async (values: any) => {
         const { name, phone, address } = values;
+        const priceToUse = finalPrice ?? totalPrice;
         const res = await callPlaceOrder(
             name,
             phone,
             "Tại cửa hàng",
             "COD_OFFLINE",
-            totalPrice.toString()
+            priceToUse.toString()
         );
 
         if (res.statusCode === '200') {
@@ -214,11 +253,16 @@ const CreateOrderPage = () => {
                                         name="name"
                                         placeholder="Họ và tên"
                                         fieldProps={{ style: { height: 50, fontSize: 16 } }}
+                                        rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}
                                     />
                                     <ProFormText
                                         name="phone"
                                         placeholder="Số điện thoại"
                                         fieldProps={{ style: { height: 50, fontSize: 16 } }}
+                                        rules={[
+                                            { required: true, message: 'Vui lòng nhập số điện thoại' },
+                                            { pattern: /^[0-9]{10}$/, message: 'Số điện thoại không hợp lệ' }
+                                        ]}
                                     />
 
                                     <Row gutter={16}>
@@ -353,7 +397,9 @@ const CreateOrderPage = () => {
                                             }}
                                         >
                                             <p style={{ fontSize: 18, margin: "5 0" }}>Giá giảm:</p>
-                                            <p style={{ fontSize: 18, margin: "5 0" }}>0đ</p>
+                                            <p style={{ fontSize: 18, margin: "5 0" }}>
+                                                {finalPrice ? `-${(totalPrice - finalPrice).toLocaleString()}đ` : '0đ'}
+                                            </p>
                                         </div>
                                         <Divider style={{ margin: "5px 0" }} />
                                         <div
@@ -365,23 +411,32 @@ const CreateOrderPage = () => {
                                         >
                                             <p style={{ fontSize: 18, margin: 0 }}>Tổng tiền:</p>
                                             <h3 style={{ margin: 0 }}>
-                                                {totalPrice.toLocaleString()}đ
+                                                {(finalPrice !== undefined ? finalPrice : totalPrice).toLocaleString()}đ
                                             </h3>
                                         </div>
                                     </div>
 
                                     <h3 style={{ marginTop: 10 }}>Mã khuyến mãi</h3>
-                                    <Input
-                                        placeholder="Nhập mã khuyến mãi"
-                                        style={{ marginBottom: "10px", marginTop: 3 }}
-                                        prefix={
-                                            <img
-                                                src={`${backendUrl}/storage/slide/discount.png`}
-                                                alt="Voucher"
-                                                style={{ width: 18, height: 18, marginRight: 5 }}
-                                            />
-                                        }
-                                    />
+                                    <div style={{ display: 'flex', gap: 10, marginBottom: 10, marginTop: 3 }}>
+                                        <Input
+                                            placeholder="Nhập mã khuyến mãi"
+                                            value={inputValue}
+                                            onChange={(e) => setInputValue(e.target.value)}
+                                            style={{ flex: 1 }}
+                                            prefix={
+                                                <img
+                                                    src={`${backendUrl}/storage/slide/discount.png`}
+                                                    alt="Voucher"
+                                                    style={{ width: 18, height: 18, marginRight: 5 }}
+                                                />
+                                            }
+                                        />
+                                        <Button style={{ background: "black", color: "white", fontWeight: 500 }}
+                                            onClick={handleApplyDiscount}
+                                        >
+                                            Chọn
+                                        </Button>
+                                    </div>
 
                                     <Button
                                         type="primary"

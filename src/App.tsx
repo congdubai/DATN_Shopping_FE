@@ -21,7 +21,7 @@ import HomePage from "./pages/client/home";
 import CartPage from "./pages/client/cart";
 import CheckOutPage from "./pages/client/checkout";
 import DashboardPage from "./pages/admin/dashboard";
-import CreateOrderPage from "./components/admin/createOrder/CreateOrder";
+import CreateOrderPage from "./components/staff/createOrder/CreateOrder";
 import HistoryPage from "./pages/client/history";
 import ProductDetailClientPage from "./pages/client/productDetail";
 import CategoryHomePage from "./pages/client/CategoryHome";

@@ -142,7 +142,7 @@ const CartPage = () => {
                                     <Divider style={{ margin: "10px 0" }} />
 
                                     <Col span={24}>
-                                        <div style={{ borderRadius: 5, backgroundColor: "#fcf4ec", padding: "8px 5px" }}>Bạn được <b>giảm 10%</b> tối đa 10K, mua đơn hàng trên 350,000₫ để giảm ngay 50K!</div>
+                                        <div style={{ borderRadius: 5, backgroundColor: "#fcf4ec", padding: "8px 5px" }}>Mua đơn hàng trên 350,000₫ để được <b>miễn phí ship</b> !</div>
                                     </Col>
                                     {cartItems.length === 0 ? (
                                         <div style={{ padding: "20px 5px", fontSize: 16, fontFamily: "'Geologica', sans-serif" }}>

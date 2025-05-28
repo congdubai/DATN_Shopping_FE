@@ -130,7 +130,7 @@ const ModalUser = (props: IProps) => {
     };
 
     const submitUser = async (valuesForm: any) => {
-        const { name, email, password, address, age, gender, role } = valuesForm;
+        const { name, email, password, address, age, gender, role, phone } = valuesForm;
         const formattedAddress = Array.isArray(address)
             ? address.join(", ")
             : (typeof address === "object" && address !== null
@@ -146,6 +146,7 @@ const ModalUser = (props: IProps) => {
                 email,
                 password,
                 age,
+                phone,
                 gender,
                 address: formattedAddress, // Đảm bảo địa chỉ đúng format
                 role: { id: role.value, name: "", description: "" },
@@ -155,6 +156,7 @@ const ModalUser = (props: IProps) => {
                 user.name,
                 dataImage[0]?.name || "",
                 user.age,
+                user.phone,
                 user.gender,
                 user.address,
                 user.role
@@ -175,6 +177,7 @@ const ModalUser = (props: IProps) => {
                 email,
                 password,
                 age,
+                phone,
                 gender,
                 address: formattedAddress,
                 role: { id: role.value, name: "", description: "" },
@@ -185,6 +188,7 @@ const ModalUser = (props: IProps) => {
                 user.password,
                 dataImage[0]?.name || "",
                 user.age,
+                user.phone,
                 user.gender,
                 user.address,
                 user.role
@@ -295,6 +299,10 @@ const ModalUser = (props: IProps) => {
                             label="Số điện thoại"
                             name="phone"
                             placeholder="Nhập số điện thoại"
+                            rules={[
+                                { required: true, message: 'Vui lòng nhập số điện thoại' },
+                                { pattern: /^[0-9]{10}$/, message: 'Số điện thoại không hợp lệ' }
+                            ]}
                         />
                     </Col>
                     <Col lg={12} md={12} sm={24} xs={24}>

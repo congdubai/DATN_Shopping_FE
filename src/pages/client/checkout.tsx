@@ -17,6 +17,8 @@ const CheckOutPage = () => {
         (sum, item) => sum + item.price * item.quantity,
         0
     );
+    const shippingFee = totalPrice > 350000 ? 0 : 30000;
+
     const [form] = Form.useForm();
     const discountCode = useAppSelector((state: any) => state.discount.discountCode);
 
@@ -46,7 +48,7 @@ const CheckOutPage = () => {
     const handleSubmit = async (values: any) => {
         const { name, phone, address } = values;
         const fullAddress = Array.isArray(address) ? address.join(", ") : address;
-        const priceToUse = finalPrice ?? totalPrice;
+        const priceToUse = (finalPrice ?? totalPrice) + shippingFee;
 
         if (paymentMethod === "cod") {
             // Xử lý đơn hàng với COD
@@ -126,6 +128,7 @@ const CheckOutPage = () => {
                                             <ProFormText
                                                 name="name"
                                                 placeholder="Họ và tên"
+                                                rules={[{ required: true, message: 'Vui lòng nhập họ tên' }]}
                                                 fieldProps={{
                                                     style: {
                                                         height: 50,
@@ -136,6 +139,10 @@ const CheckOutPage = () => {
                                             <ProFormText
                                                 name="phone"
                                                 placeholder="Số điện thoại"
+                                                rules={[
+                                                    { required: true, message: 'Vui lòng nhập số điện thoại' },
+                                                    { pattern: /^[0-9]{10}$/, message: 'Số điện thoại không hợp lệ' }
+                                                ]}
                                                 fieldProps={{
                                                     style: {
                                                         height: 50,
@@ -174,6 +181,18 @@ const CheckOutPage = () => {
                                                     {finalPrice ? `-${(totalPrice - finalPrice).toLocaleString()}đ` : '0đ'}
                                                 </p>
                                             </div>
+                                            <div
+                                                style={{
+                                                    display: "flex",
+                                                    justifyContent: "space-between",
+                                                    alignItems: "center",
+                                                }}
+                                            >
+                                                <p style={{ fontSize: 18, margin: "5 0" }}>Phí vận chuyển:</p>
+                                                <p style={{ fontSize: 18, margin: "5 0" }}>
+                                                    {shippingFee.toLocaleString() ? `${shippingFee.toLocaleString()}đ` : '0đ'}
+                                                </p>
+                                            </div>
                                             <Divider style={{ margin: "5px 0" }} />
                                             <div
                                                 style={{
@@ -184,7 +203,7 @@ const CheckOutPage = () => {
                                             >
                                                 <p style={{ fontSize: 18, margin: 0 }}>Tổng tiền:</p>
                                                 <h3 style={{ margin: 0 }}>
-                                                    {(finalPrice !== undefined ? finalPrice : totalPrice).toLocaleString()}đ
+                                                    {(finalPrice !== undefined ? finalPrice + shippingFee : totalPrice + shippingFee).toLocaleString()}đ
                                                 </h3>
                                             </div>
                                         </div>

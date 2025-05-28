@@ -50,11 +50,11 @@ Module User
 export const callFetchUser = (query: string) => {
     return axios.get<IBackendRes<IModelPaginate<IUser>>>(`/api/v1/users?${query}`);
 }
-export const callCreateUser = (email: string, name: string, password: string, avatar: string, age: number, gender: string, address: string, role: IRole) => {
-    return axios.post<IBackendRes<IUser>>('/api/v1/users', { email, name, password, avatar, age, gender, address, role });
+export const callCreateUser = (email: string, name: string, password: string, avatar: string, age: number, phone: string, gender: string, address: string, role: IRole) => {
+    return axios.post<IBackendRes<IUser>>('/api/v1/users', { email, name, password, avatar, age, phone, gender, address, role });
 }
-export const callUpdateUser = (id: string, name: string, avatar: string, age: number, gender: string, address: string, role: IRole) => {
-    return axios.put<IBackendRes<IUser>>(`/api/v1/users`, { id, name, avatar, age, gender, address, role });
+export const callUpdateUser = (id: string, name: string, avatar: string, age: number, phone: string, gender: string, address: string, role: IRole) => {
+    return axios.put<IBackendRes<IUser>>(`/api/v1/users`, { id, name, avatar, age, phone, gender, address, role });
 }
 export const callDeleteUser = (id: string) => {
     return axios.delete<IBackendRes<IUser>>(`/api/v1/users/${id}`);
