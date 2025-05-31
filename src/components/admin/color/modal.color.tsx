@@ -37,7 +37,11 @@ const ModalColor = (props: IProps) => {
             }
             const res = await callUpdateColor(color, dataInit.id);
             if (res.data) {
-                message.success("Cập nhật color thành công");
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Sửa màu sắc thành công!',
+                    placement: 'topRight',
+                });
                 handleReset();
                 reloadTable();
             } else {
@@ -53,7 +57,11 @@ const ModalColor = (props: IProps) => {
             }
             const res = await callCreateColor(color);
             if (res.data) {
-                message.success("Thêm mới color thành công");
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Sửa màu sắc thành công!',
+                    placement: 'topRight',
+                });
                 handleReset();
                 reloadTable();
             } else {

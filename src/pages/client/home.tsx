@@ -202,7 +202,7 @@ const HomePage = () => {
                     {/**banner */}
                     <Row justify="center">
                         <Col span={24}>
-                            <img src={`${backendUrl}/storage/slide/banner.webp`} className="carousel-img" style={{ marginTop: 20 }} />
+                            <img src={`${backendUrl}/storage/slide/banner.png`} className="carousel-img" style={{ marginTop: 20 }} />
                         </Col>
                     </Row>
 

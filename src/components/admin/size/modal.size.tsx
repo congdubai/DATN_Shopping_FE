@@ -37,7 +37,11 @@ const ModalSize = (props: IProps) => {
             }
             const res = await callUpdateSize(size, dataInit.id);
             if (res.data) {
-                message.success("Cập nhật size thành công");
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Cập nhật kích thước thành công!',
+                    placement: 'topRight',
+                });
                 handleReset();
                 reloadTable();
             } else {

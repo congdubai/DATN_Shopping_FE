@@ -168,7 +168,11 @@ const ModalProduct = (props: IProps) => {
             }
             const res = await callUpdateProduct(product.id, product.name, product.price, product.minPrice, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {
-                message.success("Cập nhật sản phẩm thành công");
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Cập nhật sản phẩm thành công!',
+                    placement: 'topRight',
+                });
                 handleReset();
                 reloadTable();
             } else {
@@ -189,7 +193,11 @@ const ModalProduct = (props: IProps) => {
             }
             const res = await callCreateProduct(product.name, product.price, product.minPrice, dataImage[0].name, value, product.shortDesc, product.category);
             if (res.data) {
-                message.success("Thêm mới sản phẩm thành công");
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Thêm sản phẩm thành công!',
+                    placement: 'topRight',
+                });
                 handleReset();
                 reloadTable();
             } else {

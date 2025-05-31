@@ -37,7 +37,11 @@ const ModalRole = (props: IProps) => {
             }
             const res = await callUpdateRole(role, dataInit.id);
             if (res.data) {
-                message.success("Cập nhật role thành công");
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Cập nhật vai trò thành công!',
+                    placement: 'topRight',
+                });
                 handleReset();
                 reloadTable();
             } else {
@@ -53,7 +57,11 @@ const ModalRole = (props: IProps) => {
             }
             const res = await callCreateRole(role);
             if (res.data) {
-                message.success("Thêm mới role thành công");
+                notification.success({
+                    message: 'Thành công',
+                    description: 'Thêm vai trò thành công!',
+                    placement: 'topRight',
+                });
                 handleReset();
                 reloadTable();
             } else {

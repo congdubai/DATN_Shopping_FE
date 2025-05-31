@@ -525,3 +525,25 @@
     color: black;
     text-align: center;
 }
+
+/* Khi item được chọn */
+.ant-menu-horizontal>.ant-menu-item-selected,
+.ant-menu-horizontal>.ant-menu-submenu-selected {
+    color: #FFB41D !important;
+}
+
+.ant-menu-horizontal>.ant-menu-item-selected .anticon,
+.ant-menu-horizontal>.ant-menu-submenu-selected .anticon {
+    color: #FFB41D !important;
+}
+
+/* Khi hover vào item */
+.ant-menu-horizontal>.ant-menu-item:hover,
+.ant-menu-horizontal>.ant-menu-submenu:hover {
+    color: #FFB41D !important;
+}
+
+.ant-menu-horizontal>.ant-menu-item:hover .anticon,
+.ant-menu-horizontal>.ant-menu-submenu:hover .anticon {
+    color: #FFB41D !important;
+}
