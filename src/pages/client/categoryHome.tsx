@@ -36,7 +36,7 @@ const CategoryHomePage = () => {
                 <Col span={19} style={{ padding: "0 20px" }}>
                     <Row justify="center">
                         <Col span={24} style={{ marginTop: "160px", position: "relative" }}>
-                            <img src={`${backendUrl}/storage/slide/banner.webp`} className="carousel-img" style={{ marginTop: 20 }} />
+                            <img src={`${backendUrl}/storage/slide/banner.png`} className="carousel-img" style={{ marginTop: 20, height: 240 }} />
                         </Col>
                     </Row>
 
