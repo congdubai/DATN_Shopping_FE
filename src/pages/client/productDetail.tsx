@@ -302,7 +302,7 @@ const ProductDetailClientPage = () => {
                                 </span>
                             </p>
 
-                            <Title level={3} style={{ color: "#ff0000", display: "inline-block", marginRight: 10, marginTop: 10 }}>{productDetails[0]?.product?.price}đ</Title>
+                            <Title level={3} style={{ color: "#ff0000", display: "inline-block", marginRight: 10, marginTop: 10 }}>{productDetails[0]?.product?.price?.toLocaleString('vi-VN')}đ</Title>
                             <Text delete style={{ fontSize: 16, color: "gray", marginTop: 8 }}>499.000đ</Text>
                             <p>
                                 <strong>Màu sắc:</strong>

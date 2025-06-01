@@ -242,7 +242,7 @@ const HomeSearchPage = () => {
                                         </div>
                                     </div>
                                     <Title level={5} className="product-title">{product.name}</Title>
-                                    <Text strong className="product-price">{product.price} <sup className="product-currency">đ</sup></Text>
+                                    <Text strong className="product-price">{product.price?.toLocaleString('vi-VN')} <sup className="product-currency">đ</sup></Text>
                                 </Card>
                             ))
                         ) : (
