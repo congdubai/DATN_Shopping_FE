@@ -83,9 +83,6 @@ const ModalProductDetail = (props: IProps) => {
                 uid: uuidv4(),
             }])
         }
-        if (isColorExists) {
-            console.log("check data ", dataImage[0].name)
-        }
     }, [dataInit, isColorExists]);
 
     async function fetchProductList(name: string): Promise<IProductSelect[]> {
@@ -159,7 +156,6 @@ const ModalProductDetail = (props: IProps) => {
 
         try {
             const image = await callFetchProductDetailByColor(String(product.value), String(colorValue));
-            console.log("check image ", image);
             const imageObj = {
                 name: image,
                 uid: uuidv4(),
@@ -254,7 +250,7 @@ const ModalProductDetail = (props: IProps) => {
                 imageDetail,
                 product: { id: product.value, name: "", image: "" },
                 size: { id: size.value, name: "", description: "" },
-                color: { id: color.value, name: "", description: "" }
+                color: { id: color.key, name: "", description: "" }
             }
             const res = await callUpdateProductDetail(productDetail.id, imageName, productDetail.quantity, productDetail.product, productDetail.color, productDetail.size);
             if (res.data) {
@@ -274,7 +270,7 @@ const ModalProductDetail = (props: IProps) => {
                 imageDetail,
                 product: { id: product.value, name: "", image: "" },
                 size: { id: size.value, name: "", description: "" },
-                color: { id: color.value, name: "", description: "" }
+                color: { id: color.key, name: "", description: "" }
             }
             const res = await callCreateProductDetail(imageName, productDetail.quantity, productDetail.product, productDetail.color, productDetail.size);
             if (res.data) {

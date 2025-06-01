@@ -17,7 +17,7 @@ const HomePage = () => {
     const meta = useAppSelector(state => state.product.meta);
     const isFetching = useAppSelector(state => state.product.isFetching);
     const dispatch = useAppDispatch();
-    const images = ["slide-1.webp", "slide-2.jpg", "slide-3.webp", "slide-4.webp"];
+    const images = ["banner1.jpg", "banner2.jpg", "banner3.jpg", "banner4.png"];
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const { Title, Text } = Typography;
     const carouselRef = useRef<CarouselRef>(null);
@@ -205,7 +205,6 @@ const HomePage = () => {
                             <img src={`${backendUrl}/storage/slide/banner.png`} className="carousel-img" style={{ marginTop: 20, height: 240 }} />
                         </Col>
                     </Row>
-
                     {/* Danh sách sản phẩm */}
                     <div className="product-grid">
                         {isFetching ? (
