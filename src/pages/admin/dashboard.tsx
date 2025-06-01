@@ -16,6 +16,7 @@ import { IOrder, ITopProduct, ITopSeller } from '@/types/backend';
 import { ColumnsType } from 'antd/lib/table/interface';
 import ViewTopProductDetail from '@/components/admin/dashboard/product/view.topProduct';
 import dayjs from 'dayjs';
+import Access from '@/components/share/access';
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 const { RangePicker } = DatePicker;
 
@@ -311,6 +312,7 @@ export const DashboardPage = () => {
     ];
     return (
         <>
+
             <ConfigProvider
                 theme={{
                     token: {
@@ -381,263 +383,265 @@ export const DashboardPage = () => {
                             </Col>
                         ) : (
                             <>
-                                <Col sm={24} lg={24}>
-                                    <Row gutter={[
-                                        { xs: 8, sm: 16, md: 24, lg: 32 },
-                                        { xs: 8, sm: 16, md: 24, lg: 32 }
-                                    ]}>
-                                        <Col xs={24} sm={12}>
-                                            <RevenueCard
-                                                title={
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span style={{ margin: 0 }}>Khách hàng</span>
-                                                        <RangePicker
-                                                            value={dateRange2}
-                                                            onChange={(dates) => {
-                                                                if (dates) setDateRange2(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                            }}
-                                                            format="DD/MM/YYYY"
-                                                            allowClear={false}
-                                                        />
-                                                    </div>
-                                                }
-                                                value={countUser}
-                                                diff={5.54}
-                                                height={180}
-                                                justify="space-between"
-                                            />
-                                        </Col>
+                                <Access requiredRole="admin" hideChildren>
+                                    <Col sm={24} lg={24}>
+                                        <Row gutter={[
+                                            { xs: 8, sm: 16, md: 24, lg: 32 },
+                                            { xs: 8, sm: 16, md: 24, lg: 32 }
+                                        ]}>
+                                            <Col xs={24} sm={12}>
+                                                <RevenueCard
+                                                    title={
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <span style={{ margin: 0 }}>Khách hàng</span>
+                                                            <RangePicker
+                                                                value={dateRange2}
+                                                                onChange={(dates) => {
+                                                                    if (dates) setDateRange2(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                                }}
+                                                                format="DD/MM/YYYY"
+                                                                allowClear={false}
+                                                            />
+                                                        </div>
+                                                    }
+                                                    value={countUser}
+                                                    diff={5.54}
+                                                    height={180}
+                                                    justify="space-between"
+                                                />
+                                            </Col>
 
-                                        <Col xs={24} sm={12}>
-                                            <RevenueCard
-                                                title={
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span style={{ margin: 0 }}>Số lượng bán</span>
-                                                        <RangePicker
-                                                            value={dateRange3}
-                                                            onChange={(dates) => {
-                                                                if (dates) setDateRange3(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                            }}
-                                                            format="DD/MM/YYYY"
-                                                            allowClear={false}
-                                                        />
-                                                    </div>
-                                                }
-                                                value={countOrder}
-                                                diff={-12.3}
-                                                height={180}
-                                                justify="space-between"
-                                            />
-                                        </Col>
-                                        <Col xs={24} sm={12}>
-                                            <RevenueCard
-                                                title={
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span style={{ margin: 0 }}>Doanh thu</span>
-                                                        <RangePicker
-                                                            value={dateRange5}
-                                                            onChange={(dates) => {
-                                                                if (dates) setDateRange5(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                            }}
-                                                            format="DD/MM/YYYY"
-                                                            allowClear={false}
-                                                        />
-                                                    </div>
-                                                }
-                                                value={new Intl.NumberFormat('vi-VN', {
-                                                    style: 'currency',
-                                                    currency: 'VND',
-                                                }).format(totalPrice)}
-                                                diff={9.52}
-                                                height={180}
-                                                justify="space-between"
-                                            />
+                                            <Col xs={24} sm={12}>
+                                                <RevenueCard
+                                                    title={
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <span style={{ margin: 0 }}>Số lượng bán</span>
+                                                            <RangePicker
+                                                                value={dateRange3}
+                                                                onChange={(dates) => {
+                                                                    if (dates) setDateRange3(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                                }}
+                                                                format="DD/MM/YYYY"
+                                                                allowClear={false}
+                                                            />
+                                                        </div>
+                                                    }
+                                                    value={countOrder}
+                                                    diff={-12.3}
+                                                    height={180}
+                                                    justify="space-between"
+                                                />
+                                            </Col>
+                                            <Col xs={24} sm={12}>
+                                                <RevenueCard
+                                                    title={
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <span style={{ margin: 0 }}>Doanh thu</span>
+                                                            <RangePicker
+                                                                value={dateRange5}
+                                                                onChange={(dates) => {
+                                                                    if (dates) setDateRange5(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                                }}
+                                                                format="DD/MM/YYYY"
+                                                                allowClear={false}
+                                                            />
+                                                        </div>
+                                                    }
+                                                    value={new Intl.NumberFormat('vi-VN', {
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    }).format(totalPrice)}
+                                                    diff={9.52}
+                                                    height={180}
+                                                    justify="space-between"
+                                                />
 
-                                        </Col>
-                                        <Col xs={24} sm={12}>
-                                            <RevenueCard
-                                                title={
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                        <span style={{ margin: 0 }}>Số lượng hủy</span>
-                                                        <RangePicker
-                                                            value={dateRange4}
-                                                            onChange={(dates) => {
-                                                                if (dates) setDateRange4(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                            }}
-                                                            format="DD/MM/YYYY"
-                                                            allowClear={false}
-                                                        />
-                                                    </div>
-                                                }
-                                                value={countCancelOrder}
-                                                diff={2.34}
-                                                height={180}
-                                                justify="space-between"
-                                            />
-                                        </Col>
-                                    </Row>
-                                </Col>
-                                <Col xs={24} lg={12}>
-                                    <Card
-                                        title="Bán hàng"
-                                        extra={
-                                            <RangePicker
-                                                value={dateRange8}
-                                                onChange={(dates) => {
-                                                    if (dates) setDateRange8(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                }}
-                                                format="DD/MM/YYYY"
-                                                allowClear={false}
-                                            />
-                                        }
-                                        style={cardStyles}
-                                    >
-                                        <Flex vertical gap="middle">
-                                            <Space>
-                                                <Title level={3} style={{ margin: 0 }}>
-                                                    <CountUp end={totalPrice1} /> VND
-                                                </Title>
-                                                <Tag color="green-inverse" icon={<ArrowUpOutlined />}>
-                                                    8.7%
-                                                </Tag>
-                                            </Space>
-                                            <SalesChart dateRange8={dateRange8} />
-                                        </Flex>
-                                    </Card>
-                                </Col>
-                                <Col xs={24} lg={12}>
-                                    <Card
-                                        title="Sản phẩm theo danh mục"
-                                        extra={
-                                            <RangePicker
-                                                value={dateRange6}
-                                                onChange={(dates) => {
-                                                    if (dates) setDateRange6(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                }}
-                                                format="DD/MM/YYYY"
-                                                allowClear={false}
-                                            />
-                                        }
-                                        style={cardStyles}
-                                    >
-                                        <CategoriesChart dateRange6={dateRange6} />
-                                    </Card>
-                                </Col>
+                                            </Col>
+                                            <Col xs={24} sm={12}>
+                                                <RevenueCard
+                                                    title={
+                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                            <span style={{ margin: 0 }}>Số lượng hủy</span>
+                                                            <RangePicker
+                                                                value={dateRange4}
+                                                                onChange={(dates) => {
+                                                                    if (dates) setDateRange4(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                                }}
+                                                                format="DD/MM/YYYY"
+                                                                allowClear={false}
+                                                            />
+                                                        </div>
+                                                    }
+                                                    value={countCancelOrder}
+                                                    diff={2.34}
+                                                    height={180}
+                                                    justify="space-between"
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                    <Col xs={24} lg={12}>
+                                        <Card
+                                            title="Bán hàng"
+                                            extra={
+                                                <RangePicker
+                                                    value={dateRange8}
+                                                    onChange={(dates) => {
+                                                        if (dates) setDateRange8(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                    }}
+                                                    format="DD/MM/YYYY"
+                                                    allowClear={false}
+                                                />
+                                            }
+                                            style={cardStyles}
+                                        >
+                                            <Flex vertical gap="middle">
+                                                <Space>
+                                                    <Title level={3} style={{ margin: 0 }}>
+                                                        <CountUp end={totalPrice1} /> VND
+                                                    </Title>
+                                                    <Tag color="green-inverse" icon={<ArrowUpOutlined />}>
+                                                        8.7%
+                                                    </Tag>
+                                                </Space>
+                                                <SalesChart dateRange8={dateRange8} />
+                                            </Flex>
+                                        </Card>
+                                    </Col>
+                                    <Col xs={24} lg={12}>
+                                        <Card
+                                            title="Sản phẩm theo danh mục"
+                                            extra={
+                                                <RangePicker
+                                                    value={dateRange6}
+                                                    onChange={(dates) => {
+                                                        if (dates) setDateRange6(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                    }}
+                                                    format="DD/MM/YYYY"
+                                                    allowClear={false}
+                                                />
+                                            }
+                                            style={cardStyles}
+                                        >
+                                            <CategoriesChart dateRange6={dateRange6} />
+                                        </Card>
+                                    </Col>
 
-                                <Col xs={24} lg={12}>
-                                    <Card title={
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span>Top sản phẩm bán chạy</span>
-                                            <RangePicker
-                                                value={dateRange}
-                                                onChange={(dates) => {
-                                                    if (dates) setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                }}
-                                                format="DD/MM/YYYY"
-                                                allowClear={false}
-                                            />
-                                        </div>
-                                    } style={cardStyles}>
-                                        {topProductsError ? (
-                                            <Alert
-                                                message="Error"
-                                                description={topProductsError.toString()}
-                                                type="error"
-                                                showIcon
-                                            />
-                                        ) : (
-                                            <Table
-                                                columns={PRODUCTS_COLUMNS}
-                                                dataSource={topProducts}
-                                                loading={topProductsLoading}
-                                                rowKey="id"
-                                                className="overflow-scroll"
-                                            />
-                                        )}
-                                    </Card>
-                                </Col>
-                                <Col xs={24} lg={12}>
-                                    <Card title={
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span>Top sản phẩm bán chậm</span>
-                                            <RangePicker
-                                                value={dateRange1}
-                                                onChange={(dates) => {
-                                                    if (dates) setDateRange1(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                }}
-                                                format="DD/MM/YYYY"
-                                                allowClear={false}
-                                            />
-                                        </div>
-                                    } style={cardStyles}>
-                                        {slowProductsError ? (
-                                            <Alert
-                                                message="Error"
-                                                description={slowProductsError.toString()}
-                                                type="error"
-                                                showIcon
-                                            />
-                                        ) : (
-                                            <Table
-                                                columns={PRODUCTS_COLUMNS}
-                                                dataSource={slowProducts}
-                                                loading={slowProductsLoading}
-                                                rowKey="id"
-                                                className="overflow-scroll"
-                                            />
-                                        )}
-                                    </Card>
-                                </Col>
-                                <Col span={24}>
-                                    <Card title={
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span style={{ margin: 0 }}>Top nhân viên</span>
-                                            <RangePicker
-                                                value={dateRange7}
-                                                onChange={(dates) => {
-                                                    if (dates) setDateRange7(dates as [dayjs.Dayjs, dayjs.Dayjs]);
-                                                }}
-                                                format="DD/MM/YYYY"
-                                                allowClear={false}
-                                            />
-                                        </div>
-                                    }>
-                                        {topSellersError ? (
-                                            <Alert
-                                                message="Error"
-                                                description={topSellersError.toString()}
-                                                type="error"
-                                                showIcon
-                                            />
-                                        ) : (
-                                            <Table
-                                                columns={SELLER_COLUMNS}
-                                                dataSource={topSellers}
-                                                loading={topSellersLoading}
-                                                className="overflow-scroll"
-                                            />
-                                        )}
-                                    </Card>
-                                </Col>
-                                <Col span={24}>
-                                    <Card title="Đơn hàng gần đây">
-                                        {recentOrdersError ? (
-                                            <Alert
-                                                message="Error"
-                                                description={recentOrdersError.toString()}
-                                                type="error"
-                                                showIcon
-                                            />
-                                        ) : (
-                                            <Table
-                                                columns={ORDERS_COLUMNS}
-                                                dataSource={recentOrders}
-                                                loading={recentOrdersLoading}
-                                                className="overflow-scroll"
-                                            />
-                                        )}
-                                    </Card>
-                                </Col>
+                                    <Col xs={24} lg={12}>
+                                        <Card title={
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span>Top sản phẩm bán chạy</span>
+                                                <RangePicker
+                                                    value={dateRange}
+                                                    onChange={(dates) => {
+                                                        if (dates) setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                    }}
+                                                    format="DD/MM/YYYY"
+                                                    allowClear={false}
+                                                />
+                                            </div>
+                                        } style={cardStyles}>
+                                            {topProductsError ? (
+                                                <Alert
+                                                    message="Error"
+                                                    description={topProductsError.toString()}
+                                                    type="error"
+                                                    showIcon
+                                                />
+                                            ) : (
+                                                <Table
+                                                    columns={PRODUCTS_COLUMNS}
+                                                    dataSource={topProducts}
+                                                    loading={topProductsLoading}
+                                                    rowKey="id"
+                                                    className="overflow-scroll"
+                                                />
+                                            )}
+                                        </Card>
+                                    </Col>
+                                    <Col xs={24} lg={12}>
+                                        <Card title={
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span>Top sản phẩm bán chậm</span>
+                                                <RangePicker
+                                                    value={dateRange1}
+                                                    onChange={(dates) => {
+                                                        if (dates) setDateRange1(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                    }}
+                                                    format="DD/MM/YYYY"
+                                                    allowClear={false}
+                                                />
+                                            </div>
+                                        } style={cardStyles}>
+                                            {slowProductsError ? (
+                                                <Alert
+                                                    message="Error"
+                                                    description={slowProductsError.toString()}
+                                                    type="error"
+                                                    showIcon
+                                                />
+                                            ) : (
+                                                <Table
+                                                    columns={PRODUCTS_COLUMNS}
+                                                    dataSource={slowProducts}
+                                                    loading={slowProductsLoading}
+                                                    rowKey="id"
+                                                    className="overflow-scroll"
+                                                />
+                                            )}
+                                        </Card>
+                                    </Col>
+                                    <Col span={24}>
+                                        <Card title={
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ margin: 0 }}>Top nhân viên</span>
+                                                <RangePicker
+                                                    value={dateRange7}
+                                                    onChange={(dates) => {
+                                                        if (dates) setDateRange7(dates as [dayjs.Dayjs, dayjs.Dayjs]);
+                                                    }}
+                                                    format="DD/MM/YYYY"
+                                                    allowClear={false}
+                                                />
+                                            </div>
+                                        }>
+                                            {topSellersError ? (
+                                                <Alert
+                                                    message="Error"
+                                                    description={topSellersError.toString()}
+                                                    type="error"
+                                                    showIcon
+                                                />
+                                            ) : (
+                                                <Table
+                                                    columns={SELLER_COLUMNS}
+                                                    dataSource={topSellers}
+                                                    loading={topSellersLoading}
+                                                    className="overflow-scroll"
+                                                />
+                                            )}
+                                        </Card>
+                                    </Col>
+                                    <Col span={24}>
+                                        <Card title="Đơn hàng gần đây">
+                                            {recentOrdersError ? (
+                                                <Alert
+                                                    message="Error"
+                                                    description={recentOrdersError.toString()}
+                                                    type="error"
+                                                    showIcon
+                                                />
+                                            ) : (
+                                                <Table
+                                                    columns={ORDERS_COLUMNS}
+                                                    dataSource={recentOrders}
+                                                    loading={recentOrdersLoading}
+                                                    className="overflow-scroll"
+                                                />
+                                            )}
+                                        </Card>
+                                    </Col>
+                                </Access>
                             </>)}
 
                     </Row>

@@ -59,7 +59,7 @@ const CategoriesChart: React.FC<CategoriesChartProps> = ({ dateRange6 }) => {
         label: {
             type: 'inner',
             offset: '-50%',
-            content: (datum: any) => `${(datum.percent * 100)}%`,
+            content: (datum: any) => `${(datum.percent * 100).toFixed(2)}%`,
             style: {
                 textAlign: 'center',
                 fontSize: 16,
